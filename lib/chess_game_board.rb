@@ -13,10 +13,12 @@ class ChessBoard
   def display_board
     i = 8
     @board.each do |row|
+
       puts " #{i}  #{row.join(' | ')} "
       puts '   -----------------------'
       i -= 1
     end
+    p "   #{('a'..'h').to_a.join('  ')}"
   end
 end
 
