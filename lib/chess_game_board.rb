@@ -13,13 +13,19 @@ class ChessBoard
 
   def create_pawns
     pawns = []
-    index = 0
-    8.times do |i|
+    (0..7).each_with_index do |num, index|
       pawns << ChessPawn.new([1, index], 'black')
       pawns << ChessPawn.new([6, index], 'white')
-      index += 1
     end
     pawns
+  end
+
+  def populate_board
+    pawns = create_pawns
+    pawns.each do |pawn|
+      row, col = pawn.position
+      @board[row][col] = pawn.unicode
+    end
   end
 
   def display_board
@@ -35,5 +41,6 @@ end
 
 chess_board = ChessBoard.new
 
+chess_board.populate_board
 chess_board.display_board
 

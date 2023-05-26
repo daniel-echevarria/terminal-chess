@@ -3,6 +3,8 @@ require_relative '../lib/chess_game_move_module.rb'
 class ChessPawn
   include MovePiece
 
+  attr_reader :position, :unicode
+
   def initialize(position, color)
     @position = position
     @color = color
