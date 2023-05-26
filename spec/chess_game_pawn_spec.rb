@@ -32,7 +32,7 @@ describe ChessPawn do
       end
     end
 
-    describe '#possible_moves' do
+    describe '#potential_moves' do
 
       context 'when on initial position' do
 
@@ -46,7 +46,7 @@ describe ChessPawn do
         end
 
         it 'returns 2 positions, one or 2 rows down' do
-          result = whitepawn.possible_moves.sort
+          result = whitepawn.potential_moves.sort
           expectation = [[5, 0], [4, 0]].sort
           expect(result).to eq(expectation)
         end
@@ -63,7 +63,7 @@ describe ChessPawn do
         end
 
         it 'returns 1 position, one row down' do
-          result = whitepawn.possible_moves.sort
+          result = whitepawn.potential_moves.sort
           expectation = [[4, 2]].sort
           expect(result).to eq(expectation)
         end

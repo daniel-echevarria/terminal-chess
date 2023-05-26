@@ -8,7 +8,7 @@ class ChessPawn
     @color = color
   end
 
-  def possible_moves
+  def potential_moves
     moves = []
     if @color == 'white'
       moves << move_vertically(@position, -2) if initial_position?(@position, @color)
