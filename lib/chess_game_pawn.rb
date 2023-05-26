@@ -10,8 +10,14 @@ class ChessPawn
 
   def possible_moves
     moves = []
-    moves << move_vertically(@position, 2) if initial_position?(@position, @color)
-    moves << move_vertically(@position, 1)
+    if @color == 'white'
+      moves << move_vertically(@position, -2) if initial_position?(@position, @color)
+      moves << move_vertically(@position, -1)
+    else
+      moves << move_vertically(@position, 2) if initial_position?(@position, @color)
+      moves << move_vertically(@position, 1)
+    end
+    moves
   end
 
   def initial_position?(position, color)

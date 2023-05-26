@@ -40,8 +40,8 @@ describe ChessPawn do
         before do
           position = whitepawn.instance_variable_get(:@position)
           allow(whitepawn).to receive(:initial_position?).and_return(true)
-          allow(whitepawn).to receive(:move_vertically).with(position, 1).and_return([5, 0])
-          allow(whitepawn).to receive(:move_vertically).with(position, 2).and_return([4, 0])
+          allow(whitepawn).to receive(:move_vertically).with(position, -1).and_return([5, 0])
+          allow(whitepawn).to receive(:move_vertically).with(position, -2).and_return([4, 0])
         end
 
         it 'returns 2 positions, one or 2 rows down' do
@@ -58,7 +58,7 @@ describe ChessPawn do
         before do
           position = whitepawn.instance_variable_get(:@position)
           allow(whitepawn).to receive(:initial_position?).and_return(false)
-          allow(whitepawn).to receive(:move_vertically).with(position, 1).and_return([4, 2])
+          allow(whitepawn).to receive(:move_vertically).with(position, -1).and_return([4, 2])
         end
 
         it 'returns 1 position, one row down' do
