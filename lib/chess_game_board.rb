@@ -5,10 +5,11 @@ class ChessBoard
 
   def initialize
     @board = create_board
+    @pawns = create_pawns
   end
 
   def create_board
-    Array.new(8) { Array.new(8) }
+    Array.new(8) { Array.new(8, " ") }
   end
 
   def create_pawns
@@ -21,8 +22,7 @@ class ChessBoard
   end
 
   def populate_board
-    pawns = create_pawns
-    pawns.each do |pawn|
+    @pawns.each do |pawn|
       row, col = pawn.position
       @board[row][col] = pawn.unicode
     end
