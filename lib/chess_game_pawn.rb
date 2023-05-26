@@ -6,6 +6,7 @@ class ChessPawn
   def initialize(position, color)
     @position = position
     @color = color
+    @unicode = set_unicode
   end
 
   def potential_moves
@@ -23,5 +24,9 @@ class ChessPawn
   def initial_position?(position, color)
     initial_row = color == 'white' ? 6 : 1
     position[0] == initial_row
+  end
+
+  def set_unicode
+    @color == 'white' ? "\u265F" : "\u2659"
   end
 end

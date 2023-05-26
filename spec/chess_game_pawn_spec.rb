@@ -3,12 +3,29 @@ require_relative '../lib/chess_game_move_module.rb'
 
 describe ChessPawn do
 
+  context '#set_unicode' do
+    context 'when color is black' do
+      let(:blackpawn) { described_class.new([1, 0], 'black') }
+
+      it 'sets unicode to black pawn unicode' do
+        result = blackpawn.set_unicode
+        expect(result).to eq("\u2659")
+      end
+    end
+
+    context 'when color is white' do
+      let(:whitepawn) { described_class.new([6, 0], 'white') }
+
+      it 'sets unicode to white pawn unicode' do
+        result = whitepawn.set_unicode
+        expect(result).to eq("\u265F")
+      end
+    end
+  end
+
   context 'when pawn is white' do
-
     describe '#initial_position?' do
-
       context 'when on initial position' do
-
         let(:whitepawn) { described_class.new([6, 0], 'white') }
 
         it 'returns true' do
@@ -20,7 +37,6 @@ describe ChessPawn do
       end
 
       context 'when somewhere else' do
-
         let(:whitepawn) { described_class.new([4, 2], 'white') }
 
         it 'returns false' do
@@ -33,9 +49,7 @@ describe ChessPawn do
     end
 
     describe '#potential_moves' do
-
       context 'when on initial position' do
-
         let(:whitepawn) { described_class.new([6, 0], 'white') }
 
         before do
@@ -53,7 +67,6 @@ describe ChessPawn do
       end
 
       context 'when not on initial position' do
-
         let(:whitepawn) { described_class.new([5, 2], 'white') }
 
         before do
