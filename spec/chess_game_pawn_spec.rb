@@ -2,6 +2,7 @@ require_relative '../lib/chess_game_pawn.rb'
 require_relative '../lib/chess_game_move_module.rb'
 
 describe ChessPawn do
+
   context 'when pawn is white' do
 
     describe '#initial_position?' do
