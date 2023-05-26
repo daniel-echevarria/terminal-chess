@@ -11,6 +11,17 @@ class ChessBoard
     Array.new(8) { Array.new(8) }
   end
 
+  def create_pawns
+    pawns = []
+    index = 0
+    8.times do |i|
+      pawns << ChessPawn.new([1, index], 'black')
+      pawns << ChessPawn.new([6, index], 'white')
+      index += 1
+    end
+    pawns
+  end
+
   def display_board
     i = 8
     @board.each do |row|
@@ -20,31 +31,9 @@ class ChessBoard
     end
     p "   #{('a'..'h').to_a.join('   ')}"
   end
-
-  def pre_populate_board
-    @board.each_with_index do |row, index|
-      if index == 1 || index == 6
-        row.map! { |v| v = 'p' }
-      end
-    end
-  end
-
-  def populate_board
-    @board.each_with_index do |row, index|
-      row.map!.with_index do |col, ind|
-        if col == 'p'
-          index > 3 ? "\u265F" : "\u2659"
-        else
-          " "
-        end
-      end
-    end
-  end
 end
 
 chess_board = ChessBoard.new
 
-chess_board.pre_populate_board
-chess_board.populate_board
 chess_board.display_board
 
