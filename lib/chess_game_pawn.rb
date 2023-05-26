@@ -15,5 +15,7 @@ class ChessPawn
   end
 
   def initial_position?(position, color)
+    initial_row = color == 'white' ? 6 : 1
+    position[0] == initial_row
   end
 end
