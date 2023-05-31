@@ -8,10 +8,12 @@ class ChessGame
     @pieces = create_pieces
   end
 
-  # # def play_move(player)
-  # #   position = select_piece_input(player)
-  # #   piece = select_piece
-  # end
+  def play_move(player)
+    from_chess_position = select_piece_input(player)
+    from_array_position = translate_chess_to_array(from_chess_position)
+    piece = select_piece(from_array_position)
+    to_position = move_piece_input(piece)
+  end
 
   def select_piece_input(player)
     select_piece_message
@@ -36,28 +38,34 @@ class ChessGame
   def valid_pick?(player, chess_position)
     array_position = translate_chess_to_array(chess_position)
     piece = select_piece(array_position)
+    return if piece.nil?
+
     piece.color == player.color
   end
 
   def valid_move?(piece, chess_position)
-    possible_moves = get_possible_moves(piece, @board)
-    possible_moves.include?(chess_position)
+    array_position = translate_chess_to_array(chess_position)
+    possible_moves = get_potential_moves(piece)
+    possible_moves.include?(array_position)
   end
 
-  def get_possible_moves(piece, board)
+  def get_potential_moves(piece)
     # given a piece and the board situation, output a list of all the possible moves the piece can make
+    p piece.potential_moves
   end
 
   def select_piece(position)
-    # given a list of pieces with position select the piece that matches the position
-    piece = @pieces.select { |piece| piece.position == position}
+    pieces = @pieces.flatten(1)
+    piece = pieces.select { |piece| piece.position == position }
     piece[0]
   end
 
   def select_piece_message
+    puts 'Select the piece you would like to move by typing it\'s position '
   end
 
   def move_piece_message
+    puts 'Type the square you want to move the piece to'
   end
 
   def translate_chess_to_array(input)
