@@ -5,7 +5,7 @@ class ChessGame
     @board = board
     @player_1 = player_1
     @player_2 = player_2
-    @pieces = create_pieces
+    @pieces = all_pieces
   end
 
   def select_piece_input(player)
@@ -18,20 +18,44 @@ class ChessGame
     input
   end
 
-  def valid_pick?(player, input)
-    position = translate_chess_to_array(input)
-    piece = select_piece(position)
+  def move_piece_input(piece)
+    move_piece_message
+    chess_position = gets.chomp
+    until valid_move?(piece, chess_position) do
+      puts 'please input a valid move'
+      chess_position = gets.chomp
+    end
+    chess_position
+  end
+
+  def valid_pick?(player, chess_position)
+    array_position = translate_chess_to_array(chess_position)
+    piece = select_piece(array_position)
     piece.color == player.color
   end
 
+  def valid_move?(piece, chess_position)
+    possible_moves = get_possible_moves(piece, @board)
+    possible_moves.include?(chess_position)
+  end
+
+  def get_possible_moves(piece, board)
+    # given a piece and the board situation, output a list of all the possible moves the piece can make
+  end
+
   def select_piece(position)
+    # select the piece that matches the position
     # piece = @pieces.select { |piece| piece.position == position}
   end
 
   def select_piece_message
   end
 
+  def move_piece_message
+  end
+
   def translate_chess_to_array(input)
+
   end
 
   def create_pieces

@@ -6,6 +6,7 @@ class ChessBoard
   def initialize
     @board = create_board
     @pawns = create_pawns
+    @board_pieces = []
   end
 
   def create_board

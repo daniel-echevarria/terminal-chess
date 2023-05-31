@@ -19,4 +19,5 @@ module MovePiece
     position[1] -= num
     position
   end
+
 end
