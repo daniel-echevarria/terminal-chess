@@ -8,6 +8,11 @@ class ChessGame
     @pieces = create_pieces
   end
 
+  # # def play_move(player)
+  # #   position = select_piece_input(player)
+  # #   piece = select_piece
+  # end
+
   def select_piece_input(player)
     select_piece_message
     input = gets.chomp
@@ -44,8 +49,9 @@ class ChessGame
   end
 
   def select_piece(position)
-    # select the piece that matches the position
-    # piece = @pieces.select { |piece| piece.position == position}
+    # given a list of pieces with position select the piece that matches the position
+    piece = @pieces.select { |piece| piece.position == position}
+    piece[0]
   end
 
   def select_piece_message
