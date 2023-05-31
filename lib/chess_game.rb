@@ -5,7 +5,7 @@ class ChessGame
     @board = board
     @player_1 = player_1
     @player_2 = player_2
-    @pieces = all_pieces
+    @pieces = create_pieces
   end
 
   def select_piece_input(player)
@@ -55,7 +55,12 @@ class ChessGame
   end
 
   def translate_chess_to_array(input)
-
+    chess_rows = (8).downto(1).to_a
+    chess_columns = ('a').upto('h').to_a
+    col, row = input.split('')
+    a_col = chess_columns.index(col)
+    a_row = chess_rows.index(row.to_i)
+    [a_row, a_col]
   end
 
   def create_pieces

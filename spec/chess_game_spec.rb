@@ -139,4 +139,30 @@ describe ChessGame do
       end
     end
   end
+
+  describe '#translate_chess_to_array' do
+    context 'when user inputs a2' do
+      it 'returns [6, 0]' do
+        input = 'a2'
+        result = game.translate_chess_to_array(input)
+        expect(result).to eq([6, 0])
+      end
+    end
+
+    context 'when user inputs e3' do
+      it 'returns [5, 4]' do
+        input = 'e3'
+        result = game.translate_chess_to_array(input)
+        expect(result).to eq([5, 4])
+      end
+    end
+
+    context 'when use inputs h8' do
+      it 'returns [0, 7]' do
+        input = 'h8'
+        result = game.translate_chess_to_array(input)
+        expect(result).to eq([0, 7])
+      end
+    end
+  end
 end
