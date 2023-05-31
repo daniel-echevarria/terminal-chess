@@ -63,6 +63,24 @@ class ChessGame
     [a_row, a_col]
   end
 
+  def create_pawns
+    pawns = []
+    (0..7).each_with_index do |num, index|
+      pawns << ChessPawn.new([1, index], 'black')
+      pawns << ChessPawn.new([6, index], 'white')
+    end
+    pawns
+  end
+
   def create_pieces
+    pieces = []
+    pieces << create_pawns
+    pieces
+  end
+
+  def inital_board_setup
+    @board.populate_board(@pieces.flatten)
+    @board.display_board
   end
 end
+
