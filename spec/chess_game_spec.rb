@@ -119,13 +119,15 @@ describe ChessGame do
 
   describe '#valid_move?' do
     let(:whitepawn) { instance_double(ChessPawn, position: [6, 0])}
+
     before do
-      allow(game).to receive(:get_possible_moves).with(whitepawn, board).and_return([[5, 0], [4, 0]])
+      allow(game).to receive(:get_potential_moves).with(whitepawn).and_return([[5, 0], [4, 0]])
     end
 
     context 'when the move is valid' do
       it 'returns true' do
-        to_position = [5, 0]
+        allow(game).to receive(:translate_chess_to_array).with('a3').and_return([5, 0])
+        to_position = 'a3'
         result = game.valid_move?(whitepawn, to_position)
         expect(result).to be(true)
       end
@@ -133,7 +135,8 @@ describe ChessGame do
 
     context 'when the move is not valid' do
       it 'returns false' do
-        to_position = [3, 3]
+        allow(game).to receive(:translate_chess_to_array).with('c3').and_return([5, 2])
+        to_position = 'c3'
         result = game.valid_move?(whitepawn, to_position)
         expect(result).to be(false)
       end
@@ -203,4 +206,16 @@ describe ChessGame do
       end
     end
   end
+
+  # describe '#move_piece' do
+  #   let(:pawn) { instance_double(ChessPawn, position: [6, 0] )}
+
+  #   context 'when piece is on [6, 0] and asked to move to [5, 0]' do
+  #     it 'changes position from [6, 0] to [5, 0]' do
+  #       to_position = [5, 0]
+  #       action = game.move_piece(pawn, to_position)
+  #       expect(pawn.position).to eq([5, 0])
+  #     end
+  #   end
+  # end
 end

@@ -25,6 +25,12 @@ class ChessGame
     input
   end
 
+  def select_piece(position)
+    pieces = @pieces.flatten(1)
+    piece = pieces.select { |piece| piece.position == position }
+    piece[0]
+  end
+
   def move_piece_input(piece)
     move_piece_message
     chess_position = gets.chomp
@@ -33,6 +39,10 @@ class ChessGame
       chess_position = gets.chomp
     end
     chess_position
+  end
+
+  def move_piece(piece, position)
+    piece.position = position
   end
 
   def valid_pick?(player, chess_position)
@@ -51,13 +61,7 @@ class ChessGame
 
   def get_potential_moves(piece)
     # given a piece and the board situation, output a list of all the possible moves the piece can make
-    p piece.potential_moves
-  end
-
-  def select_piece(position)
-    pieces = @pieces.flatten(1)
-    piece = pieces.select { |piece| piece.position == position }
-    piece[0]
+    piece.potential_moves
   end
 
   def select_piece_message
