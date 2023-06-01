@@ -15,11 +15,8 @@ class ChessPawn
   def potential_moves
     moves = []
     vertical_direction = @color == 'white' ? -1 : 1
-    p @position
     moves << move_vertically(@position, 2 * vertical_direction) if initial_position?(@position, @color)
-    p @position
     moves << move_vertically(@position, 1 * vertical_direction)
-    p @position
     moves << move_main_diagonal(@position, 1 * vertical_direction)
     moves << move_secondary_diagonal(@position, 1 * vertical_direction)
     moves

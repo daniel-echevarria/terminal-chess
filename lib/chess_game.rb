@@ -12,7 +12,23 @@ class ChessGame
     from_chess_position = select_piece_input(player)
     from_array_position = translate_chess_to_array(from_chess_position)
     piece = select_piece(from_array_position)
-    to_position = move_piece_input(piece)
+    to_chess_position = move_piece_input(piece)
+    to_array_position = translate_chess_to_array(to_chess_position)
+    move_piece(piece, to_array_position)
+    @board.clean_cell(from_array_position)
+  end
+
+
+  def play_round
+    turns = 4
+    players = [@player_1, @player_2]
+    until turns == 0
+      update_board
+      current_player = players.shift
+      play_move(current_player)
+      players << current_player
+      turns -= 1
+    end
   end
 
   def select_piece_input(player)
@@ -28,7 +44,7 @@ class ChessGame
   def select_piece(position)
     pieces = @pieces.flatten(1)
     piece = pieces.select { |piece| piece.position == position }
-    piece[0]
+    piece.first
   end
 
   def move_piece_input(piece)
@@ -96,7 +112,7 @@ class ChessGame
     pieces
   end
 
-  def inital_board_setup
+  def update_board
     @board.populate_board(@pieces.flatten)
     @board.display_board
   end

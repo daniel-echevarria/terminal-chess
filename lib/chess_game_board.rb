@@ -18,6 +18,11 @@ class ChessBoard
     end
   end
 
+  def clean_cell(position)
+    row, col = position
+    @board[row][col] = " "
+  end
+
   def display_board
     i = 8
     @board.each do |row|
