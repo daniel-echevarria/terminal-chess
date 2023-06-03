@@ -53,7 +53,7 @@ describe ChessGame do
       before do
         pick = 'a2'
         allow(game).to receive(:translate_chess_to_array).with(pick).and_return([6, 0])
-        allow(game).to receive(:select_piece).with([6, 0]).and_return(whitepawn)
+        allow(game).to receive(:select_piece_at).with([6, 0]).and_return(whitepawn)
         allow(whitepawn).to receive(:color).and_return('white')
       end
 
@@ -70,7 +70,7 @@ describe ChessGame do
       before do
         pick = 'a7'
         allow(game).to receive(:translate_chess_to_array).with(pick).and_return([1, 0])
-        allow(game).to receive(:select_piece).with([1, 0]).and_return(blackpawn)
+        allow(game).to receive(:select_piece_at).with([1, 0]).and_return(blackpawn)
         allow(blackpawn).to receive(:color).and_return('black')
       end
 
@@ -169,7 +169,7 @@ describe ChessGame do
     end
   end
 
-  describe '#select_piece' do
+  describe '#select_piece_at' do
     let(:pawn_1) { instance_double(ChessPawn, position: [6, 0]) }
     let(:pawn_2) { instance_double(ChessPawn, position: [2, 3]) }
     let(:pawn_3) { instance_double(ChessPawn, position: [5, 0]) }
@@ -182,7 +182,7 @@ describe ChessGame do
       context 'when selected position is [6, 0]' do
         it 'returns the piece on [6, 0]' do
           position = [6, 0]
-          result = game.select_piece(position)
+          result = game.select_piece_at(position)
           expect(result).to eq(pawn_1)
         end
       end
@@ -190,7 +190,7 @@ describe ChessGame do
       context 'when selected position is [2, 3]' do
         it 'returns the piece on [2, 3]' do
           position = [2, 3]
-          result = game.select_piece(position)
+          result = game.select_piece_at(position)
           expect(result).to eq(pawn_2)
         end
       end
@@ -200,7 +200,7 @@ describe ChessGame do
       context 'when selected position is [4, 2]' do
         it 'returns nil' do
           position = [4, 2]
-          result = game.select_piece(position)
+          result = game.select_piece_at(position)
           expect(result).to eq(nil)
         end
       end
@@ -247,7 +247,26 @@ describe ChessGame do
     end
   end
 
-  describe '#add_special_case_pawn_moves' do
+  describe '#has_ally' do
+    let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [6, 0]) }
+    let(:whitepawn_2) { instance_double(ChessPawn, color: 'white', position: [5, 0]) }
+    let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [4, 0]) }
+
+    before do
+      position = [5, 0]
+      allow(game).to receive(:select_piece_at).with(position).and_return(whitepawn_2)
+    end
+
+    context 'when there is an ally at the position' do
+      it 'returns true' do
+        position = [5, 0]
+        result = game.has_ally(whitepawn, position)
+        expect(result).to be(true)
+      end
+    end
+  end
+
+  describe '#special_case_pawn_moves' do
     context 'when there is an oponent in the secondary diagonal next square' do
       let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [6, 0])}
       let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [5, 1])}
@@ -257,7 +276,7 @@ describe ChessGame do
       end
 
       it 'returns the move' do
-        result = game.add_special_case_pawn_moves(whitepawn)
+        result = game.special_case_pawn_moves(whitepawn)
         expect(result).to eq([[5, 1]])
       end
     end
@@ -273,7 +292,7 @@ describe ChessGame do
       end
 
       it 'returns both moves' do
-        result = game.add_special_case_pawn_moves(blackpawn)
+        result = game.special_case_pawn_moves(blackpawn)
         expect(result).to include([2, 3],[2, 5])
       end
     end
@@ -282,8 +301,40 @@ describe ChessGame do
       let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [1, 4]) }
 
       it 'returns an empty []' do
-        result = game.add_special_case_pawn_moves(blackpawn)
+        result = game.special_case_pawn_moves(blackpawn)
         expect(result).to eq([])
+      end
+    end
+
+    describe '#snack_piece_at' do
+      context 'when a pieces gets eaten' do
+        let(:eaten_pawn) { instance_double(ChessPawn, color: 'black', position: [3, 3])}
+
+        before do
+          game.pieces << eaten_pawn
+        end
+
+        it 'removes the piece from the pieces' do
+          piece_position = [3, 3]
+          game.snack_piece_at(piece_position)
+          expect(game.pieces).not_to include(eaten_pawn)
+        end
+      end
+    end
+
+    describe '#remove_invalid_moves' do
+      context 'when there is an ally on one of the positions' do
+        let(:moving_pawn) { instance_double(ChessPawn, color: 'white', position: [3, 3]) }
+
+        before do
+          allow(moving_pawn).to receive(:potential_moves).and_return([2, 3])
+        end
+
+        it 'removes that position' do
+          moves = game.get_potential_moves(moving_pawn)
+          game.remove_invalid_moves(moving_pawn, moves)
+          expect(moves).not_to include([2, 3])
+        end
       end
     end
   end

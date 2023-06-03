@@ -15,7 +15,7 @@ class ChessGame
   def play_move(player)
     from_chess_position = select_piece_input(player)
     from_array_position = translate_chess_to_array(from_chess_position)
-    piece = select_piece(from_array_position)
+    piece = select_piece_at(from_array_position)
     to_chess_position = move_piece_input(piece)
     to_array_position = translate_chess_to_array(to_chess_position)
     move_piece(piece, to_array_position)
@@ -46,9 +46,8 @@ class ChessGame
     input
   end
 
-  def select_piece(position)
-    pieces = @pieces.flatten(1)
-    piece = pieces.select { |piece| piece.position == position }
+  def select_piece_at(position)
+    piece = @pieces.select { |piece| piece.position == position }
     piece.first
   end
 
@@ -62,13 +61,19 @@ class ChessGame
     chess_position
   end
 
+  def snack_piece_at(position)
+    piece = select_piece_at(position)
+    @pieces.delete(piece)
+  end
+
   def move_piece(piece, position)
+    snack(position) if has_oponent(piece, position)
     piece.position = position
   end
 
   def valid_pick?(player, chess_position)
     array_position = translate_chess_to_array(chess_position)
-    piece = select_piece(array_position)
+    piece = select_piece_at(array_position)
     return if piece.nil?
 
     piece.color == player.color
@@ -81,28 +86,38 @@ class ChessGame
   end
 
   def has_oponent(moving_piece, position)
-    piece = select_piece(position)
+    piece = select_piece_at(position)
     return false if piece.nil?
 
     piece.color != moving_piece.color
   end
 
+  def has_ally(moving_piece, position)
+    piece = select_piece_at(position)
+    return false if piece.nil?
+
+    piece.color == moving_piece.color
+  end
+
   def get_potential_moves(piece)
     moves = []
     moves << piece.potential_moves
-    moves << add_special_case_pawn_moves(piece) if piece.is_a?(ChessPawn)
-    moves.flatten(1)
+    moves << special_case_pawn_moves(piece) if piece.is_a?(ChessPawn)
+    moves
   end
 
-  def add_special_case_pawn_moves(pawn)
-    valid_moves = []
-    position = pawn.position
-    direction = pawn.color == 'white' ? 1 : -1
-    main_diag = move_main_diagonal(position, direction)
-    sec_diag = move_secondary_diagonal(position, direction)
+  def remove_invalid_moves(piece, moves)
 
-    valid_moves << main_diag if has_oponent(pawn, main_diag)
-    valid_moves << sec_diag if has_oponent(pawn, sec_diag)
+  end
+
+  def special_case_pawn_moves(pawn)
+    direction = pawn.color == 'white' ? 1 : -1
+    main_diag_move = move_main_diagonal(pawn.position, direction)
+    sec_diag_move = move_secondary_diagonal(pawn.position, direction)
+
+    valid_moves = []
+    valid_moves << main_diag_move if has_oponent(pawn, main_diag_move)
+    valid_moves << sec_diag_move if has_oponent(pawn, sec_diag_move)
 
     valid_moves
   end
@@ -136,11 +151,11 @@ class ChessGame
   def create_pieces
     pieces = []
     pieces << create_pawns
-    pieces
+    pieces.flatten(1)
   end
 
   def update_board
-    @board.populate_board(@pieces.flatten)
+    @board.populate_board(@pieces)
     @board.display_board
   end
 end
