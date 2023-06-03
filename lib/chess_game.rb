@@ -36,6 +36,21 @@ class ChessGame
   def game_over?
   end
 
+  def snack_piece_at(position)
+    piece = select_piece_at(position)
+    @pieces.delete(piece)
+  end
+
+  def move_piece(piece, position)
+    snack_piece_at(position) if has_oponent(piece, position)
+    piece.position = position
+  end
+
+  def select_piece_at(position)
+    piece = @pieces.select { |piece| piece.position == position }
+    piece.first
+  end
+
   def select_piece_input(player)
     select_piece_message(player)
     input = gets.chomp
@@ -46,11 +61,6 @@ class ChessGame
     input
   end
 
-  def select_piece_at(position)
-    piece = @pieces.select { |piece| piece.position == position }
-    piece.first
-  end
-
   def move_piece_input(piece)
     move_piece_message
     chess_position = gets.chomp
@@ -59,16 +69,6 @@ class ChessGame
       chess_position = gets.chomp
     end
     chess_position
-  end
-
-  def snack_piece_at(position)
-    piece = select_piece_at(position)
-    @pieces.delete(piece)
-  end
-
-  def move_piece(piece, position)
-    snack_piece_at(position) if has_oponent(piece, position)
-    piece.position = position
   end
 
   def valid_pick?(player, chess_position)
@@ -85,6 +85,8 @@ class ChessGame
     possible_moves.flatten(1).include?(array_position)
   end
 
+  # check if there's an ally or an opponnent at a certain position
+
   def has_oponent(moving_piece, position)
     piece = select_piece_at(position)
     return false if piece.nil?
@@ -98,6 +100,8 @@ class ChessGame
 
     piece.color == moving_piece.color
   end
+
+  # deal with the possible moves given a piece
 
   def get_potential_moves(piece)
     moves = []
@@ -123,14 +127,6 @@ class ChessGame
     valid_moves
   end
 
-  def select_piece_message(player)
-    puts "Hey #{player.name} you'r are playing with #{player.color} pieces,  select the piece you would like to move by typing it\'s position"
-  end
-
-  def move_piece_message
-    puts 'Type the square you want to move the piece to'
-  end
-
   def translate_chess_to_array(input)
     chess_rows = (8).downto(1).to_a
     chess_columns = ('a').upto('h').to_a
@@ -139,6 +135,8 @@ class ChessGame
     a_row = chess_rows.index(row.to_i)
     [a_row, a_col]
   end
+
+  # Set_up Game, Create pieces etc.
 
   def create_pawns
     pawns = []
@@ -159,5 +157,14 @@ class ChessGame
     @board.populate_board(@pieces)
     @board.display_board
   end
+
+  def select_piece_message(player)
+    puts "Hey #{player.name} you'r are playing with #{player.color} pieces,  select the piece you would like to move by typing it\'s position"
+  end
+
+  def move_piece_message
+    puts 'Type the square you want to move the piece to'
+  end
+
 end
 
