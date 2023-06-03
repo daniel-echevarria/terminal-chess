@@ -17,8 +17,6 @@ class ChessPawn
     vertical_direction = @color == 'white' ? -1 : 1
     moves << move_vertically(@position, 2 * vertical_direction) if initial_position?(@position, @color)
     moves << move_vertically(@position, 1 * vertical_direction)
-    moves << move_main_diagonal(@position, 1 * vertical_direction)
-    moves << move_secondary_diagonal(@position, 1 * vertical_direction)
     moves
   end
 

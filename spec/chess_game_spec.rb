@@ -207,15 +207,84 @@ describe ChessGame do
     end
   end
 
-  # describe '#move_piece' do
-  #   let(:pawn) { instance_double(ChessPawn, position: [6, 0] )}
+  describe '#has_oponent' do
+    let(:whitepawn) { instance_double(ChessPawn, color: 'white') }
+    let(:blackpawn) { instance_double(ChessPawn, color: 'black') }
 
-  #   context 'when piece is on [6, 0] and asked to move to [5, 0]' do
-  #     it 'changes position from [6, 0] to [5, 0]' do
-  #       to_position = [5, 0]
-  #       action = game.move_piece(pawn, to_position)
-  #       expect(pawn.position).to eq([5, 0])
-  #     end
-  #   end
-  # end
+    context 'when the square has an opponent on it' do
+      it 'returns true' do
+        square = 'c7'
+        position = game.translate_chess_to_array(square)
+        result = game.has_oponent(whitepawn, position)
+        expect(result).to eq(true)
+      end
+    end
+
+    context 'when the square has no opponent on it' do
+      context 'when the square is empty' do
+        it 'returns false' do
+          square = 'd4'
+          position = game.translate_chess_to_array(square)
+          result = game.has_oponent(whitepawn, position)
+          expect(result).to eq(false)
+        end
+      end
+
+      context 'when the square has a same color piece' do
+        let(:whitepawn_2) { instance_double(ChessPawn, color: 'white', position: [4, 3]) }
+
+        before do
+          game.pieces << whitepawn_2
+        end
+
+        it 'returns false' do
+          square = 'd4'
+          position = game.translate_chess_to_array(square)
+          result = game.has_oponent(whitepawn, position)
+          expect(result).to eq(false)
+        end
+      end
+    end
+  end
+
+  describe '#add_special_case_pawn_moves' do
+    context 'when there is an oponent in the secondary diagonal next square' do
+      let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [6, 0])}
+      let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [5, 1])}
+
+      before do
+        game.pieces << blackpawn
+      end
+
+      it 'returns the move' do
+        result = game.add_special_case_pawn_moves(whitepawn)
+        expect(result).to eq([[5, 1]])
+      end
+    end
+
+    context 'when there is oponents on both diagonals' do
+      let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [1, 4]) }
+      let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [2, 3])}
+      let(:whitepawn_2) { instance_double(ChessPawn, color: 'white', position: [2, 5])}
+
+      before do
+        game.pieces << whitepawn
+        game.pieces << whitepawn_2
+      end
+
+      it 'returns both moves' do
+        result = game.add_special_case_pawn_moves(blackpawn)
+        expect(result).to include([2, 3],[2, 5])
+      end
+    end
+
+    context 'when ther is opponents in neither diagonal' do
+      let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [1, 4]) }
+
+      it 'returns an empty []' do
+        result = game.add_special_case_pawn_moves(blackpawn)
+        expect(result).to eq([])
+      end
+    end
+  end
 end

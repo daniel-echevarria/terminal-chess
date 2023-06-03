@@ -1,5 +1,9 @@
+require_relative '../lib/chess_game_move_module.rb'
 
 class ChessGame
+
+  include MovePiece
+  attr_reader :pieces
 
   def initialize(board, player_1, player_2)
     @board = board
@@ -20,19 +24,20 @@ class ChessGame
 
 
   def play_round
-    turns = 4
     players = [@player_1, @player_2]
-    until turns == 0
+    until game_over?
       update_board
       current_player = players.shift
       play_move(current_player)
       players << current_player
-      turns -= 1
     end
   end
 
+  def game_over?
+  end
+
   def select_piece_input(player)
-    select_piece_message
+    select_piece_message(player)
     input = gets.chomp
     until valid_pick?(player, input) do
       puts "Please input the position of a #{player.color} piece"
@@ -75,13 +80,35 @@ class ChessGame
     possible_moves.include?(array_position)
   end
 
-  def get_potential_moves(piece)
-    # given a piece and the board situation, output a list of all the possible moves the piece can make
-    piece.potential_moves
+  def has_oponent(moving_piece, position)
+    piece = select_piece(position)
+    return false if piece.nil?
+
+    piece.color != moving_piece.color
   end
 
-  def select_piece_message
-    puts 'Select the piece you would like to move by typing it\'s position '
+  def get_potential_moves(piece)
+    moves = []
+    moves << piece.potential_moves
+    moves << add_special_case_pawn_moves(piece) if piece.is_a?(ChessPawn)
+    moves.flatten(1)
+  end
+
+  def add_special_case_pawn_moves(pawn)
+    valid_moves = []
+    position = pawn.position
+    direction = pawn.color == 'white' ? 1 : -1
+    main_diag = move_main_diagonal(position, direction)
+    sec_diag = move_secondary_diagonal(position, direction)
+
+    valid_moves << main_diag if has_oponent(pawn, main_diag)
+    valid_moves << sec_diag if has_oponent(pawn, sec_diag)
+
+    valid_moves
+  end
+
+  def select_piece_message(player)
+    puts "Hey #{player.name} you'r are playing with #{player.color} pieces,  select the piece you would like to move by typing it\'s position"
   end
 
   def move_piece_message

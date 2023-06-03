@@ -1,6 +1,6 @@
 
 class ChessPlayer
-  attr_reader :color
+  attr_reader :color, :name
   def initialize(color, name = 'player')
     @color = color
     @name = name
