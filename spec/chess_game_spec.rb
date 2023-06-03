@@ -325,8 +325,11 @@ describe ChessGame do
     describe '#remove_invalid_moves' do
       context 'when there is an ally on one of the positions' do
         let(:moving_pawn) { instance_double(ChessPawn, color: 'white', position: [3, 3]) }
+        let(:ally_pawn) { instance_double(ChessPawn, color: 'white', position: [2, 3]) }
 
         before do
+          game.pieces << moving_pawn
+          game.pieces << ally_pawn
           allow(moving_pawn).to receive(:potential_moves).and_return([2, 3])
         end
 

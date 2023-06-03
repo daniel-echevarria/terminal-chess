@@ -67,7 +67,7 @@ class ChessGame
   end
 
   def move_piece(piece, position)
-    snack(position) if has_oponent(piece, position)
+    snack_piece_at(position) if has_oponent(piece, position)
     piece.position = position
   end
 
@@ -82,7 +82,7 @@ class ChessGame
   def valid_move?(piece, chess_position)
     array_position = translate_chess_to_array(chess_position)
     possible_moves = get_potential_moves(piece)
-    possible_moves.include?(array_position)
+    possible_moves.flatten(1).include?(array_position)
   end
 
   def has_oponent(moving_piece, position)
@@ -102,12 +102,13 @@ class ChessGame
   def get_potential_moves(piece)
     moves = []
     moves << piece.potential_moves
+    remove_invalid_moves(piece, moves)
     moves << special_case_pawn_moves(piece) if piece.is_a?(ChessPawn)
     moves
   end
 
   def remove_invalid_moves(piece, moves)
-
+    moves.delete_if { |pos| has_ally(piece, pos) }
   end
 
   def special_case_pawn_moves(pawn)
