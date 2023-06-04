@@ -392,6 +392,38 @@ describe ChessGame do
             expect(result).to eq(true)
           end
         end
+
+        context 'when the position is too far down' do
+          it 'returns true ' do
+            position = [8, 5]
+            result = game.is_out_of_board?(position)
+            expect(result).to eq(true)
+          end
+        end
+
+        context 'when the positon is too far left' do
+          it 'returns true' do
+            position = [3, -1]
+            result = game.is_out_of_board?(position)
+            expect(result).to eq(true)
+          end
+        end
+
+        context 'when the position is too far right' do
+          it 'returns true' do
+            position = [3, 8]
+            result = game.is_out_of_board?(position)
+            expect(result).to eq(true)
+          end
+        end
+
+        context 'when the position is not out of board' do
+          it 'returns false' do
+            position = [3, 7]
+            result = game.is_out_of_board?(position)
+            expect(result).to eq(false)
+          end
+        end
       end
     end
   end

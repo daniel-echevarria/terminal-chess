@@ -87,7 +87,7 @@ class ChessGame
     possible_moves.include?(array_position)
   end
 
-  # check if there's an ally or an opponnent at a certain position
+  # Get info about a position
 
   def has_oponent(moving_piece, position)
     piece = select_piece_at(position)
@@ -102,6 +102,13 @@ class ChessGame
 
     piece.color == moving_piece.color
   end
+
+  def is_out_of_board?(position)
+    row, col = position
+    row.between?(1, 7) && col.between?(1, 7) ? false : true
+  end
+
+
 
   # given a piece output her possible vertical movements
   # check the position of the piece check all the position till the end of the board
