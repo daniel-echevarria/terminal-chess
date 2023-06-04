@@ -41,6 +41,8 @@ class ChessGame
     @pieces.delete(piece)
   end
 
+  # given a position and a piece list all the possible moves
+
   def move_piece(piece, position)
     snack_piece_at(position) if has_oponent(piece, position)
     piece.position = position
@@ -82,7 +84,7 @@ class ChessGame
   def valid_move?(piece, chess_position)
     array_position = translate_chess_to_array(chess_position)
     possible_moves = get_potential_moves(piece)
-    possible_moves.flatten(1).include?(array_position)
+    possible_moves.include?(array_position)
   end
 
   # check if there's an ally or an opponnent at a certain position
@@ -101,14 +103,26 @@ class ChessGame
     piece.color == moving_piece.color
   end
 
-  # deal with the possible moves given a piece
+  # given a piece output her possible vertical movements
+  # check the position of the piece check all the position till the end of the board
+  # and add those position to the moves, if one of the position as an ally on it exit
+  # if one of the position has an opponent add the position and exit
+
+  def generate_up_vertical_moves(piece, next_move = move_vertically(piece.position, -1), moves = [])
+    return moves if has_ally(piece, next_move)
+    moves << next_move and return moves if has_oponent(piece, next_move)
+
+    moves << next_move
+    next_move = move_vertically(next_move, -1)
+    generate_up_vertical_moves(piece, next_move, moves)
+  end
 
   def get_potential_moves(piece)
     moves = []
     moves << piece.potential_moves
     remove_invalid_moves(piece, moves)
     moves << special_case_pawn_moves(piece) if piece.is_a?(ChessPawn)
-    moves
+    moves.flatten(1)
   end
 
   def remove_invalid_moves(piece, moves)

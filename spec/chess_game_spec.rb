@@ -2,6 +2,7 @@ require_relative '../lib/chess_game.rb'
 require_relative '../lib/chess_game_player.rb'
 require_relative '../lib/chess_game_board.rb'
 require_relative '../lib/chess_game_pawn.rb'
+require_relative '../lib/chess_game_tower.rb'
 
 describe ChessGame do
   context 'when player is white'
@@ -337,6 +338,19 @@ describe ChessGame do
           moves = game.get_potential_moves(moving_pawn)
           game.remove_invalid_moves(moving_pawn, moves)
           expect(moves).not_to include([2, 3])
+        end
+      end
+    end
+
+    describe '#generate_up_vertical_moves' do
+      let(:tower) { instance_double(ChessTower, color: 'white', position: [4, 3]) }
+
+      context 'when the piece is a white tower on d4 ([4, 3])' do
+        it 'returns [[3, 3], [2, 3], [1, 3]]' do
+
+          result = game.generate_up_vertical_moves(tower)
+          expectation = [[3, 3], [2, 3], [1, 3]]
+          expect(result).to eq(expectation)
         end
       end
     end
