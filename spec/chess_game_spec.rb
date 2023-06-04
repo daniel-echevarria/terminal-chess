@@ -5,7 +5,6 @@ require_relative '../lib/chess_game_pawn.rb'
 require_relative '../lib/chess_game_tower.rb'
 
 describe ChessGame do
-  context 'when player is white'
   let(:board) { double('board') }
   let(:player_1) { instance_double(ChessPlayer, color: 'white') }
   let(:player_2) { instance_double(ChessPlayer, color: 'black') }
@@ -347,9 +346,38 @@ describe ChessGame do
 
       context 'when the piece is a white tower on d4 ([4, 3])' do
         it 'returns [[3, 3], [2, 3], [1, 3]]' do
-
           result = game.generate_up_vertical_moves(tower)
           expectation = [[3, 3], [2, 3], [1, 3]]
+          expect(result).to eq(expectation)
+        end
+      end
+
+      context 'when the piece is a black tower on a3 [5, 0]' do
+        let(:black_tower) { instance_double(ChessTower, color: 'black', position: [5, 0])}
+        it 'returns [[4, 0], [3, 0], [2, 0]]' do
+          result = game.generate_up_vertical_moves(black_tower)
+          expectation = [[4, 0], [3, 0], [2, 0]]
+          expect(result).to eq(expectation)
+        end
+      end
+    end
+
+    describe '#generate_down_vertical_moves' do
+      let(:tower) { instance_double(ChessTower, color: 'white', position: [3, 2]) }
+
+      context 'when the piece is a white tower on c5 ([3, 2])' do
+        it 'returns [[4, 2], [5, 2]]' do
+          result = game.generate_down_vertical_moves(tower)
+          expectation = [[4, 2], [5, 2]]
+          expect(result).to eq(expectation)
+        end
+      end
+
+      context 'when the piece is a black tower on a3 [5, 0]' do
+        let(:black_tower) { instance_double(ChessTower, color: 'black', position: [5, 0])}
+        it 'returns [[6, 0]]' do
+          result = game.generate_down_vertical_moves(black_tower)
+          expectation = [[6, 0]]
           expect(result).to eq(expectation)
         end
       end

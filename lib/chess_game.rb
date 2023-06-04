@@ -117,6 +117,15 @@ class ChessGame
     generate_up_vertical_moves(piece, next_move, moves)
   end
 
+  def generate_down_vertical_moves(piece, next_move = move_vertically(piece.position, 1), moves = [])
+    return moves if has_ally(piece, next_move)
+    moves << next_move and return moves if has_oponent(piece, next_move)
+
+    moves << next_move
+    next_move = move_vertically(next_move, 1)
+    generate_down_vertical_moves(piece, next_move, moves)
+  end
+
   def get_potential_moves(piece)
     moves = []
     moves << piece.potential_moves
