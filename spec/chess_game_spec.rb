@@ -354,6 +354,7 @@ describe ChessGame do
 
       context 'when the piece is a black tower on a3 [5, 0]' do
         let(:black_tower) { instance_double(ChessTower, color: 'black', position: [5, 0])}
+
         it 'returns [[4, 0], [3, 0], [2, 0]]' do
           result = game.generate_up_vertical_moves(black_tower)
           expectation = [[4, 0], [3, 0], [2, 0]]
@@ -375,9 +376,31 @@ describe ChessGame do
 
       context 'when the piece is a black tower on a3 [5, 0]' do
         let(:black_tower) { instance_double(ChessTower, color: 'black', position: [5, 0])}
+
         it 'returns [[6, 0]]' do
           result = game.generate_down_vertical_moves(black_tower)
           expectation = [[6, 0]]
+          expect(result).to eq(expectation)
+        end
+      end
+    end
+
+    describe '#generate_left_horizontal_moves' do
+      let(:white_tower) { instance_double(ChessTower, color: 'white', position: [4, 4]) }
+      let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [4, 0]) }
+
+      before do
+        game.pieces << whitepawn
+      end
+
+      after do
+        game.pieces.delete(whitepawn)
+      end
+
+      context 'when the piece on [4, 4] (e4) and there is a ally on [4, 0]' do
+        it 'returns [[4, 3], [4, 2], [4, 1]]' do
+          result = game.generate_left_horizontal_moves(white_tower)
+          expectation = [[4, 3], [4, 2], [4, 1]]
           expect(result).to eq(expectation)
         end
       end

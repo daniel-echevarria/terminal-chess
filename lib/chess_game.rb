@@ -105,7 +105,7 @@ class ChessGame
 
   def is_out_of_board?(position)
     row, col = position
-    row.between?(1, 7) && col.between?(1, 7) ? false : true
+    row.between?(0, 7) && col.between?(0, 7) ? false : true
   end
 
   def generate_up_vertical_moves(piece, next_move = move_vertically(piece.position, -1), moves = [])
@@ -124,6 +124,15 @@ class ChessGame
     moves << next_move
     next_move = move_vertically(next_move, 1)
     generate_down_vertical_moves(piece, next_move, moves)
+  end
+
+  def generate_left_horizontal_moves(piece, next_move = move_horizontally(piece.position, -1), moves = [])
+    return moves if has_ally(piece, next_move)
+    moves << next_move and return moves if has_oponent(piece, next_move) || is_out_of_board?(next_move)
+
+    moves << next_move
+    next_move = move_horizontally(next_move, -1)
+    generate_left_horizontal_moves(piece, next_move, moves)
   end
 
   def get_potential_moves(piece)
@@ -188,6 +197,5 @@ class ChessGame
   def move_piece_message
     puts 'Type the square you want to move the piece to'
   end
-
 end
 
