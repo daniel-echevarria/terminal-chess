@@ -382,5 +382,17 @@ describe ChessGame do
         end
       end
     end
+
+    describe '#is_out_of_board?' do
+      context 'when the position is out of board' do
+        context 'when the position is too far up' do
+          it 'returns true' do
+            position = [-1, 5]
+            result = game.is_out_of_board?(position)
+            expect(result).to eq(true)
+          end
+        end
+      end
+    end
   end
 end
