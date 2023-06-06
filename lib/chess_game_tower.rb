@@ -3,7 +3,8 @@ require_relative '../lib/chess_game_move_module.rb'
 class ChessTower
   include MovePiece
 
-  attr_reader :unicode, :color, :position
+  attr_reader :unicode, :color
+  attr_accessor :position
 
   def initialize(position, color)
     @position = position

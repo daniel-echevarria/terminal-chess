@@ -149,6 +149,10 @@ class ChessGame
       moves << piece.potential_moves
       moves << special_case_pawn_moves(piece)
     end
+    moves << generate_up_vertical_moves(piece)
+    moves << generate_down_vertical_moves(piece)
+    moves << generate_left_horizontal_moves(piece)
+    moves << generate_right_horizontal_moves(piece)
     remove_invalid_moves(piece, moves)
     moves.flatten(1)
   end
