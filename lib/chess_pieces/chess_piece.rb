@@ -1,5 +1,4 @@
 
-
 class ChessPiece
 
   attr_accessor :position, :color, :unicode
