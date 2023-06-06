@@ -1,19 +1,11 @@
 require_relative '../lib/chess_game_move_module.rb'
+require_relative '../lib/chess_game_piece.rb'
 
-class ChessTower
+class ChessTower < ChessPiece
   include MovePiece
 
-  attr_reader :unicode, :color
-  attr_accessor :position
-
-  def initialize(position, color)
-    @position = position
-    @color = color
-    @unicode = set_unicode
-  end
-
   def set_unicode
-    @color == 'white' ? "\u265C" : "\u2656"
+    @unicode = @color == 'white' ? "\u265C" : "\u2656"
   end
 
 end
