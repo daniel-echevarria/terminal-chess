@@ -1,5 +1,8 @@
 
 class MoveGenerator
+
+  attr_accessor :pieces
+
   def initialize(piece, board)
     @piece = piece
     @board = board

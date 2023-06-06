@@ -168,46 +168,6 @@ describe ChessGame do
     end
   end
 
-  describe '#has_oponent' do
-    let(:whitepawn) { instance_double(ChessPawn, color: 'white') }
-    let(:blackpawn) { instance_double(ChessPawn, color: 'black') }
-
-    context 'when the square has an opponent on it' do
-      it 'returns true' do
-        square = 'c7'
-        position = game.translate_chess_to_array(square)
-        result = game.has_oponent(whitepawn, position)
-        expect(result).to eq(true)
-      end
-    end
-
-    context 'when the square has no opponent on it' do
-      context 'when the square is empty' do
-        it 'returns false' do
-          square = 'd4'
-          position = game.translate_chess_to_array(square)
-          result = game.has_oponent(whitepawn, position)
-          expect(result).to eq(false)
-        end
-      end
-
-      context 'when the square has a same color piece' do
-        let(:whitepawn_2) { instance_double(ChessPawn, color: 'white', position: [4, 3]) }
-
-        before do
-          game.pieces << whitepawn_2
-        end
-
-        it 'returns false' do
-          square = 'd4'
-          position = game.translate_chess_to_array(square)
-          result = game.has_oponent(whitepawn, position)
-          expect(result).to eq(false)
-        end
-      end
-    end
-  end
-
   describe '#has_ally' do
     let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [6, 0]) }
     let(:whitepawn_2) { instance_double(ChessPawn, color: 'white', position: [5, 0]) }
