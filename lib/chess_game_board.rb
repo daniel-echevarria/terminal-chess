@@ -2,9 +2,11 @@
 require_relative '../lib/chess_game_pawn.rb'
 
 class ChessBoard
+  attr_reader :pieces
 
   def initialize
     @board = create_board
+    @pieces = create_pieces
   end
 
   def create_board
@@ -16,6 +18,21 @@ class ChessBoard
       row, col = piece.position
       @board[row][col] = piece.unicode
     end
+  end
+
+  def create_pieces
+    pieces = []
+    pieces << create_pawns
+    pieces.flatten(1)
+  end
+
+  def create_pawns
+    pawns = []
+    (0..7).each_with_index do |num, index|
+      pawns << ChessPawn.new([1, index], 'black')
+      pawns << ChessPawn.new([6, index], 'white')
+    end
+    pawns
   end
 
   def clean_cell(position)
