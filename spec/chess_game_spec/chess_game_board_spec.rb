@@ -19,6 +19,4 @@ describe ChessBoard do
       ])
     end
   end
-
-
 end
