@@ -9,7 +9,6 @@ class ChessGame
     @board = board
     @player_1 = player_1
     @player_2 = player_2
-    @pieces = create_pieces
   end
 
   def play_move(player)
@@ -22,11 +21,10 @@ class ChessGame
     @board.clean_cell(from_array_position)
   end
 
-
   def play_round
     players = [@player_1, @player_2]
     until game_over?
-      update_board
+      @board.update_board
       current_player = players.shift
       play_move(current_player)
       players << current_player
@@ -34,6 +32,11 @@ class ChessGame
   end
 
   def game_over?
+  end
+
+  def select_piece_at(position)
+    piece = @board.pieces.select { |piece| piece.position == position }
+    piece.first
   end
 
   def select_piece_input(player)
@@ -77,11 +80,6 @@ class ChessGame
     a_col = chess_columns.index(col)
     a_row = chess_rows.index(row.to_i)
     [a_row, a_col]
-  end
-
-  def update_board
-    @board.populate_board(@pieces)
-    @board.display_board
   end
 
   def select_piece_message(player)

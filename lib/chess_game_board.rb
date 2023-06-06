@@ -13,6 +13,11 @@ class ChessBoard
     Array.new(8) { Array.new(8, " ") }
   end
 
+  def update_board
+    populate_board(@pieces)
+    display_board
+  end
+
   def populate_board(pieces)
     pieces.each do |piece|
       row, col = piece.position

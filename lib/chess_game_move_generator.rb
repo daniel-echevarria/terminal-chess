@@ -14,11 +14,6 @@ class MoveGenerator
   def generate_moves(piece)
   end
 
-  def select_piece_at(position)
-    piece = @pieces.select { |piece| piece.position == position }
-    piece.first
-  end
-
   def has_oponent(moving_piece, position)
     piece = select_piece_at(position)
     return false if piece.nil?
