@@ -1,4 +1,4 @@
-require_relative '../lib/chess_game_move_module.rb'
+require_relative '../../lib/chess_game/chess_game_move_module.rb'
 
 describe MovePiece do
 

@@ -1,6 +1,4 @@
 
-require_relative '../lib/chess_game_pawn.rb'
-
 class ChessBoard
 
   def initialize

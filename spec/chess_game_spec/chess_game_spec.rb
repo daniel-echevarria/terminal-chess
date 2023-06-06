@@ -1,8 +1,8 @@
-require_relative '../lib/chess_game.rb'
-require_relative '../lib/chess_game_player.rb'
-require_relative '../lib/chess_game_board.rb'
-require_relative '../lib/chess_game_pawn.rb'
-require_relative '../lib/chess_game_tower.rb'
+require_relative '../../lib/chess_game/chess_game.rb'
+require_relative '../../lib/chess_game/chess_game_player.rb'
+require_relative '../../lib/chess_game/chess_game_board.rb'
+require_relative '../../lib/chess_pieces/chess_pawn.rb'
+require_relative '../../lib/chess_pieces/chess_tower.rb'
 
 describe ChessGame do
   let(:board) { double('board') }

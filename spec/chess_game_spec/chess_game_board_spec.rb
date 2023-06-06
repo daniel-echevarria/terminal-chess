@@ -1,4 +1,4 @@
-require_relative '../lib/chess_game_board.rb'
+require_relative '../../lib/chess_game/chess_game_board.rb'
 
 describe ChessBoard do
 
