@@ -393,14 +393,27 @@ describe ChessGame do
         game.pieces << whitepawn
       end
 
-      after do
-        game.pieces.delete(whitepawn)
-      end
-
       context 'when the piece on [4, 4] (e4) and there is a ally on [4, 0]' do
         it 'returns [[4, 3], [4, 2], [4, 1]]' do
           result = game.generate_left_horizontal_moves(white_tower)
           expectation = [[4, 3], [4, 2], [4, 1]]
+          expect(result).to eq(expectation)
+        end
+      end
+    end
+
+    describe '#generate_right_horizontal_moves' do
+      context 'when the tower is on [4, 3] and a pawn on [4, 7]' do
+        let(:white_tower) { instance_double(ChessTower, color: 'white', position: [4, 3]) }
+        let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [4, 7]) }
+
+        before do
+          game.pieces << whitepawn
+        end
+
+        it 'returns the position until then aka [[4, 4], [4, 5], [4, 6]]' do
+          result = game.generate_right_horizontal_moves(white_tower)
+          expectation = [[4, 4], [4, 5], [4, 6]]
           expect(result).to eq(expectation)
         end
       end

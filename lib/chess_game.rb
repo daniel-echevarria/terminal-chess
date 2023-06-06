@@ -1,4 +1,5 @@
 require_relative '../lib/chess_game_move_module.rb'
+require_relative '../lib/chess_game_tower.rb'
 
 class ChessGame
 
@@ -13,13 +14,11 @@ class ChessGame
   end
 
   def play_move(player)
-    from_chess_position = select_piece_input(player)
-    from_array_position = translate_chess_to_array(from_chess_position)
-    piece = select_piece_at(from_array_position)
-    to_chess_position = move_piece_input(piece)
-    to_array_position = translate_chess_to_array(to_chess_position)
-    move_piece(piece, to_array_position)
-    @board.clean_cell(from_array_position)
+    start_position = select_piece_input(player)
+    piece = select_piece_at(start_position)
+    to_position = move_piece_input(piece)
+    move_piece(piece, to_position)
+    @board.clean_cell(start_position)
   end
 
 
@@ -60,7 +59,7 @@ class ChessGame
       puts "Please input the position of a #{player.color} piece"
       input = gets.chomp
     end
-    input
+    translate_chess_to_array(input)
   end
 
   def move_piece_input(piece)
@@ -70,7 +69,7 @@ class ChessGame
       puts 'please input a valid move'
       chess_position = gets.chomp
     end
-    chess_position
+    translate_chess_to_array(chess_position)
   end
 
   def valid_pick?(player, chess_position)
@@ -135,11 +134,22 @@ class ChessGame
     generate_left_horizontal_moves(piece, next_move, moves)
   end
 
+  def generate_right_horizontal_moves(piece, next_move = move_horizontally(piece.position, 1), moves = [])
+    return moves if has_ally(piece, next_move) || is_out_of_board?(next_move)
+    moves << next_move and return moves if has_oponent(piece, next_move)
+
+    moves << next_move
+    next_move = move_horizontally(next_move, 1)
+    generate_right_horizontal_moves(piece, next_move, moves)
+  end
+
   def get_potential_moves(piece)
     moves = []
-    moves << piece.potential_moves
+    if piece.is_a?(ChessPawn)
+      moves << piece.potential_moves
+      moves << special_case_pawn_moves(piece)
+    end
     remove_invalid_moves(piece, moves)
-    moves << special_case_pawn_moves(piece) if piece.is_a?(ChessPawn)
     moves.flatten(1)
   end
 
@@ -179,9 +189,20 @@ class ChessGame
     pawns
   end
 
+  def create_towers
+    towers = []
+    towers_initial_positions = [[0, 0], [0, 7], [7, 0], [7, 7]]
+    towers_initial_positions.each do |pos|
+      color = pos[0] < 3 ? 'black' : 'white'
+      towers << ChessTower.new(pos, color)
+    end
+    towers
+  end
+
   def create_pieces
     pieces = []
     pieces << create_pawns
+    pieces << create_towers
     pieces.flatten(1)
   end
 
