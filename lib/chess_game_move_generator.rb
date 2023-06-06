@@ -1,5 +1,7 @@
+require_relative '../lib/chess_game_move_module.rb'
 
 class MoveGenerator
+  include MovePiece
 
   attr_accessor :pieces
 
@@ -37,8 +39,8 @@ class MoveGenerator
   end
 
   def generate_up_vertical_moves(piece, next_move = move_vertically(piece.position, -1), moves = [])
-    return moves if has_ally(piece, next_move)
-    moves << next_move and return moves if has_oponent(piece, next_move) || is_out_of_board?(next_move)
+    return moves if has_ally(piece, next_move) || is_out_of_board?(next_move)
+    moves << next_move and return moves if has_oponent(piece, next_move)
 
     moves << next_move
     next_move = move_vertically(next_move, -1)
@@ -46,7 +48,7 @@ class MoveGenerator
   end
 
   def generate_down_vertical_moves(piece, next_move = move_vertically(piece.position, 1), moves = [])
-    return moves if has_ally(piece, next_move)
+    return moves if has_ally(piece, next_move) || is_out_of_board?(next_move)
     moves << next_move and return moves if has_oponent(piece, next_move) || is_out_of_board?(next_move)
 
     moves << next_move
