@@ -3,10 +3,13 @@ class ChessBoard
 
   attr_reader :board
 
-  MAJOR_PIECES = {
-    'rooks': [ChessTower]
+  MAJOR_PIECES_WITH_INITIAL_POSITIONS = {
+    rooks: [ChessRook, [[0, 0], [0, 7], [7, 0], [7, 7]]],
+    knights: [ChessKnight, [[0, 1], [0, 6], [7, 1], [7, 6]]],
+    bishops: [ChessBishop, [[0, 2], [0, 5], [7, 2], [7, 5]]],
+    queens: [ChessQueen, [[0, 3], [7, 4]]],
+    kings: [ChessKing, [[0, 4], [7, 5]]]
   }
-
 
   def initialize
     @board = create_board

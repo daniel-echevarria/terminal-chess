@@ -1,5 +1,5 @@
 require_relative 'chess_game_move_module.rb'
-require_relative '../chess_pieces/chess_tower.rb'
+require_relative '../chess_pieces/chess_rook.rb'
 require_relative '../chess_pieces/chess_pawn.rb'
 require_relative '../chess_pieces/chess_knight.rb'
 
