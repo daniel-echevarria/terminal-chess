@@ -1,6 +1,7 @@
 require_relative 'chess_game_move_module.rb'
 require_relative '../chess_pieces/chess_tower.rb'
 require_relative '../chess_pieces/chess_pawn.rb'
+require_relative '../chess_pieces/chess_knight.rb'
 
 class ChessGame
 
@@ -194,6 +195,16 @@ class ChessGame
     pawns
   end
 
+  # Pseudocode for creating pieces
+  # Given some initial position and an object creator create a piece at each position
+
+  def build_pieces(piece_creator, positions)
+    pieces = positions.map do |pos|
+      color = pos[0] < 3 ? 'black' : 'white'
+      piece_creator.new(pos, color)
+    end
+  end
+
   def create_towers
     towers = []
     towers_initial_positions = [[0, 0], [0, 7], [7, 0], [7, 7]]
@@ -204,10 +215,20 @@ class ChessGame
     towers
   end
 
+  def create_knights
+    knights_initial_positions = [[0, 1], [0, 6], [7, 1], [7, 6]]
+    knights = knights_initial_positions.map do |pos|
+      color = pos[0] < 3 ? 'black' : 'white'
+        ChessKnight.new(pos, color)
+    end
+  end
+
   def create_pieces
     pieces = []
+    towers_initial_positions = [[0, 0], [0, 7], [7, 0], [7, 7]]
     pieces << create_pawns
-    pieces << create_towers
+    pieces << build_pieces(ChessTower, towers_initial_positions)
+    pieces << create_knights
     pieces.flatten(1)
   end
 

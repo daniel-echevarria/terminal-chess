@@ -1,6 +1,13 @@
 
 class ChessBoard
 
+  attr_reader :board
+
+  MAJOR_PIECES = {
+    'rooks': [ChessTower]
+  }
+
+
   def initialize
     @board = create_board
   end
