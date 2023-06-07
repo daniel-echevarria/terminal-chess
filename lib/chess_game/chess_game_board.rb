@@ -19,6 +19,13 @@ class ChessBoard
     Array.new(8) { Array.new(8, " ") }
   end
 
+  def build_pieces(piece_creator, positions)
+    pieces = positions.map do |pos|
+      color = pos[0] < 3 ? 'black' : 'white'
+      piece_creator.new(pos, color)
+    end
+  end
+
   def populate_board(pieces)
     pieces.each do |piece|
       row, col = piece.position

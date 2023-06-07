@@ -198,13 +198,6 @@ class ChessGame
   # Pseudocode for creating pieces
   # Given some initial position and an object creator create a piece at each position
 
-  def build_pieces(piece_creator, positions)
-    pieces = positions.map do |pos|
-      color = pos[0] < 3 ? 'black' : 'white'
-      piece_creator.new(pos, color)
-    end
-  end
-
   def create_towers
     towers = []
     towers_initial_positions = [[0, 0], [0, 7], [7, 0], [7, 7]]
