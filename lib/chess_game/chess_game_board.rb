@@ -27,12 +27,12 @@ class ChessBoard
     },
     queens: {
       constructor: ChessQueen,
-      positions: [[0, 3], [7, 4]],
+     positions: [[0, 4], [7, 3]],
       unicodes: ["\u265B", "\u2655"]
     },
     kings: {
       constructor: ChessKing,
-      positions: [[0, 4], [7, 5]],
+      positions: [[0, 3], [7, 4]],
       unicodes: ["\u265A", "\u2654"]
     }
   }
@@ -41,6 +41,13 @@ class ChessBoard
   def initialize
     @board = create_board
     @pieces = create_all_major_pieces(MAJOR_PIECES_INITIAL_SETUP)
+  end
+
+  def intial_set_up
+    @board = create_board
+    @pieces = create_all_major_pieces(MAJOR_PIECES_INITIAL_SETUP)
+    populate_board(@pieces)
+    display_board
   end
 
   # Board Related Methods
@@ -103,3 +110,7 @@ class ChessBoard
     color == 'white' ? unicodes[0] : unicodes[1]
   end
 end
+
+board = ChessBoard.new
+
+board.intial_set_up
