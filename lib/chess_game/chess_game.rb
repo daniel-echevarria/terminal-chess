@@ -203,7 +203,7 @@ class ChessGame
     towers_initial_positions = [[0, 0], [0, 7], [7, 0], [7, 7]]
     towers_initial_positions.each do |pos|
       color = pos[0] < 3 ? 'black' : 'white'
-      towers << ChessTower.new(pos, color)
+      towers << ChessRook.new(pos, color)
     end
     towers
   end
@@ -220,7 +220,7 @@ class ChessGame
     pieces = []
     towers_initial_positions = [[0, 0], [0, 7], [7, 0], [7, 7]]
     pieces << create_pawns
-    pieces << build_pieces(ChessTower, towers_initial_positions)
+    pieces << build_pieces(ChessRook, towers_initial_positions)
     pieces << create_knights
     pieces.flatten(1)
   end

@@ -1,10 +1,19 @@
 
+require_relative '../chess_pieces/chess_rook.rb'
+require_relative '../chess_pieces/chess_knight.rb'
+require_relative '../chess_pieces/chess_bishop.rb'
+require_relative '../chess_pieces/chess_queen.rb'
+require_relative '../chess_pieces/chess_king.rb'
+require_relative '../chess_pieces/chess_pawn.rb'
+
 class ChessBoard
 
   attr_reader :board
 
   MAJOR_PIECES_WITH_INITIAL_POSITIONS = {
-    rooks: [ChessRook, [[0, 0], [0, 7], [7, 0], [7, 7]]],
+    rooks: { constructor: ChessRook,
+             positions: [[0, 0], [0, 7], [7, 0], [7, 7]]
+            },
     knights: [ChessKnight, [[0, 1], [0, 6], [7, 1], [7, 6]]],
     bishops: [ChessBishop, [[0, 2], [0, 5], [7, 2], [7, 5]]],
     queens: [ChessQueen, [[0, 3], [7, 4]]],
@@ -19,10 +28,21 @@ class ChessBoard
     Array.new(8) { Array.new(8, " ") }
   end
 
-  def build_pieces(piece_creator, positions)
+  # def create_pieces(piece_creator, positions)
+  #   pieces = positions.map do |pos|
+  #     color = pos[0] < 3 ? 'black' : 'white'
+  #     piece_creator.new(pos, color)
+  #   end
+  # end
+
+  # given an hash with the constructor and the positions create the pieces at the position
+
+  def create_pieces(hash)
+    constructor = hash[:constructor]
+    positions = hash[:positions]
     pieces = positions.map do |pos|
       color = pos[0] < 3 ? 'black' : 'white'
-      piece_creator.new(pos, color)
+      constructor.new(pos, color)
     end
   end
 

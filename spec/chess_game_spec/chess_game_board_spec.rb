@@ -33,4 +33,17 @@ describe ChessBoard do
       end
     end
   end
+
+  describe '#create_pieces' do
+    context 'when passed the rook hash' do
+      it 'creates a rook for each initial position' do
+        rook_hash = {
+          constructor: ChessRook,
+          positions: [[0, 0], [0, 7], [7, 0], [7, 7]]
+        }
+        result = chess_board.create_pieces(rook_hash)
+        expect(result).to include(an_instance_of(ChessRook)).exactly(4).times
+      end
+    end
+  end
 end
