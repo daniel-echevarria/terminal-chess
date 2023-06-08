@@ -1,16 +1,8 @@
-require_relative '../lib/chess_game_move_module.rb'
+require_relative '../chess_game/chess_game_move_module.rb'
+require_relative '../chess_pieces/chess_piece.rb'
 
-class ChessPawn
+class ChessPawn < ChessPiece
   include MovePiece
-
-  attr_reader :unicode, :color
-  attr_accessor :position
-
-  def initialize(position, color)
-    @position = position
-    @color = color
-    @unicode = set_unicode
-  end
 
   def potential_moves
     moves = []
@@ -26,6 +18,6 @@ class ChessPawn
   end
 
   def set_unicode
-    @color == 'white' ? "\u265F" : "\u2659"
+    @unicode = @color == 'white' ? "\u265F" : "\u2659"
   end
 end

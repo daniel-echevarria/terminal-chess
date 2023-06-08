@@ -1,4 +1,4 @@
-require_relative '../lib/chess_game_move_module.rb'
+require_relative '../../lib/chess_game/chess_game_move_module.rb'
 
 describe MovePiece do
 
@@ -56,8 +56,8 @@ describe MovePiece do
   describe '#move_main_diagonal' do
     context 'when asked to move 3 squares up' do
       context 'when position is [3, 3]' do
-        it 'returns [0, 0]' do
-          move_value = -3
+        it 'returns [6, 6]' do
+          move_value = 3
           position = [3, 3]
           result = dummy_instance.move_main_diagonal(position, move_value)
           expect(result).to eq([0, 0])
@@ -68,7 +68,7 @@ describe MovePiece do
     context 'when asked to move 2 squares down' do
       context 'when position is [5, 5]' do
         it 'returns [7, 7]' do
-          move_value = 2
+          move_value = -2
           position = [5, 5]
           result = dummy_instance.move_main_diagonal(position, move_value)
           expect(result).to eq([7, 7])
@@ -81,7 +81,7 @@ describe MovePiece do
     context 'when asked to move 2 squares up' do
       context 'when position is [2, 3]' do
         it 'returns [0, 5]' do
-          move_value = -2
+          move_value = 2
           position = [2, 3]
           result = dummy_instance.move_secondary_diagonal(position, move_value)
           expect(result).to eq([0, 5])
@@ -92,7 +92,7 @@ describe MovePiece do
     context 'when asked to move 2 squares down' do
       context 'when position is [3, 3]' do
         it 'returns [5, 1]' do
-          move_value = 2
+          move_value = -2
           position = [3, 3]
           result = dummy_instance.move_secondary_diagonal(position, move_value)
           expect(result).to eq([5, 1])
