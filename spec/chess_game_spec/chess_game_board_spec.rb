@@ -34,6 +34,30 @@ describe ChessBoard do
     end
   end
 
+  describe '#select_piece_at' do
+    let(:white_pawn) { instance_double(ChessPawn, color: 'white', position: [0, 6]) }
+
+    before do
+      chess_board.instance_variable_set(:@pieces, [white_pawn])
+    end
+
+    context 'when the positions is [0, 6] and there is a pawn on that position' do
+      it 'returns the pawn' do
+        position = [0, 6]
+        result = chess_board.select_piece_at(position)
+        expect(result).to eq(white_pawn)
+      end
+    end
+
+    context 'when the position is [0, 5] and there is no piece on that position' do
+      it 'returns nil' do
+        position = [0, 5]
+        result = chess_board.select_piece_at(position)
+        expect(result).to be_nil
+      end
+    end
+  end
+
   describe '#create_one_type_of_pieces' do
     context 'when passed the rook hash' do
       it 'creates a rook for each initial position' do

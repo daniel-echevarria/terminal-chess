@@ -57,7 +57,6 @@ class ChessBoard
   def reset_board
     @board = create_board
     @pieces = create_all_pieces
-    display_board
   end
 
   def populate_board(pieces)
@@ -82,11 +81,15 @@ class ChessBoard
     p "   #{('a'..'h').to_a.join('   ')}"
   end
 
+  def update_board
+    populate_board(@pieces)
+    display_board
+  end
+
   # Pieces Related Methods
 
   def select_piece_at(position)
-    piece = @pieces.select { |piece| piece.position == position }
-    piece.first
+    @pieces.find { |piece| piece.position == position }
   end
 
   # Inital Pieces Setup

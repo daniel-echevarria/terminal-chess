@@ -16,7 +16,7 @@ class ChessGame
 
   def play_move(player)
     start_position = select_piece_input(player)
-    piece = select_piece_at(start_position)
+    piece = @board.select_piece_at(start_position)
     to_position = move_piece_input(piece)
     move_piece(piece, to_position)
     @board.clean_cell(start_position)
@@ -26,7 +26,7 @@ class ChessGame
   def play_round
     players = [@player_1, @player_2]
     until game_over?
-      update_board
+      @board.update_board
       current_player = players.shift
       play_move(current_player)
       players << current_player
@@ -48,11 +48,6 @@ class ChessGame
     piece.position = position
   end
 
-  def select_piece_at(position)
-    piece = @board.pieces.select { |piece| piece.position == position }
-    piece.first
-  end
-
   def select_piece_input(player)
     select_piece_message(player)
     input = gets.chomp
@@ -63,27 +58,27 @@ class ChessGame
     translate_chess_to_array(input)
   end
 
-  def move_piece_input(piece)
-    move_piece_message
-    chess_position = gets.chomp
-    until valid_move?(piece, chess_position) do
-      puts 'please input a valid move'
-      chess_position = gets.chomp
-    end
-    translate_chess_to_array(chess_position)
-  end
-
-  def valid_pick?(player, chess_position)
-    array_position = translate_chess_to_array(chess_position)
-    piece = select_piece_at(array_position)
+  def valid_pick?(player, input)
+    position = translate_chess_to_array(input)
+    piece = @board.select_piece_at(position)
     return if piece.nil?
 
     piece.color == player.color
   end
 
-  def valid_move?(piece, chess_position)
-    array_position = translate_chess_to_array(chess_position)
-    possible_moves = get_potential_moves(piece)
+  def move_piece_input(piece)
+    move_piece_message
+    input = gets.chomp
+    until valid_move?(piece, input) do
+      puts 'please input a valid move'
+      input = gets.chomp
+    end
+    translate_chess_to_array(input)
+  end
+
+  def valid_move?(piece, input)
+    position = translate_chess_to_array(input)
+    possible_moves = piece.generate_possible_moves
     possible_moves.include?(array_position)
   end
 
@@ -181,11 +176,6 @@ class ChessGame
     a_col = chess_columns.index(col)
     a_row = chess_rows.index(row.to_i)
     [a_row, a_col]
-  end
-
-  def update_board
-    @board.populate_board(@pieces)
-    @board.display_board
   end
 
   def select_piece_message(player)

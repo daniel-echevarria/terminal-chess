@@ -4,6 +4,10 @@ require_relative '../chess_pieces/chess_piece.rb'
 class ChessPawn < ChessPiece
   include MovePiece
 
+  def generate_possible_moves(board_pieces)
+
+  end
+
   def potential_moves
     moves = []
     vertical_direction = @color == 'white' ? -1 : 1
@@ -13,8 +17,10 @@ class ChessPawn < ChessPiece
   end
 
   def initial_position?(position, color)
+    current_row = position[0]
     initial_row = color == 'white' ? 6 : 1
-    position[0] == initial_row
+
+    current_row == initial_row
   end
 
   def set_unicode
