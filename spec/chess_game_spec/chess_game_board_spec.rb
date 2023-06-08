@@ -34,15 +34,25 @@ describe ChessBoard do
     end
   end
 
-  describe '#create_pieces' do
+  describe '#create_one_type_of_pieces' do
     context 'when passed the rook hash' do
       it 'creates a rook for each initial position' do
         rook_hash = { constructor: ChessRook,
           positions: [[0, 0], [0, 7], [7, 0], [7, 7]],
           unicodes: ["\u265C", "\u2656"]
          }
-        result = chess_board.create_pieces(rook_hash)
+        result = chess_board.create_one_type_of_pieces(rook_hash)
         expect(result).to include(an_instance_of(ChessRook)).exactly(4).times
+      end
+    end
+  end
+
+  describe '#create_all_major_pieces' do
+    context 'when passed a specific hash containing all the needed info' do
+      it 'creates the 16 major pieces' do
+        hash = ChessBoard::MAJOR_PIECES_INITIAL_SETUP
+        result = chess_board.create_all_major_pieces(hash)
+        expect(result).to include(ChessPiece).exactly(16).times
       end
     end
   end
