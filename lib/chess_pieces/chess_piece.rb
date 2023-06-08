@@ -3,9 +3,9 @@ class ChessPiece
 
   attr_accessor :position, :color, :unicode
 
-  def initialize(position, color)
+  def initialize(position, color, unicode)
     @position = position
     @color = color
-    @unicode = set_unicode
+    @unicode = unicode
   end
 end

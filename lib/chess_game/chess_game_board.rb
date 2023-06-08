@@ -12,7 +12,8 @@ class ChessBoard
 
   MAJOR_PIECES_WITH_INITIAL_POSITIONS = {
     rooks: { constructor: ChessRook,
-             positions: [[0, 0], [0, 7], [7, 0], [7, 7]]
+             positions: [[0, 0], [0, 7], [7, 0], [7, 7]],
+             unicodes: ["\u265C", "\u2656"]
             },
     knights: [ChessKnight, [[0, 1], [0, 6], [7, 1], [7, 6]]],
     bishops: [ChessBishop, [[0, 2], [0, 5], [7, 2], [7, 5]]],
@@ -28,23 +29,22 @@ class ChessBoard
     Array.new(8) { Array.new(8, " ") }
   end
 
-  # def create_pieces(piece_creator, positions)
-  #   pieces = positions.map do |pos|
-  #     color = pos[0] < 3 ? 'black' : 'white'
-  #     piece_creator.new(pos, color)
-  #   end
-  # end
-
-  # given an hash with the constructor and the positions create the pieces at the position
+  def assign_piece_color(position)
+    row = position[0]
+    row < 3 ? 'black' : 'white'
+  end
 
   def create_pieces(hash)
     constructor = hash[:constructor]
     positions = hash[:positions]
+    unicodes = hash[:unicodes]
     pieces = positions.map do |pos|
-      color = pos[0] < 3 ? 'black' : 'white'
-      constructor.new(pos, color)
+      code = pos[0] < 3 ? unicodes[0] : unicodes[1]
+      color = assign_piece_color(pos)
+      constructor.new(pos, color, code)
     end
   end
+
 
   def populate_board(pieces)
     pieces.each do |piece|
