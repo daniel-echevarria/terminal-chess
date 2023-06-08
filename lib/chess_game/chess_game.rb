@@ -184,47 +184,6 @@ class ChessGame
     [a_row, a_col]
   end
 
-  # Set_up Game, Create pieces etc.
-
-  def create_pawns
-    pawns = []
-    (0..7).each_with_index do |num, index|
-      pawns << ChessPawn.new([1, index], 'black')
-      pawns << ChessPawn.new([6, index], 'white')
-    end
-    pawns
-  end
-
-  # Pseudocode for creating pieces
-  # Given some initial position and an object creator create a piece at each position
-
-  def create_towers
-    towers = []
-    towers_initial_positions = [[0, 0], [0, 7], [7, 0], [7, 7]]
-    towers_initial_positions.each do |pos|
-      color = pos[0] < 3 ? 'black' : 'white'
-      towers << ChessRook.new(pos, color)
-    end
-    towers
-  end
-
-  def create_knights
-    knights_initial_positions = [[0, 1], [0, 6], [7, 1], [7, 6]]
-    knights = knights_initial_positions.map do |pos|
-      color = pos[0] < 3 ? 'black' : 'white'
-        ChessKnight.new(pos, color)
-    end
-  end
-
-  def create_pieces
-    pieces = []
-    towers_initial_positions = [[0, 0], [0, 7], [7, 0], [7, 7]]
-    pieces << create_pawns
-    pieces << build_pieces(ChessRook, towers_initial_positions)
-    pieces << create_knights
-    pieces.flatten(1)
-  end
-
   def update_board
     @board.populate_board(@pieces)
     @board.display_board
