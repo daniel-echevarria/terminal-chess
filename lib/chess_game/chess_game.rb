@@ -12,7 +12,6 @@ class ChessGame
     @board = board
     @player_1 = player_1
     @player_2 = player_2
-    @pieces = create_pieces
   end
 
   def play_move(player)
@@ -50,7 +49,7 @@ class ChessGame
   end
 
   def select_piece_at(position)
-    piece = @pieces.select { |piece| piece.position == position }
+    piece = @board.pieces.select { |piece| piece.position == position }
     piece.first
   end
 
@@ -197,4 +196,3 @@ class ChessGame
     puts 'Type the square you want to move the piece to'
   end
 end
-

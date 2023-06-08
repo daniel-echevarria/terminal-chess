@@ -45,20 +45,19 @@ class ChessBoard
 
   def initialize
     @board = create_board
-    @pieces = create_all_major_pieces(MAJOR_PIECES_INITIAL_SETUP)
-  end
-
-  def reset_board
-    @board = create_board
-    @pieces = create_all_major_pieces(MAJOR_PIECES_INITIAL_SETUP)
-    populate_board(@pieces)
-    display_board
+    @pieces = create_all_pieces
   end
 
   # Board Related Methods
 
   def create_board
     Array.new(8) { Array.new(8, " ") }
+  end
+
+  def reset_board
+    @board = create_board
+    @pieces = create_all_pieces
+    display_board
   end
 
   def populate_board(pieces)
@@ -85,6 +84,13 @@ class ChessBoard
 
   # Pieces Related Methods
 
+  def select_piece_at(position)
+    piece = @pieces.select { |piece| piece.position == position }
+    piece.first
+  end
+
+  # Inital Pieces Setup
+
   def create_one_type_of_pieces(hash)
     constructor = hash[:constructor]
     positions = hash[:positions]
@@ -97,11 +103,10 @@ class ChessBoard
     end
   end
 
-  def create_all_major_pieces(main_hash)
+  def create_all_pieces
     pieces = []
-    main_hash.each do |type, value|
-      hash = MAJOR_PIECES_INITIAL_SETUP[type]
-      pieces << create_one_type_of_pieces(hash)
+    MAJOR_PIECES_INITIAL_SETUP.values.each do |type|
+      pieces << create_one_type_of_pieces(type)
     end
     pieces.flatten(1)
   end
@@ -116,4 +121,4 @@ class ChessBoard
   end
 end
 
-board = ChessBoard.new
+board = ChessBoard.new()

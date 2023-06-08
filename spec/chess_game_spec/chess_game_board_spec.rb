@@ -47,12 +47,12 @@ describe ChessBoard do
     end
   end
 
-  describe '#create_all_major_pieces' do
+  describe '#create_all_pieces' do
     context 'when passed a specific hash containing all the needed info' do
-      it 'creates the 16 major pieces' do
+      it 'creates 32 pieces' do
         hash = ChessBoard::MAJOR_PIECES_INITIAL_SETUP
-        result = chess_board.create_all_major_pieces(hash)
-        expect(result).to include(ChessPiece).exactly(16).times
+        result = chess_board.create_all_pieces
+        expect(result).to include(ChessPiece).exactly(32).times
       end
     end
   end
