@@ -10,15 +10,31 @@ class ChessBoard
 
   attr_reader :board
 
-  MAJOR_PIECES_WITH_INITIAL_POSITIONS = {
-    rooks: { constructor: ChessRook,
-             positions: [[0, 0], [0, 7], [7, 0], [7, 7]],
-             unicodes: ["\u265C", "\u2656"]
-            },
-    knights: [ChessKnight, [[0, 1], [0, 6], [7, 1], [7, 6]]],
-    bishops: [ChessBishop, [[0, 2], [0, 5], [7, 2], [7, 5]]],
-    queens: [ChessQueen, [[0, 3], [7, 4]]],
-    kings: [ChessKing, [[0, 4], [7, 5]]]
+  MAJOR_PIECES_INITIAL_SETUP = {
+    rooks: {
+      constructor: ChessRook,
+      positions: [[0, 0], [0, 7], [7, 0], [7, 7]],
+      unicodes: ["\u265C", "\u2656"]
+    },
+    knights: {
+      constructor: ChessKnight,
+      positions: [[0, 1], [0, 6], [7, 1], [7, 6]],
+      unicodes: ["\u265E", "\u2658"]
+    }
+    bishops: {
+      constructor: ChessBishop,
+      positions: [[0, 2], [0, 5], [7, 2], [7, 5]],
+      unicodes: ["\u265D", "\u2657"]
+    }
+    queens: {
+      constructor: ChessQueen,
+      positions: [[0, 3], [7, 4]],
+      unicodes: ["\u265B", "\u2655"]
+    }
+    kings: {
+      constructor: ChessKing,
+      positions: [[0, 4], [7, 5]],
+      unicodes: ["\u265A", "\u2654"]
   }
 
   def initialize
@@ -34,14 +50,19 @@ class ChessBoard
     row < 3 ? 'black' : 'white'
   end
 
+  def assign_piece_unicode(color, unicodes)
+    color == 'white' ? unicodes[0] : unicodes[1]
+  end
+
   def create_pieces(hash)
     constructor = hash[:constructor]
     positions = hash[:positions]
     unicodes = hash[:unicodes]
+
     pieces = positions.map do |pos|
-      code = pos[0] < 3 ? unicodes[0] : unicodes[1]
       color = assign_piece_color(pos)
-      constructor.new(pos, color, code)
+      unicode = assign_piece_unicode(color, unicodes)
+      constructor.new(pos, color, unicode)
     end
   end
 

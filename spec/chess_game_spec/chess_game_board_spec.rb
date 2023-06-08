@@ -64,4 +64,26 @@ describe ChessBoard do
       end
     end
   end
+
+  describe '#assign_piece_unicode' do
+    context 'when the piece is white' do
+
+      it 'assigns the first unicode in the unicodes array' do
+        unicodes = ["\u265C", "\u2656"]
+        color = 'white'
+        result = chess_board.assign_piece_unicode(color, unicodes)
+        expect(result).to eq("\u265C")
+      end
+    end
+
+    context 'when the piece is black' do
+
+      it 'assigns the first unicode in the unicodes array' do
+        unicodes = ["\u265C", "\u2656"]
+        color = 'black'
+        result = chess_board.assign_piece_unicode(color, unicodes)
+        expect(result).to eq("\u2656")
+      end
+    end
+  end
 end
