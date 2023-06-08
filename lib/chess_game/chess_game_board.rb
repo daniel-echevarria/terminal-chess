@@ -1,4 +1,3 @@
-
 require_relative '../chess_pieces/chess_rook.rb'
 require_relative '../chess_pieces/chess_knight.rb'
 require_relative '../chess_pieces/chess_bishop.rb'
