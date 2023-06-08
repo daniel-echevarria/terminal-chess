@@ -34,6 +34,12 @@ class ChessBoard
       constructor: ChessKing,
       positions: [[0, 3], [7, 4]],
       unicodes: ["\u265A", "\u2654"]
+    },
+    pawns: {
+      constructor: ChessPawn,
+      positions: [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7],
+      [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7]],
+      unicodes: ["\u265F", "\u2659"]
     }
   }
   attr_reader :board
@@ -43,7 +49,7 @@ class ChessBoard
     @pieces = create_all_major_pieces(MAJOR_PIECES_INITIAL_SETUP)
   end
 
-  def intial_set_up
+  def reset_board
     @board = create_board
     @pieces = create_all_major_pieces(MAJOR_PIECES_INITIAL_SETUP)
     populate_board(@pieces)
@@ -112,5 +118,3 @@ class ChessBoard
 end
 
 board = ChessBoard.new
-
-board.intial_set_up
