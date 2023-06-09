@@ -14,29 +14,34 @@ class ChessPawn < ChessPiece
     # add the position on the sec diagonal if there is an opponent on it
     possible_moves = []
     vertical_direction = @color == 'white' ? 1 : -1
+
     main_diag = move_main_diagonal(@position, 1 * vertical_direction)
     sec_diag = move_secondary_diagonal(@position, 1 * vertical_direction)
-    p main_diag
-    p sec_diag
-    [main_diag, sec_diag].each do |pos|
-      return unless board.has_oponent(pos, self)
+    one_in_front = move_vertically(@position, 1 * vertical_direction)
+    two_in_front = move_vertically(@position, 2 * vertical_direction)
 
-      possible_moves << pos
-    end
+    possible_moves << main_diag if board.has_oponent(main_diag, self)
+    possible_moves << sec_diag if board.has_oponent(sec_diag, self)
+
+    return possible_moves if board.has_ally(one_in_front, self) || board.has_oponent(one_in_front, self)
+
+    possible_moves << one_in_front
+    possible_moves << two_in_front if on_initial_position? unless board.has_ally(two_in_front, self) || board.has_oponent(two_in_front, self)
+
     possible_moves
   end
 
   def potential_moves
     moves = []
     vertical_direction = @color == 'white' ? -1 : 1
-    moves << move_vertically(@position, 2 * vertical_direction) if initial_position?(@position, @color)
+    moves << move_vertically(@position, 2 * vertical_direction) if on_initial_position?
     moves << move_vertically(@position, 1 * vertical_direction)
     moves
   end
 
-  def initial_position?(position, color)
-    current_row = position[0]
-    initial_row = color == 'white' ? 6 : 1
+  def on_initial_position?
+    current_row = @position[0]
+    initial_row = @color == 'white' ? 6 : 1
 
     current_row == initial_row
   end

@@ -25,14 +25,14 @@ describe ChessPawn do
   end
 
   context 'when pawn is white' do
-    describe '#initial_position?' do
+    describe '#on_initial_position?' do
       context 'when on initial position' do
         let(:whitepawn) { described_class.new([6, 0], 'white') }
 
         it 'returns true' do
           position = whitepawn.instance_variable_get(:@position)
           color = whitepawn.instance_variable_get(:@color)
-          result = whitepawn.initial_position?(position, color)
+          result = whitepawn.on_initial_position?
           expect(result).to be(true)
         end
       end
@@ -43,7 +43,7 @@ describe ChessPawn do
         it 'returns false' do
           position = whitepawn.instance_variable_get(:@position)
           color = whitepawn.instance_variable_get(:@color)
-          result = whitepawn.initial_position?(position, color)
+          result = whitepawn.on_initial_position?
           expect(result).to be(false)
         end
       end
@@ -76,7 +76,7 @@ describe ChessPawn do
 
         before do
           position = whitepawn.instance_variable_get(:@position)
-          allow(whitepawn).to receive(:initial_position?).and_return(true)
+          allow(whitepawn).to receive(:on_initial_position?).and_return(true)
           allow(whitepawn).to receive(:move_vertically).with(position, -1).and_return([5, 0])
           allow(whitepawn).to receive(:move_vertically).with(position, -2).and_return([4, 0])
         end
@@ -93,7 +93,7 @@ describe ChessPawn do
 
         before do
           position = whitepawn.instance_variable_get(:@position)
-          allow(whitepawn).to receive(:initial_position?).and_return(false)
+          allow(whitepawn).to receive(:on_initial_position?)
           allow(whitepawn).to receive(:move_vertically).with(position, -1).and_return([4, 2])
         end
 
