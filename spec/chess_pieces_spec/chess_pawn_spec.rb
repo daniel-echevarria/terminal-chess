@@ -1,7 +1,8 @@
 require_relative '../../lib/chess_pieces/chess_pawn.rb'
-# require_relative '../chess_game/chess_game_move_module.rb'
+require_relative '../../lib/chess_game/chess_game_board.rb'
 
 describe ChessPawn do
+  subject(:pawn) { described_class.new }
 
   context '#set_unicode' do
     context 'when color is black' do
@@ -44,6 +45,27 @@ describe ChessPawn do
           color = whitepawn.instance_variable_get(:@color)
           result = whitepawn.initial_position?(position, color)
           expect(result).to be(false)
+        end
+      end
+    end
+
+    describe '#generate_possible_moves' do
+      context 'when the pawn is on [6, 3] (d2) and there is an opponent on [5, 2] (c3)' do
+        let(:board) { instance_double(ChessBoard) }
+        let(:white_pawn_moving) { described_class.new([6, 3], 'white') }
+        let(:black_pawn) { described_class.new([5, 2], 'black') }
+
+        before do
+          allow(board).to receive(:has_oponent).with([5, 2], white_pawn_moving).and_return(true)
+          allow(board).to receive(:has_oponent).with([5, 4], white_pawn_moving).and_return(false)
+          board.instance_variable_set(:@pieces, [white_pawn_moving, black_pawn])
+        end
+
+        it 'returns 3 possible moves [5, 3], [4, 3] and [5, 2]' do
+          pieces = [white_pawn_moving, black_pawn]
+          result = white_pawn_moving.generate_possible_moves(board)
+          expectation = [[5, 3], [4, 3], [5, 2]]
+          expect(result).to eq(expectation)
         end
       end
     end
