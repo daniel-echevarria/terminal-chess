@@ -2,6 +2,7 @@ require_relative 'chess_game_move_module.rb'
 require_relative '../chess_pieces/chess_rook.rb'
 require_relative '../chess_pieces/chess_pawn.rb'
 require_relative '../chess_pieces/chess_knight.rb'
+require_relative 'move_generator.rb'
 
 class ChessGame
 
@@ -37,7 +38,7 @@ class ChessGame
   end
 
   def snack_piece_at(position)
-    piece = select_piece_at(position)
+    piece = @board.select_piece_at(position)
     @pieces.delete(piece)
   end
 
@@ -78,14 +79,17 @@ class ChessGame
 
   def valid_move?(piece, input)
     position = translate_chess_to_array(input)
-    possible_moves = piece.generate_possible_moves
-    possible_moves.include?(array_position)
+    mover = MoveGenerator.new(piece, @board)
+    possible_moves = mover.generate_possible_moves
+    p possible_moves
+    possible_moves.include?(position)
+
   end
 
   # Get info about a position
 
   def has_oponent(moving_piece, position)
-    piece = select_piece_at(position)
+    piece = @board.select_piece_at(position)
     return false if piece.nil?
 
     piece.color != moving_piece.color

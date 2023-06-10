@@ -41,7 +41,7 @@ class ChessBoard
       unicodes: ["\u265F", "\u2659"]
     }
   }
-  attr_reader :board
+  attr_reader :board, :pieces
 
   def initialize
     @board = create_board
