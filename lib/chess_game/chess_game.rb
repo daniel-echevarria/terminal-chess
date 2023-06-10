@@ -81,25 +81,7 @@ class ChessGame
     position = translate_chess_to_array(input)
     mover = MoveGenerator.new(piece, @board)
     possible_moves = mover.generate_possible_moves
-    p possible_moves
     possible_moves.include?(position)
-
-  end
-
-  # Get info about a position
-
-  def has_oponent(moving_piece, position)
-    piece = @board.select_piece_at(position)
-    return false if piece.nil?
-
-    piece.color != moving_piece.color
-  end
-
-  def has_ally(moving_piece, position)
-    piece = select_piece_at(position)
-    return false if piece.nil?
-
-    piece.color == moving_piece.color
   end
 
   def is_out_of_board?(position)
