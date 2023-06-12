@@ -22,7 +22,6 @@ module MovePiece
     [row, col]
   end
 
-
   def move_vertically(position, num)
     copy = position.dup
     copy[0] -= num
