@@ -27,10 +27,12 @@ class MoveGenerator
       moves << generate_pawn_moves
     when 'ChessRook'
       moves << generate_rook_moves
-    when 'ChessBishop'
-      moves << generate_bishop_moves
     when 'ChessKnight'
       moves << generate_knight_moves
+    when 'ChessBishop'
+      moves << generate_bishop_moves
+    when 'ChessQueen'
+      moves << generate_queen_moves
     end
     moves.flatten(1)
   end
@@ -85,6 +87,15 @@ class MoveGenerator
 
     possible_moves = potential_moves.select { |move| !invalid_move?(move) }
     possible_moves
+  end
+
+  def generate_queen_moves
+    moves = []
+
+    moves << generate_bishop_moves
+    moves << generate_rook_moves
+
+    moves.flatten(1)
   end
 
 
