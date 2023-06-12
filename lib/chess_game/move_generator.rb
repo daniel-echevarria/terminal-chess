@@ -27,6 +27,8 @@ class MoveGenerator
       moves << generate_pawn_moves
     when 'ChessRook'
       moves << generate_rook_moves
+    when 'ChessBishop'
+      moves << generate_bishop_moves
     end
     moves.flatten(1)
   end
@@ -59,6 +61,17 @@ class MoveGenerator
 
     moves.flatten(1)
   end
+
+  def generate_bishop_moves
+    moves = []
+
+    possible_directions = [:main_diag_up, :main_diag_down, :sec_diag_up, :sec_diag_down]
+    possible_directions.each { |direction| moves << generate_moves(direction) }
+
+    p moves
+    moves.flatten(1)
+  end
+
 
   def generate_moves(direction, next_move = move_one(@piece.position, direction), moves = [])
     return moves if invalid_move?(next_move)
