@@ -42,10 +42,8 @@ class ChessGame
     @pieces.delete(piece)
   end
 
-  # given a position and a piece list all the possible moves
-
   def move_piece(piece, position)
-    snack_piece_at(position) if has_oponent(piece, position)
+    snack_piece_at(position) if @board.has_oponent(piece, position)
     piece.position = position
   end
 
@@ -84,77 +82,6 @@ class ChessGame
     possible_moves.include?(position)
   end
 
-  def is_out_of_board?(position)
-    row, col = position
-    row.between?(0, 7) && col.between?(0, 7) ? false : true
-  end
-
-  def generate_up_vertical_moves(piece, next_move = move_vertically(piece.position, -1), moves = [])
-    return moves if has_ally(piece, next_move) || is_out_of_board?(next_move)
-    moves << next_move and return moves if has_oponent(piece, next_move)
-
-    moves << next_move
-    next_move = move_vertically(next_move, -1)
-    generate_up_vertical_moves(piece, next_move, moves)
-  end
-
-  def generate_down_vertical_moves(piece, next_move = move_vertically(piece.position, 1), moves = [])
-    return moves if has_ally(piece, next_move) || is_out_of_board?(next_move)
-    moves << next_move and return moves if has_oponent(piece, next_move)
-
-    moves << next_move
-    next_move = move_vertically(next_move, 1)
-    generate_down_vertical_moves(piece, next_move, moves)
-  end
-
-  def generate_left_horizontal_moves(piece, next_move = move_horizontally(piece.position, -1), moves = [])
-    return moves if has_ally(piece, next_move) || is_out_of_board?(next_move)
-    moves << next_move and return moves if has_oponent(piece, next_move)
-
-    moves << next_move
-    next_move = move_horizontally(next_move, -1)
-    generate_left_horizontal_moves(piece, next_move, moves)
-  end
-
-  def generate_right_horizontal_moves(piece, next_move = move_horizontally(piece.position, 1), moves = [])
-    return moves if has_ally(piece, next_move) || is_out_of_board?(next_move)
-    moves << next_move and return moves if has_oponent(piece, next_move)
-
-    moves << next_move
-    next_move = move_horizontally(next_move, 1)
-    generate_right_horizontal_moves(piece, next_move, moves)
-  end
-
-  def get_potential_moves(piece)
-    moves = []
-    if piece.is_a?(ChessPawn)
-      moves << piece.potential_moves
-      moves << special_case_pawn_moves(piece)
-    end
-    moves << generate_up_vertical_moves(piece)
-    moves << generate_down_vertical_moves(piece)
-    moves << generate_left_horizontal_moves(piece)
-    moves << generate_right_horizontal_moves(piece)
-    remove_invalid_moves(piece, moves)
-    moves.flatten(1)
-  end
-
-  def remove_invalid_moves(piece, moves)
-    moves.delete_if { |pos| has_ally(piece, pos) }
-  end
-
-  def special_case_pawn_moves(pawn)
-    direction = pawn.color == 'white' ? 1 : -1
-    main_diag_move = move_main_diagonal(pawn.position, direction)
-    sec_diag_move = move_secondary_diagonal(pawn.position, direction)
-
-    valid_moves = []
-    valid_moves << main_diag_move if has_oponent(pawn, main_diag_move)
-    valid_moves << sec_diag_move if has_oponent(pawn, sec_diag_move)
-
-    valid_moves
-  end
-
   def translate_chess_to_array(input)
     chess_rows = (8).downto(1).to_a
     chess_columns = ('a').upto('h').to_a
@@ -165,7 +92,7 @@ class ChessGame
   end
 
   def select_piece_message(player)
-    puts "Hey #{player.name} you'r are playing with #{player.color} pieces,  select the piece you would like to move by typing it\'s position"
+    puts "Hey #{player.name} you are playing with #{player.color} pieces, select the piece you would like to move by typing it\'s position"
   end
 
   def move_piece_message

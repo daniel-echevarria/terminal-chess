@@ -86,19 +86,6 @@ class ChessBoard
     display_board
   end
 
-  # Pieces Related Methods
-
-  def select_piece_at(position)
-    @pieces.find { |piece| piece.position == position }
-  end
-
-  def has_oponent(moving_piece, position)
-    piece = select_piece_at(position)
-    return false if piece.nil?
-
-    piece.color != moving_piece.color
-  end
-
   # Inital Pieces Setup
 
   def create_one_type_of_pieces(hash)
