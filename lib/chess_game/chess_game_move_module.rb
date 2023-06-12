@@ -13,9 +13,12 @@ module MovePiece
   }
 
   def move_one(position, direction)
+    dir = DIRECTIONS[direction]
     row, col = position.dup
-    row += direction[0]
-    col += direction[1]
+
+    row += dir[0]
+    col += dir[1]
+
     [row, col]
   end
 
