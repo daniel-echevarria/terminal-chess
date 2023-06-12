@@ -10,17 +10,8 @@ class MoveGenerator
     @board = board
   end
 
-  def select_piece_at(position)
-    @board.pieces.find { |piece| piece.position == position }
-  end
-
   def invalid_move?(position)
-    has_ally?(position) || is_out_of_board?(position)
-  end
-
-  def position_is_free?(position)
-    positions = @board.pieces.map(&:position)
-    !positions.include?(position)
+    @board.has_ally?(@piece, position) || @board.is_out_of_board?(position)
   end
 
   def generate_possible_moves
@@ -29,6 +20,8 @@ class MoveGenerator
     case piece_type
     when 'ChessPawn'
       moves << generate_pawn_moves
+    when 'ChessRook'
+      moves << generate_rook_moves
     end
     moves.flatten(1)
   end
@@ -43,10 +36,10 @@ class MoveGenerator
     one_front = move_vertically(position, direction)
     two_front = move_vertically(position, 2 * direction)
 
-    possible_moves << main_diag if has_oponent(main_diag)
-    possible_moves << sec_diag if has_oponent(sec_diag)
-    possible_moves << one_front if position_is_free?(one_front)
-    possible_moves << two_front if @piece.on_initial_position? && position_is_free?(two_front) && position_is_free?(one_front)
+    possible_moves << main_diag if @board.has_oponent?(@piece, main_diag)
+    possible_moves << sec_diag if @board.has_oponent?(@piece, sec_diag)
+    possible_moves << one_front if @board.position_is_free?(one_front)
+    possible_moves << two_front if @piece.on_initial_position? && @board.position_is_free?(two_front) && @board.position_is_free?(one_front)
 
     possible_moves
   end
@@ -54,31 +47,13 @@ class MoveGenerator
   def generate_rook_moves
     moves = []
 
-    moves << generate_up_vertical_moves(@piece)
-    moves << generate_down_vertical_moves(@piece)
-    moves << generate_left_horizontal_moves(@piece)
-    moves << generate_right_horizontal_moves(@piece)
+    moves << generate_moves(DIRECTIONS[:up])
+    moves << generate_moves(DIRECTIONS[:down])
+    moves << generate_moves(DIRECTIONS[:left])
+    moves << generate_moves(DIRECTIONS[:right])
 
-    moves
-  end
-
-  def has_oponent(position)
-    piece = select_piece_at(position)
-    return false if piece.nil?
-
-    piece.color != @piece.color
-  end
-
-  def has_ally?(position)
-    piece = select_piece_at(position)
-    return false if piece.nil?
-
-    piece.color == @piece.color
-  end
-
-  def is_out_of_board?(position)
-    row, col = position
-    row.between?(0, 7) && col.between?(0, 7) ? false : true
+    p moves
+    moves.flatten(1)
   end
 
   def select_direction(direction_symbol)
@@ -90,53 +65,53 @@ class MoveGenerator
   # if next move has an opponent add the next move to moves and return moves
   # otherwise call generate moves on the next square
 
-  def generate_moves(piece, direction, next_move = move_one(piece.position, direction), moves = [])
+  def generate_moves(direction, next_move = move_one(@piece.position, direction), moves = [])
     return moves if invalid_move?(next_move)
     moves << next_move
-    return moves if has_oponent(next_move)
+    return moves if @board.has_oponent?(@piece, next_move)
 
     next_move = move_one(next_move, direction)
-    generate_moves(piece, direction, next_move, moves)
+    generate_moves(direction, next_move, moves)
   end
 
 
 
-  def generate_up_vertical_moves(piece, next_move = move_vertically(piece.position, 1), moves = [])
-    return moves if invalid_move?(next_move)
-    return moves if has_oponent(next_move)
+  # def generate_up_vertical_moves(piece, next_move = move_vertically(piece.position, 1), moves = [])
+  #   return moves if invalid_move?(next_move)
+  #   return moves if has_oponent(next_move)
 
-    moves << next_move
-    next_move = move_vertically(next_move, 1)
-    generate_up_vertical_moves(piece, next_move, moves)
-  end
+  #   moves << next_move
+  #   next_move = move_vertically(next_move, 1)
+  #   generate_up_vertical_moves(piece, next_move, moves)
+  # end
 
-  def generate_down_vertical_moves(piece, next_move = move_vertically(piece.position, -1), moves = [])
-    return moves if invalid_move?(next_move)
-    moves << next_move and return moves if has_oponent(piece, next_move)
+  # def generate_down_vertical_moves(piece, next_move = move_vertically(piece.position, -1), moves = [])
+  #   return moves if invalid_move?(next_move)
+  #   moves << next_move and return moves if has_oponent(piece, next_move)
 
-    moves << next_move
-    next_move = move_vertically(next_move, -1)
-    generate_down_vertical_moves(piece, next_move, moves)
-  end
+  #   moves << next_move
+  #   next_move = move_vertically(next_move, -1)
+  #   generate_down_vertical_moves(piece, next_move, moves)
+  # end
 
-  def generate_left_horizontal_moves(piece, next_move = move_horizontally(piece.position, -1), moves = [])
-    return moves if invalid_move?(next_move)
-    moves << next_move and return moves if has_oponent(piece, next_move)
+  # def generate_left_horizontal_moves(piece, next_move = move_horizontally(piece.position, -1), moves = [])
+  #   return moves if invalid_move?(next_move)
+  #   moves << next_move and return moves if has_oponent(piece, next_move)
 
-    moves << next_move
-    next_move = move_horizontally(next_move, -1)
-    generate_left_horizontal_moves(piece, next_move, moves)
-  end
+  #   moves << next_move
+  #   next_move = move_horizontally(next_move, -1)
+  #   generate_left_horizontal_moves(piece, next_move, moves)
+  # end
 
 
-  def generate_right_horizontal_moves(piece, next_move = move_horizontally(piece.position, -1), moves = [])
-    return moves if invalid_move?(next_move)
-    moves << next_move and return moves if has_oponent(piece, next_move)
+  # def generate_right_horizontal_moves(piece, next_move = move_horizontally(piece.position, -1), moves = [])
+  #   return moves if invalid_move?(next_move)
+  #   moves << next_move and return moves if has_oponent(piece, next_move)
 
-    moves << next_move
-    next_move = move_horizontally(next_move, 1)
-    generate_righ_horizontal_moves(piece, next_move, moves)
-  end
+  #   moves << next_move
+  #   next_move = move_horizontally(next_move, 1)
+  #   generate_righ_horizontal_moves(piece, next_move, moves)
+  # end
 
   def snack_piece_at(position)
     piece = select_piece_at(position)
@@ -144,7 +119,7 @@ class MoveGenerator
   end
 
   def move_piece(piece, position)
-    snack_piece_at(position) if has_oponent(piece, position)
+    snack_piece_at(position) if has_oponent?(piece, position)
     piece.position = position
   end
 end

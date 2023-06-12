@@ -7,7 +7,6 @@ require_relative 'move_generator.rb'
 class ChessGame
 
   include MovePiece
-  attr_reader :pieces
 
   def initialize(board, player_1, player_2)
     @board = board
@@ -19,7 +18,7 @@ class ChessGame
     start_position = select_piece_input(player)
     piece = @board.select_piece_at(start_position)
     to_position = move_piece_input(piece)
-    move_piece(piece, to_position)
+    @board.move_piece(piece, to_position)
     @board.clean_cell(start_position)
   end
 
@@ -35,16 +34,6 @@ class ChessGame
   end
 
   def game_over?
-  end
-
-  def snack_piece_at(position)
-    piece = @board.select_piece_at(position)
-    @pieces.delete(piece)
-  end
-
-  def move_piece(piece, position)
-    snack_piece_at(position) if @board.has_oponent(piece, position)
-    piece.position = position
   end
 
   def select_piece_input(player)

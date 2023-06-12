@@ -86,6 +86,44 @@ class ChessBoard
     display_board
   end
 
+  def select_piece_at(position)
+    @pieces.find { |piece| piece.position == position }
+  end
+
+  def snack_piece_at(position)
+    piece = select_piece_at(position)
+    @pieces.delete(piece)
+  end
+
+  def move_piece(piece, position)
+    snack_piece_at(position) if has_oponent?(piece, position)
+    piece.position = position
+  end
+
+  def position_is_free?(position)
+    positions = @pieces.map(&:position)
+    !positions.include?(position)
+  end
+
+  def has_oponent?(moving_piece, position)
+    piece = select_piece_at(position)
+    return false if piece.nil?
+
+    piece.color != moving_piece.color
+  end
+
+  def has_ally?(moving_piece, position)
+    piece = select_piece_at(position)
+    return false if piece.nil?
+
+    piece.color == moving_piece.color
+  end
+
+  def is_out_of_board?(position)
+    row, col = position
+    row.between?(0, 7) && col.between?(0, 7) ? false : true
+  end
+
   # Inital Pieces Setup
 
   def create_one_type_of_pieces(hash)

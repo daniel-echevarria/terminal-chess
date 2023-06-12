@@ -20,6 +20,31 @@ describe ChessBoard do
     end
   end
 
+  describe '#position_is_free?' do
+    context 'when the cell is free' do
+
+      before do
+        allow(board).to receive(:pieces).and_return([white_piece, white_ally, black_piece])
+      end
+
+      it 'returns true' do
+        position = [2, 2]
+        result = move_generator.position_is_free?(position)
+        expect(result).to eq(true)
+      end
+    end
+
+    context 'when there is an opponent' do
+      it 'returns false' do
+      end
+    end
+
+    context 'when there is an ally' do
+      it 'returns false' do
+      end
+    end
+  end
+
   describe '#clean_cell' do
     context 'when there is a piece in the cell' do
 
