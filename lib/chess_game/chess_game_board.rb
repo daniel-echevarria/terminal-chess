@@ -4,6 +4,7 @@ require_relative '../chess_pieces/chess_bishop.rb'
 require_relative '../chess_pieces/chess_queen.rb'
 require_relative '../chess_pieces/chess_king.rb'
 require_relative '../chess_pieces/chess_pawn.rb'
+require_relative '../chess_game/move_generator.rb'
 
 class ChessBoard
   # A Hash containing the info for setting up the major pieces as the game starts
@@ -90,14 +91,14 @@ class ChessBoard
     @pieces.find { |piece| piece.position == position }
   end
 
-  def snack_piece_at(position)
-    piece = select_piece_at(position)
-    @pieces.delete(piece)
-  end
-
   def move_piece(piece, position)
     snack_piece_at(position) if has_oponent?(piece, position)
     piece.position = position
+  end
+
+  def snack_piece_at(position)
+    piece = select_piece_at(position)
+    @pieces.delete(piece)
   end
 
   def position_is_free?(position)
@@ -124,6 +125,22 @@ class ChessBoard
     row.between?(0, 7) && col.between?(0, 7) ? false : true
   end
 
+  def select_opponent_pieces(piece)
+    opponent_pieces = @pieces.select { |p| p.color != piece.color }
+  end
+
+  def get_opponent_possible_moves(king)
+    opponent_possible_moves = []
+    opponent_pieces = select_opponent_pieces(king)
+    opponent_pieces.each do |piece|
+      mover = MoveGenerator.new(piece, self)
+      opponent_possible_moves << mover.generate_possible_moves
+    end
+    opponent_possible_moves.flatten(1)
+  end
+
+  def is_check?(king)
+  end
   # Inital Pieces Setup
 
   def create_one_type_of_pieces(hash)
@@ -138,14 +155,6 @@ class ChessBoard
     end
   end
 
-  def create_all_pieces
-    pieces = []
-    MAJOR_PIECES_INITIAL_SETUP.values.each do |type|
-      pieces << create_one_type_of_pieces(type)
-    end
-    pieces.flatten(1)
-  end
-
   def assign_piece_color(position)
     row = position[0]
     row < 3 ? 'black' : 'white'
@@ -154,6 +163,13 @@ class ChessBoard
   def assign_piece_unicode(color, unicodes)
     color == 'white' ? unicodes[0] : unicodes[1]
   end
+
+  def create_all_pieces
+    pieces = []
+    MAJOR_PIECES_INITIAL_SETUP.values.each do |type|
+      pieces << create_one_type_of_pieces(type)
+    end
+    pieces.flatten(1)
+  end
 end
 
-board = ChessBoard.new()

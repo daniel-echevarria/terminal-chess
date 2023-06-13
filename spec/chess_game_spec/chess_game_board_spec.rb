@@ -1,4 +1,5 @@
 require_relative '../../lib/chess_game/chess_game_board.rb'
+require_relative '../../lib/chess_pieces/chess_piece.rb'
 
 describe ChessBoard do
 
@@ -22,25 +23,20 @@ describe ChessBoard do
 
   describe '#position_is_free?' do
     context 'when the cell is free' do
-
-      before do
-        allow(board).to receive(:pieces).and_return([white_piece, white_ally, black_piece])
-      end
-
       it 'returns true' do
         position = [2, 2]
-        result = move_generator.position_is_free?(position)
+        result = chess_board.position_is_free?(position)
         expect(result).to eq(true)
       end
     end
 
     context 'when there is an opponent' do
-      it 'returns false' do
+      xit 'returns false' do
       end
     end
 
     context 'when there is an ally' do
-      it 'returns false' do
+      xit 'returns false' do
       end
     end
   end
@@ -144,5 +140,48 @@ describe ChessBoard do
         expect(result).to eq("\u2656")
       end
     end
+  end
+
+  describe '#select_opponent_pieces' do
+    let(:white_piece) { instance_double(ChessPiece, color: 'white') }
+    let(:white_piece_2) { instance_double(ChessPiece, color: 'white') }
+    let(:black_piece_one) { instance_double(ChessPiece, color: 'black') }
+    let(:black_piece_2) { instance_double(ChessPiece, color: 'black') }
+
+    context 'when the piece is white and there are 2 black pieces and one other white piece' do
+
+      before do
+        chess_board.instance_variable_set(:@pieces, [black_piece_one, black_piece_2, white_piece_2, white_piece])
+      end
+
+      it 'return an array with all the black pieces' do
+        result = chess_board.select_opponent_pieces(white_piece)
+        expect(result).to eq([black_piece_one, black_piece_2])
+      end
+    end
+  end
+
+  describe '#get_opponent_possible_moves' do
+    context 'when the piece is white and there are 3 black pieces on the board' do
+      let(:white_piece) { instance_double(ChessPiece, color: 'white', position: [3, 2]) }
+      let(:black_rook) { instance_double(ChessRook, color: 'black', position: [3, 4]) }
+      let(:black_knight) { instance_double(ChessKnight, color: 'black', position: [5, 6]) }
+
+      before do
+        chess_board.instance_variable_set(:@pieces, [white_piece, black_rook, black_knight])
+        allow(chess_board).to receive(:select_opponent_pieces).and_return([black_rook, black_knight])
+        allow(black_rook).to receive(:class).and_return(ChessRook)
+        allow(black_knight).to receive(:class).and_return(ChessKnight)
+      end
+
+      it 'returns all the possible moves of the black pieces' do
+        result = chess_board.get_opponent_possible_moves(white_piece)
+        expect(result.length).to eq(18)
+      end
+    end
+  end
+
+  describe '#is_check?' do
+    context 'when '
   end
 end

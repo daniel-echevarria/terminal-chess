@@ -8,4 +8,4 @@ board = ChessBoard.new
 
 chess_game = ChessGame.new(board, player_1, player_2)
 
-chess_game.play_round
+chess_game.play

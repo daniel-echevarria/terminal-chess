@@ -14,16 +14,7 @@ class ChessGame
     @player_2 = player_2
   end
 
-  def play_move(player)
-    start_position = select_piece_input(player)
-    piece = @board.select_piece_at(start_position)
-    to_position = move_piece_input(piece)
-    @board.move_piece(piece, to_position)
-    @board.clean_cell(start_position)
-  end
-
-
-  def play_round
+  def play
     players = [@player_1, @player_2]
     until game_over?
       @board.update_board
@@ -34,6 +25,14 @@ class ChessGame
   end
 
   def game_over?
+  end
+
+  def play_move(player)
+    start_position = select_piece_input(player)
+    piece = @board.select_piece_at(start_position)
+    to_position = move_piece_input(piece)
+    @board.move_piece(piece, to_position)
+    @board.clean_cell(start_position)
   end
 
   def select_piece_input(player)

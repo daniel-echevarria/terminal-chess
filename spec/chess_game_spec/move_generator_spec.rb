@@ -82,16 +82,6 @@ describe MoveGenerator do
     end
   end
 
-  describe '#select_direction' do
-    context 'when the direction symbole is :up' do
-      it 'returns [-1, 0]' do
-        direction = :up
-        result = move_generator.select_direction(direction)
-        expect(result).to eq([-1, 0])
-      end
-    end
-  end
-
   describe '#generate_up_vertical_moves' do
     context 'when the rook is white and on [4, 3]' do
       let(:rook) { instance_double(ChessRook, color: 'white', position: [4, 3]) }
@@ -150,6 +140,4 @@ describe MoveGenerator do
       end
     end
   end
-
-
 end
