@@ -74,12 +74,14 @@ class ChessBoard
 
   def display_board
     i = 8
+    p "   #{('a'..'h').to_a.join('   ')}  "
+    puts '   -------------------------------'
     @board.each do |row|
-      puts " #{i}  #{row.join(' | ')} "
+      puts " #{i}  #{row.join(' | ')}  #{i}"
       puts '   -------------------------------'
       i -= 1
     end
-    p "   #{('a'..'h').to_a.join('   ')}"
+    p "   #{('a'..'h').to_a.join('   ')}  "
     puts
   end
 

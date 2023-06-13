@@ -28,6 +28,20 @@ class ChessGame
   def game_over?
   end
 
+  # make a ordered list of the moves
+
+  # simulate move
+  # given a possible move
+  # return a copy of the board pieces after that move is make
+
+
+  # If after a move a player is check that move is invalid
+  # Checkmate algorithm
+  # Given a player and a board with pieces
+  # get all the possible moves this player could make
+  # for all the possibles moves check the hypotetical board state after that move
+  # if all of the hypotetical board states
+
   def is_player_check?(player)
     player_king = select_player_king(player)
     @board.is_check?(player_king)
