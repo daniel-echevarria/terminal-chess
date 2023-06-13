@@ -2,7 +2,7 @@ require_relative '../../lib/chess_game/chess_game.rb'
 require_relative '../../lib/chess_game/chess_game_player.rb'
 require_relative '../../lib/chess_game/chess_game_board.rb'
 require_relative '../../lib/chess_pieces/chess_pawn.rb'
-require_relative '../../lib/chess_pieces/chess_tower.rb'
+require_relative '../../lib/chess_pieces/chess_rook.rb'
 
 describe ChessGame do
   let(:board) { double('board') }
@@ -11,7 +11,6 @@ describe ChessGame do
   subject(:game) { described_class.new(board, player_1, player_2) }
 
   describe "#select_piece_input" do
-
     context 'when player inputs a valid position' do
 
       before do
@@ -53,7 +52,7 @@ describe ChessGame do
       before do
         pick = 'a2'
         allow(game).to receive(:translate_chess_to_array).with(pick).and_return([6, 0])
-        allow(game).to receive(:select_piece_at).with([6, 0]).and_return(whitepawn)
+        allow(board).to receive(:select_piece_at).with([6, 0]).and_return(whitepawn)
         allow(whitepawn).to receive(:color).and_return('white')
       end
 
@@ -70,7 +69,7 @@ describe ChessGame do
       before do
         pick = 'a7'
         allow(game).to receive(:translate_chess_to_array).with(pick).and_return([1, 0])
-        allow(game).to receive(:select_piece_at).with([1, 0]).and_return(blackpawn)
+        allow(board).to receive(:select_piece_at).with([1, 0]).and_return(blackpawn)
         allow(blackpawn).to receive(:color).and_return('black')
       end
 
@@ -117,32 +116,6 @@ describe ChessGame do
     end
   end
 
-  describe '#valid_move?' do
-    let(:whitepawn) { instance_double(ChessPawn, position: [6, 0])}
-
-    before do
-      allow(game).to receive(:get_potential_moves).with(whitepawn).and_return([[5, 0], [4, 0]])
-    end
-
-    context 'when the move is valid' do
-      it 'returns true' do
-        allow(game).to receive(:translate_chess_to_array).with('a3').and_return([5, 0])
-        to_position = 'a3'
-        result = game.valid_move?(whitepawn, to_position)
-        expect(result).to be(true)
-      end
-    end
-
-    context 'when the move is not valid' do
-      it 'returns false' do
-        allow(game).to receive(:translate_chess_to_array).with('c3').and_return([5, 2])
-        to_position = 'c3'
-        result = game.valid_move?(whitepawn, to_position)
-        expect(result).to be(false)
-      end
-    end
-  end
-
   describe '#translate_chess_to_array' do
     context 'when user inputs a2' do
       it 'returns [6, 0]' do
@@ -169,297 +142,61 @@ describe ChessGame do
     end
   end
 
-  describe '#select_piece_at' do
-    let(:pawn_1) { instance_double(ChessPawn, position: [6, 0]) }
-    let(:pawn_2) { instance_double(ChessPawn, position: [2, 3]) }
-    let(:pawn_3) { instance_double(ChessPawn, position: [5, 0]) }
+  describe 'is_player_check?' do
+    let(:white_player) { instance_double(ChessPlayer, color: 'white') }
+    let(:white_king) { instance_double(ChessKing, color: 'white') }
 
-    before do
-      game.instance_variable_set(:@pieces, [pawn_1, pawn_2, pawn_3])
-    end
+    context 'when the player is check' do
 
-    context 'when there is a piece on the selected position' do
-      context 'when selected position is [6, 0]' do
-        it 'returns the piece on [6, 0]' do
-          position = [6, 0]
-          result = game.select_piece_at(position)
-          expect(result).to eq(pawn_1)
-        end
+      before do
+        allow(game).to receive(:select_player_king).with(white_player).and_return(white_king)
+        allow(board).to receive(:is_check?).with(white_king).and_return(true)
       end
 
-      context 'when selected position is [2, 3]' do
-        it 'returns the piece on [2, 3]' do
-          position = [2, 3]
-          result = game.select_piece_at(position)
-          expect(result).to eq(pawn_2)
-        end
-      end
-    end
-
-    context 'when there is no piece on the selected position' do
-      context 'when selected position is [4, 2]' do
-        it 'returns nil' do
-          position = [4, 2]
-          result = game.select_piece_at(position)
-          expect(result).to eq(nil)
-        end
-      end
-    end
-  end
-
-  describe '#has_oponent' do
-    let(:whitepawn) { instance_double(ChessPawn, color: 'white') }
-    let(:blackpawn) { instance_double(ChessPawn, color: 'black') }
-
-    context 'when the square has an opponent on it' do
       it 'returns true' do
-        square = 'c7'
-        position = game.translate_chess_to_array(square)
-        result = game.has_oponent(whitepawn, position)
-        expect(result).to eq(true)
-      end
-    end
-
-    context 'when the square has no opponent on it' do
-      context 'when the square is empty' do
-        it 'returns false' do
-          square = 'd4'
-          position = game.translate_chess_to_array(square)
-          result = game.has_oponent(whitepawn, position)
-          expect(result).to eq(false)
-        end
-      end
-
-      context 'when the square has a same color piece' do
-        let(:whitepawn_2) { instance_double(ChessPawn, color: 'white', position: [4, 3]) }
-
-        before do
-          game.pieces << whitepawn_2
-        end
-
-        it 'returns false' do
-          square = 'd4'
-          position = game.translate_chess_to_array(square)
-          result = game.has_oponent(whitepawn, position)
-          expect(result).to eq(false)
-        end
-      end
-    end
-  end
-
-  describe '#has_ally' do
-    let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [6, 0]) }
-    let(:whitepawn_2) { instance_double(ChessPawn, color: 'white', position: [5, 0]) }
-    let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [4, 0]) }
-
-    before do
-      position = [5, 0]
-      allow(game).to receive(:select_piece_at).with(position).and_return(whitepawn_2)
-    end
-
-    context 'when there is an ally at the position' do
-      it 'returns true' do
-        position = [5, 0]
-        result = game.has_ally(whitepawn, position)
+        result = game.is_player_check?(white_player)
         expect(result).to be(true)
       end
     end
+
+    context 'when the player is not check' do
+
+      before do
+        allow(game).to receive(:select_player_king).with(white_player).and_return(white_king)
+        allow(board).to receive(:is_check?).with(white_king).and_return(false)
+      end
+
+      it 'returns false' do
+        result = game.is_player_check?(white_player)
+        expect(result).to be(false)
+      end
+    end
   end
 
-  describe '#special_case_pawn_moves' do
-    context 'when there is an oponent in the secondary diagonal next square' do
-      let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [6, 0])}
-      let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [5, 1])}
+  describe 'select_player_king' do
+    let(:white_player) { instance_double(ChessPlayer, color: 'white') }
+    let(:black_player) { instance_double(ChessPlayer, color: 'black') }
 
-      before do
-        game.pieces << blackpawn
-      end
+    let(:white_king) { instance_double(ChessKing, color: 'white') }
+    let(:black_king) { instance_double(ChessKing, color: 'black') }
 
-      it 'returns the move' do
-        result = game.special_case_pawn_moves(whitepawn)
-        expect(result).to eq([[5, 1]])
+    before do
+      allow(board).to receive(:pieces).and_return([white_player, black_player, white_king, black_king])
+      allow(white_king).to receive(:is_a?).with(ChessKing).and_return(true)
+      allow(black_king).to receive(:is_a?).with(ChessKing).and_return(true)
+    end
+
+    context 'when the player is white' do
+      it 'returns the white king' do
+        result = game.select_player_king(white_player)
+        expect(result).to eq(white_king)
       end
     end
 
-    context 'when there is oponents on both diagonals' do
-      let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [1, 4]) }
-      let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [2, 3])}
-      let(:whitepawn_2) { instance_double(ChessPawn, color: 'white', position: [2, 5])}
-
-      before do
-        game.pieces << whitepawn
-        game.pieces << whitepawn_2
-      end
-
-      it 'returns both moves' do
-        result = game.special_case_pawn_moves(blackpawn)
-        expect(result).to include([2, 3],[2, 5])
-      end
-    end
-
-    context 'when ther is opponents in neither diagonal' do
-      let(:blackpawn) { instance_double(ChessPawn, color: 'black', position: [1, 4]) }
-
-      it 'returns an empty []' do
-        result = game.special_case_pawn_moves(blackpawn)
-        expect(result).to eq([])
-      end
-    end
-
-    describe '#snack_piece_at' do
-      context 'when a pieces gets eaten' do
-        let(:eaten_pawn) { instance_double(ChessPawn, color: 'black', position: [3, 3])}
-
-        before do
-          game.pieces << eaten_pawn
-        end
-
-        it 'removes the piece from the pieces' do
-          piece_position = [3, 3]
-          game.snack_piece_at(piece_position)
-          expect(game.pieces).not_to include(eaten_pawn)
-        end
-      end
-    end
-
-    describe '#remove_invalid_moves' do
-      context 'when there is an ally on one of the positions' do
-        let(:moving_pawn) { instance_double(ChessPawn, color: 'white', position: [3, 3]) }
-        let(:ally_pawn) { instance_double(ChessPawn, color: 'white', position: [2, 3]) }
-
-        before do
-          game.pieces << moving_pawn
-          game.pieces << ally_pawn
-          allow(moving_pawn).to receive(:potential_moves).and_return([2, 3])
-        end
-
-        it 'removes that position' do
-          moves = game.get_potential_moves(moving_pawn)
-          game.remove_invalid_moves(moving_pawn, moves)
-          expect(moves).not_to include([2, 3])
-        end
-      end
-    end
-
-    describe '#generate_up_vertical_moves' do
-      let(:tower) { instance_double(ChessTower, color: 'white', position: [4, 3]) }
-
-      context 'when the piece is a white tower on d4 ([4, 3])' do
-        it 'returns [[3, 3], [2, 3], [1, 3]]' do
-          result = game.generate_up_vertical_moves(tower)
-          expectation = [[3, 3], [2, 3], [1, 3]]
-          expect(result).to eq(expectation)
-        end
-      end
-
-      context 'when the piece is a black tower on a3 [5, 0]' do
-        let(:black_tower) { instance_double(ChessTower, color: 'black', position: [5, 0])}
-
-        it 'returns [[4, 0], [3, 0], [2, 0]]' do
-          result = game.generate_up_vertical_moves(black_tower)
-          expectation = [[4, 0], [3, 0], [2, 0]]
-          expect(result).to eq(expectation)
-        end
-      end
-    end
-
-    describe '#generate_down_vertical_moves' do
-      let(:tower) { instance_double(ChessTower, color: 'white', position: [3, 2]) }
-
-      context 'when the piece is a white tower on c5 ([3, 2])' do
-        it 'returns [[4, 2], [5, 2]]' do
-          result = game.generate_down_vertical_moves(tower)
-          expectation = [[4, 2], [5, 2]]
-          expect(result).to eq(expectation)
-        end
-      end
-
-      context 'when the piece is a black tower on a3 [5, 0]' do
-        let(:black_tower) { instance_double(ChessTower, color: 'black', position: [5, 0])}
-
-        it 'returns [[6, 0]]' do
-          result = game.generate_down_vertical_moves(black_tower)
-          expectation = [[6, 0]]
-          expect(result).to eq(expectation)
-        end
-      end
-    end
-
-    describe '#generate_left_horizontal_moves' do
-      let(:white_tower) { instance_double(ChessTower, color: 'white', position: [4, 4]) }
-      let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [4, 0]) }
-
-      before do
-        game.pieces << whitepawn
-      end
-
-      context 'when the piece on [4, 4] (e4) and there is a ally on [4, 0]' do
-        it 'returns [[4, 3], [4, 2], [4, 1]]' do
-          result = game.generate_left_horizontal_moves(white_tower)
-          expectation = [[4, 3], [4, 2], [4, 1]]
-          expect(result).to eq(expectation)
-        end
-      end
-    end
-
-    describe '#generate_right_horizontal_moves' do
-      context 'when the tower is on [4, 3] and a pawn on [4, 7]' do
-        let(:white_tower) { instance_double(ChessTower, color: 'white', position: [4, 3]) }
-        let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [4, 7]) }
-
-        before do
-          game.pieces << whitepawn
-        end
-
-        it 'returns the position until then aka [[4, 4], [4, 5], [4, 6]]' do
-          result = game.generate_right_horizontal_moves(white_tower)
-          expectation = [[4, 4], [4, 5], [4, 6]]
-          expect(result).to eq(expectation)
-        end
-      end
-    end
-
-    describe '#is_out_of_board?' do
-      context 'when the position is out of board' do
-        context 'when the position is too far up' do
-          it 'returns true' do
-            position = [-1, 5]
-            result = game.is_out_of_board?(position)
-            expect(result).to eq(true)
-          end
-        end
-
-        context 'when the position is too far down' do
-          it 'returns true ' do
-            position = [8, 5]
-            result = game.is_out_of_board?(position)
-            expect(result).to eq(true)
-          end
-        end
-
-        context 'when the positon is too far left' do
-          it 'returns true' do
-            position = [3, -1]
-            result = game.is_out_of_board?(position)
-            expect(result).to eq(true)
-          end
-        end
-
-        context 'when the position is too far right' do
-          it 'returns true' do
-            position = [3, 8]
-            result = game.is_out_of_board?(position)
-            expect(result).to eq(true)
-          end
-        end
-
-        context 'when the position is not out of board' do
-          it 'returns false' do
-            position = [3, 7]
-            result = game.is_out_of_board?(position)
-            expect(result).to eq(false)
-          end
-        end
+    context 'when player is black' do
+      it 'returns the black king' do
+        result = game.select_player_king(black_king)
+        expect(result).to eq(black_king)
       end
     end
   end

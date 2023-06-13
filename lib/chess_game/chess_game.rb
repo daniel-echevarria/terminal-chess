@@ -19,12 +19,22 @@ class ChessGame
     until game_over?
       @board.update_board
       current_player = players.shift
+      display_check_message(current_player) if is_player_check?(current_player)
       play_move(current_player)
       players << current_player
     end
   end
 
   def game_over?
+  end
+
+  def is_player_check?(player)
+    player_king = select_player_king(player)
+    @board.is_check?(player_king)
+  end
+
+  def select_player_king(player)
+    king = @board.pieces.find { |piece| piece.is_a?(ChessKing) && piece.color == player.color }
   end
 
   def play_move(player)
@@ -80,10 +90,17 @@ class ChessGame
   end
 
   def select_piece_message(player)
-    puts "Hey #{player.name} you are playing with #{player.color} pieces, select the piece you would like to move by typing it\'s position"
+    puts <<~HEREDOC
+      Hey #{player.name} you are playing with #{player.color} pieces,
+      select the piece you would like to move by typing it\'s position
+    HEREDOC
   end
 
   def move_piece_message
     puts 'Type the square you want to move the piece to'
+  end
+
+  def display_check_message(player)
+    puts "#{player.name} you are in check!"
   end
 end

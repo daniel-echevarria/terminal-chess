@@ -182,6 +182,20 @@ describe ChessBoard do
   end
 
   describe '#is_check?' do
-    context 'when '
+    context 'when some of the opponents possible moves include the kings position' do
+      let(:white_king) { instance_double(ChessKing, color: 'white', position: [4, 2])}
+      let(:black_rook) { instance_double(ChessRook, color: 'black', position: [4, 6])}
+
+      before do
+        # chess_board.instance_variable_set(:@pieces, [white_king, black_rook])
+        rook_possibles = [[4, 1], [3, 2], [4, 2]]
+        allow(chess_board).to receive(:get_opponent_possible_moves).with(white_king).and_return(rook_possibles)
+      end
+
+      it 'returns true' do
+        result = chess_board.is_check?(white_king)
+        expect(result).to eq(true)
+      end
+    end
   end
 end

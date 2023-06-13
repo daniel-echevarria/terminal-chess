@@ -27,12 +27,12 @@ class ChessBoard
     },
     queens: {
       constructor: ChessQueen,
-     positions: [[0, 4], [7, 3]],
+     positions: [[0, 3], [7, 3]],
       unicodes: ["\u265B", "\u2655"]
     },
     kings: {
       constructor: ChessKing,
-      positions: [[0, 3], [7, 4]],
+      positions: [[0, 4], [7, 4]],
       unicodes: ["\u265A", "\u2654"]
     },
     pawns: {
@@ -80,6 +80,7 @@ class ChessBoard
       i -= 1
     end
     p "   #{('a'..'h').to_a.join('   ')}"
+    puts
   end
 
   def update_board
@@ -140,6 +141,8 @@ class ChessBoard
   end
 
   def is_check?(king)
+    opp_possibles_moves = get_opponent_possible_moves(king)
+    opp_possibles_moves.include?(king.position)
   end
   # Inital Pieces Setup
 
