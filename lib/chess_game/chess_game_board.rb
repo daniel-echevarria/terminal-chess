@@ -63,27 +63,33 @@ class ChessBoard
     @pieces.find { |piece| piece.position == position }
   end
 
-  #  given a move, check if there is an opponent on the future position
-  #  if there is, record that piece, with the original position in a snack symbole
   def move_piece(piece, future_position)
-    if has_oponent?(piece, future_position)
-      snacked = { piece: snack_piece_at(future_position), from: future_positionj}
-    end
+    snacked_piece = snack_piece_at(future_position) if has_oponent?(piece, future_position)
+    snack_record = create_snack_record(snacked_piece, future_position) if snacked_piece
 
-    original_postion = piece.position
+    move_record = create_move_record(piece, piece.position, future_position, snack_record)
+    @move_history << move_record
     piece.position = future_position
-    @move_history << { piece: piece, from: original_postion, to: future_position, snack: snacked }
+  end
+
+  def create_move_record(piece, previous, current, snack_record)
+    move_hash = { piece: piece, from: previous, to: current, snack: snack_record }
+  end
+
+  def create_snack_record(piece, previous)
+    snack_hash = { piece: piece, from: previous}
   end
 
   def undo_last_move
     last_move = @move_history.pop
+
     if last_move[:snack]
-      snacked_piece = last_move[:snack[:piece]]
-      snacked_piece.position = last_move[:snack[:from]]
+      snacked_piece = last_move[:snack][:piece]
+      snacked_piece.position = last_move[:snack][:from]
     end
+
     piece = last_move[:piece]
-    previous_position = last_move[:from]
-    piece.position = previous_position
+    piece.position = last_move[:from]
   end
 
   def snack_piece_at(position)

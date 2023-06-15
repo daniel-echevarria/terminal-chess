@@ -21,7 +21,9 @@ class ChessGame
       current_player = players.shift
       display_check_message(current_player) if is_player_check?(current_player)
       play_move(current_player)
-      # undo_move_if_check
+      while is_player_check?(current_player)
+        out_of_check_loop(current_player)
+      end
       players << current_player
     end
   end
@@ -29,22 +31,11 @@ class ChessGame
   def game_over?
   end
 
-  # make a ordered list of the moves
-
-  # simulate move
-  # given a possible move
-
-  # is_check_after_move? algorithm
-  # given a piece and a move, check if the player who plays is check after that move
-
-
-
-  # If after a move a player is check that move is invalid
-  # Checkmate algorithm
-  # Given a player and a board with pieces
-  # get all the possible moves this player could make
-  # for all the possibles moves check the hypotetical board state after that move
-  # if all of the hypotetical board states
+  def out_of_check_loop(current_player)
+    @board.undo_last_move
+    puts "#{current_player} You have to keep your king out of check!"
+    play_move(current_player)
+  end
 
   def is_player_check?(player)
     player_king = select_player_king(player)
