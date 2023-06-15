@@ -16,15 +16,20 @@ class ChessGame
 
   def play
     players = [@player_1, @player_2]
+
     until game_over?
-      @board.update_board
       current_player = players.shift
-      display_check_message(current_player) if is_player_check?(current_player)
-      play_move(current_player)
-      while is_player_check?(current_player)
-        out_of_check_loop(current_player)
-      end
+      play_turn(current_player)
       players << current_player
+    end
+  end
+
+  def play_turn(current_player)
+    @board.update_board
+    display_check_message(current_player) if is_player_check?(current_player)
+    play_move(current_player)
+    while is_player_check?(current_player)
+      out_of_check_loop(current_player)
     end
   end
 
