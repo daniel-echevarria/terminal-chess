@@ -140,4 +140,29 @@ describe MoveGenerator do
       end
     end
   end
+
+  describe '#is_ckeck_after_move?' do
+    let(:white_king) { instance_double(ChessKing, color: 'white', position: [3, 3]) }
+    let(:black_rook) { instance_double(ChessRook, color: 'black', position: [4, 2])}
+
+    context 'when the player is check after the move' do
+
+      before do
+        move = [3, 2]
+        allow(board).to receive(:pieces).and_return([white_king, black_rook])
+        allow(board).to receive(:is_check?).and_return(true)
+      end
+
+      it 'returns true' do
+        move = [3, 2]
+        result = move_generator.is_check_after_move?(white_king, move)
+        expect(result).to be(true)
+      end
+    end
+
+    context 'when the player is not check after the move' do
+      it 'returns false' do
+      end
+    end
+  end
 end

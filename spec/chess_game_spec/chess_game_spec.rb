@@ -142,7 +142,7 @@ describe ChessGame do
     end
   end
 
-  describe 'is_player_check?' do
+  describe '#is_player_check?' do
     let(:white_player) { instance_double(ChessPlayer, color: 'white') }
     let(:white_king) { instance_double(ChessKing, color: 'white') }
 
@@ -173,7 +173,7 @@ describe ChessGame do
     end
   end
 
-  describe 'select_player_king' do
+  describe '#select_player_king' do
     let(:white_player) { instance_double(ChessPlayer, color: 'white') }
     let(:black_player) { instance_double(ChessPlayer, color: 'black') }
 

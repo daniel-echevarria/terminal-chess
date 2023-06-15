@@ -10,11 +10,6 @@ class MoveGenerator
     @board = board
   end
 
-  def move_piece(piece, position)
-    @board.snack_piece_at(position) if @board.has_oponent?(piece, position)
-    piece.position = position
-  end
-
   def invalid_move?(position)
     @board.has_ally?(@piece, position) || @board.is_out_of_board?(position)
   end

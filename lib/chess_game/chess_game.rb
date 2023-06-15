@@ -21,6 +21,7 @@ class ChessGame
       current_player = players.shift
       display_check_message(current_player) if is_player_check?(current_player)
       play_move(current_player)
+      # undo_move_if_check
       players << current_player
     end
   end
@@ -32,7 +33,10 @@ class ChessGame
 
   # simulate move
   # given a possible move
-  # return a copy of the board pieces after that move is make
+
+  # is_check_after_move? algorithm
+  # given a piece and a move, check if the player who plays is check after that move
+
 
 
   # If after a move a player is check that move is invalid
