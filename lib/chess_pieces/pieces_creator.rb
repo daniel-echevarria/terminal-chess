@@ -40,5 +40,38 @@ class ChessPiecesCreator
     }
   }
 
+  attr_accessor :pieces
 
+  def initialize
+    @pieces = create_all_pieces
+  end
+
+  def create_one_type_of_pieces(hash)
+    constructor = hash[:constructor]
+    positions = hash[:positions]
+    unicodes = hash[:unicodes]
+
+    pieces = positions.map do |pos|
+      color = assign_piece_color(pos)
+      unicode = assign_piece_unicode(color, unicodes)
+      constructor.new(pos, color, unicode)
+    end
+  end
+
+  def assign_piece_color(position)
+    row = position[0]
+    row < 3 ? 'black' : 'white'
+  end
+
+  def assign_piece_unicode(color, unicodes)
+    color == 'white' ? unicodes[0] : unicodes[1]
+  end
+
+  def create_all_pieces
+    pieces = []
+    MAJOR_PIECES_INITIAL_SETUP.values.each do |type|
+      pieces << create_one_type_of_pieces(type)
+    end
+    pieces.flatten(1)
+  end
 end
