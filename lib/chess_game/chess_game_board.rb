@@ -9,22 +9,17 @@ class ChessBoard
   def initialize
     @board = create_board
     @pieces = get_pieces
+    @move_history = []
   end
-
-  # Board Related Methods
 
   def create_board
     Array.new(8) { Array.new(8, " ") }
   end
 
-  def get_pieces
-    piece_creator = ChessPiecesCreator.new
-    piece_creator.pieces
-  end
-
   def reset_board
     @board = create_board
     @pieces = get_pieces
+    @move_history = []
   end
 
   def populate_board(pieces)
@@ -57,13 +52,24 @@ class ChessBoard
     display_board
   end
 
+  # Pieces Related Methods
+
+  def get_pieces
+    piece_creator = ChessPiecesCreator.new
+    piece_creator.pieces
+  end
+
   def select_piece_at(position)
     @pieces.find { |piece| piece.position == position }
   end
 
-  def move_piece(piece, position)
-    snack_piece_at(position) if has_oponent?(piece, position)
-    piece.position = position
+  def move_piece(piece, future_position)
+    snack_piece_at(future_position) if has_oponent?(piece, future_position)
+    original_postion = piece.position
+    piece.position = future_position
+    move_record = { piece: piece, from: original_postion, to: future_position}
+    @move_history << move_record
+    p @move_history
   end
 
   def snack_piece_at(position)
