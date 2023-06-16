@@ -28,6 +28,16 @@ class ChessGame
     end
   end
 
+  def play_turn(player)
+    display_check_message(player) if is_player_check?(player)
+    play_move(player)
+    while is_player_check?(player)
+      out_of_check_loop(player)
+    end
+
+    @board.update_board
+  end
+
   def game_over?
     @check_mate || @game_is_draw
   end
@@ -36,29 +46,17 @@ class ChessGame
     is_player_check?(player) ? handle_chechmate(player) : handle_draw
   end
 
-  def play_turn(current_player)
-
-    display_check_message(current_player) if is_player_check?(current_player)
-    play_move(current_player)
-
-    while is_player_check?(current_player)
-      out_of_check_loop(current_player)
-    end
-
-    @board.update_board
-  end
-
   def is_player_check?(player)
     player_king = select_player_king(player)
     @board.is_check?(player_king)
   end
 
   def play_move(player)
-    start_position = select_piece_input(player)
-    piece = @board.select_piece_at(start_position)
+    from_position = select_piece_input(player)
+    piece = @board.select_piece_at(from_position)
     to_position = move_piece_input(piece)
     @board.move_piece(piece, to_position)
-    @board.clean_cell(start_position)
+    @board.clean_cell(from_position)
   end
 
   def handle_draw

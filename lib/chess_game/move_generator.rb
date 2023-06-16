@@ -3,8 +3,6 @@ require_relative '../../lib/chess_game/chess_game_move_module.rb'
 class MoveGenerator
   include MovePiece
 
-  attr_accessor :pieces
-
   def initialize(piece, board)
     @piece = piece
     @board = board
