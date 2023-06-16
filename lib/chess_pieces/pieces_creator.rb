@@ -60,11 +60,11 @@ class ChessPiecesCreator
 
   def assign_piece_color(position)
     row = position[0]
-    row < 3 ? 'black' : 'white'
+    row < 3 ? :black : :white
   end
 
   def assign_piece_unicode(color, unicodes)
-    color == 'white' ? unicodes[0] : unicodes[1]
+    color ==  :white ? unicodes[0] : unicodes[1]
   end
 
   def create_all_pieces

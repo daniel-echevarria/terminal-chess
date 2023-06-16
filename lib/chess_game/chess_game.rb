@@ -12,6 +12,7 @@ class ChessGame
     @board = board
     @player_1 = player_1
     @player_2 = player_2
+    @check_mate = nil
   end
 
   def play
@@ -21,19 +22,22 @@ class ChessGame
       play_turn(current_player)
       players << current_player
     end
-    puts 'game is over !! somebody is check mate!!'
   end
 
   def game_over?
-
+    @check_mate
   end
 
   def play_turn(current_player)
     @board.update_board
-    display_check_message(current_player) if is_player_check?(current_player)
+    display_check_message(current_player) if is_player_check?(current_player) unless is_player_check_mate?(current_player)
+    if is_player_check_mate?(current_player)
+      @check_mate = current_player
+      display_check_mate_message(current_player)
+      return
+    end
     play_move(current_player)
     while is_player_check?(current_player)
-      break if is_player_check_mate?(current_player)
       out_of_check_loop(current_player)
     end
   end
@@ -158,5 +162,9 @@ class ChessGame
 
   def display_check_message(player)
     puts "#{player.name} you are in check!"
+  end
+
+  def display_check_mate_message(player)
+    puts "Game is over, #{player.name} you are check_mate!"
   end
 end

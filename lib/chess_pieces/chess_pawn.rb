@@ -5,7 +5,7 @@ class ChessPawn < ChessPiece
 
   def on_initial_position?
     current_row = @position[0]
-    initial_row = @color == 'white' ? 6 : 1
+    initial_row = @color == :white ? 6 : 1
 
     current_row == initial_row
   end

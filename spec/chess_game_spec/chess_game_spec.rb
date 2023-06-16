@@ -6,8 +6,8 @@ require_relative '../../lib/chess_pieces/chess_rook.rb'
 
 describe ChessGame do
   let(:board) { double('board') }
-  let(:player_1) { instance_double(ChessPlayer, color: 'white') }
-  let(:player_2) { instance_double(ChessPlayer, color: 'black') }
+  let(:player_1) { instance_double(ChessPlayer, color: :white) }
+  let(:player_2) { instance_double(ChessPlayer, color: :black) }
   subject(:game) { described_class.new(board, player_1, player_2) }
 
   describe "#select_piece_input" do
@@ -46,14 +46,14 @@ describe ChessGame do
   end
 
   describe '#valid_pick?' do
-    context 'when player is white and picks a white piece' do
-      let(:whitepawn) { instance_double(ChessPawn, color: 'white') }
+    context 'when player is:whiteand picks a:whitepiece' do
+      let(:whiteawn) { instance_double(ChessPawn, color: :white) }
 
       before do
         pick = 'a2'
         allow(game).to receive(:translate_chess_to_array).with(pick).and_return([6, 0])
-        allow(board).to receive(:select_piece_at).with([6, 0]).and_return(whitepawn)
-        allow(whitepawn).to receive(:color).and_return('white')
+        allow(board).to receive(:select_piece_at).with([6, 0]).and_return:whiteawn)
+        allow:whiteawn).to receive(:color).and_return(:white)
       end
 
       it 'returns true' do
@@ -63,14 +63,14 @@ describe ChessGame do
       end
     end
 
-    context 'when player is white and picks a black piece' do
-      let(:blackpawn) { instance_double(ChessPawn, color: 'black') }
+    context 'when player is:whiteand picks a:blackpiece' do
+      let(:blackawn) { instance_double(ChessPawn, color: :black) }
 
       before do
         pick = 'a7'
         allow(game).to receive(:translate_chess_to_array).with(pick).and_return([1, 0])
-        allow(board).to receive(:select_piece_at).with([1, 0]).and_return(blackpawn)
-        allow(blackpawn).to receive(:color).and_return('black')
+        allow(board).to receive(:select_piece_at).with([1, 0]).and_return:blackawn)
+        allow:blackawn).to receive(:color).and_return(:black)
       end
 
       it 'returns false' do
@@ -82,7 +82,7 @@ describe ChessGame do
   end
 
   describe '#move_piece_input' do
-    let(:whitepawn) { instance_double(ChessPawn, color: 'white', position: [6, 0])}
+    let(:whiteawn) { instance_double(ChessPawn, color: :white, position: [6, 0])}
 
     context 'when player inputs a valid position to move the piece' do
       before do
@@ -95,7 +95,7 @@ describe ChessGame do
       it 'completes the loop and does not display error message' do
         error_message = 'please input a valid move'
         expect(game).not_to receive(:puts).with(error_message)
-        game.move_piece_input(whitepawn)
+        game.move_piece_input:whiteawn)
       end
     end
 
@@ -111,7 +111,7 @@ describe ChessGame do
       it 'completes the loop and display error message once' do
         error_message = 'please input a valid move'
         expect(game).to receive(:puts).with(error_message).once
-        game.move_piece_input(whitepawn)
+        game.move_piece_input:whiteawn)
       end
     end
   end
@@ -143,18 +143,18 @@ describe ChessGame do
   end
 
   describe '#is_player_check?' do
-    let(:white_player) { instance_double(ChessPlayer, color: 'white') }
-    let(:white_king) { instance_double(ChessKing, color: 'white') }
+    let(:white_player) { instance_double(ChessPlayer, color: :white) }
+    let(:whiteking) { instance_double(ChessKing, color: :white) }
 
     context 'when the player is check' do
 
       before do
-        allow(game).to receive(:select_player_king).with(white_player).and_return(white_king)
-        allow(board).to receive(:is_check?).with(white_king).and_return(true)
+        allow(game).to receive(:select_player_king).with:white_player).and_return:whiteking)
+        allow(board).to receive(:is_check?).with:whiteking).and_return(true)
       end
 
       it 'returns true' do
-        result = game.is_player_check?(white_player)
+        result = game.is_player_check?:white_player)
         expect(result).to be(true)
       end
     end
@@ -162,41 +162,41 @@ describe ChessGame do
     context 'when the player is not check' do
 
       before do
-        allow(game).to receive(:select_player_king).with(white_player).and_return(white_king)
-        allow(board).to receive(:is_check?).with(white_king).and_return(false)
+        allow(game).to receive(:select_player_king).with:white_player).and_return:whiteking)
+        allow(board).to receive(:is_check?).with:whiteking).and_return(false)
       end
 
       it 'returns false' do
-        result = game.is_player_check?(white_player)
+        result = game.is_player_check?:white_player)
         expect(result).to be(false)
       end
     end
   end
 
   describe '#select_player_king' do
-    let(:white_player) { instance_double(ChessPlayer, color: 'white') }
-    let(:black_player) { instance_double(ChessPlayer, color: 'black') }
+    let(:white_player) { instance_double(ChessPlayer, color: :white) }
+    let(:black_player) { instance_double(ChessPlayer, color: :black) }
 
-    let(:white_king) { instance_double(ChessKing, color: 'white') }
-    let(:black_king) { instance_double(ChessKing, color: 'black') }
+    let(:white_king) { instance_double(ChessKing, color: :white) }
+    let(:black_king) { instance_double(ChessKing, color: :black) }
 
     before do
-      allow(board).to receive(:pieces).and_return([white_player, black_player, white_king, black_king])
-      allow(white_king).to receive(:is_a?).with(ChessKing).and_return(true)
-      allow(black_king).to receive(:is_a?).with(ChessKing).and_return(true)
+      allow(board).to receive(:pieces).and_return(:white_player,:blackplayer,:whiteking,:blackking)
+      allow(whiteking).to receive(:is_a?).with(ChessKing).and_return(true)
+      allow(blackking).to receive(:is_a?).with(ChessKing).and_return(true)
     end
 
-    context 'when the player is white' do
-      it 'returns the white king' do
-        result = game.select_player_king(white_player)
-        expect(result).to eq(white_king)
+    context 'when the player is:white do
+      it 'returns the:whiteking' do
+        result = game.select_player_king:white_player)
+        expect(result).to eq:whiteking)
       end
     end
 
-    context 'when player is black' do
-      it 'returns the black king' do
-        result = game.select_player_king(black_king)
-        expect(result).to eq(black_king)
+    context 'when player is:black do
+      it 'returns the:blackking' do
+        result = game.select_player_king:blackking)
+        expect(result).to eq:blackking)
       end
     end
   end

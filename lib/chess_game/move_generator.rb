@@ -36,7 +36,7 @@ class MoveGenerator
 
   def generate_pawn_moves
     possible_moves = []
-    direction = @piece.color == 'white' ? 1 : -1
+    direction = @piece.color == :white ? 1 : -1
     position = @piece.position
 
     main_diag = move_main_diagonal(position, direction)

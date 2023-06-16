@@ -56,7 +56,7 @@ describe ChessBoard do
   end
 
   describe '#select_piece_at' do
-    let(:white_pawn) { instance_double(ChessPawn, color: 'white', position: [0, 6]) }
+    let(:white_pawn) { instance_double(ChessPawn, color: :white, position: [0, 6]) }
 
     before do
       chess_board.instance_variable_set(:@pieces, [white_pawn])
@@ -107,7 +107,7 @@ describe ChessBoard do
       it 'returns black' do
         position = [0, 1]
         result = chess_board.assign_piece_color(position)
-        expect(result).to eq('black')
+        expect(result).to eq(:black)
       end
     end
 
@@ -115,7 +115,7 @@ describe ChessBoard do
       it 'returns white' do
         position = [6, 0]
         result = chess_board.assign_piece_color(position)
-        expect(result).to eq('white')
+        expect(result).to eq(:white)
       end
     end
   end
@@ -125,7 +125,7 @@ describe ChessBoard do
 
       it 'assigns the first unicode in the unicodes array' do
         unicodes = ["\u265C", "\u2656"]
-        color = 'white'
+        color = :white
         result = chess_board.assign_piece_unicode(color, unicodes)
         expect(result).to eq("\u265C")
       end
@@ -135,7 +135,7 @@ describe ChessBoard do
 
       it 'assigns the first unicode in the unicodes array' do
         unicodes = ["\u265C", "\u2656"]
-        color = 'black'
+        color = :black
         result = chess_board.assign_piece_unicode(color, unicodes)
         expect(result).to eq("\u2656")
       end
@@ -143,10 +143,10 @@ describe ChessBoard do
   end
 
   describe '#select_opponent_pieces' do
-    let(:white_piece) { instance_double(ChessPiece, color: 'white') }
-    let(:white_piece_2) { instance_double(ChessPiece, color: 'white') }
-    let(:black_piece_one) { instance_double(ChessPiece, color: 'black') }
-    let(:black_piece_2) { instance_double(ChessPiece, color: 'black') }
+    let(:white_piece) { instance_double(ChessPiece, color: :white) }
+    let(:white_piece_2) { instance_double(ChessPiece, color: :white) }
+    let(:black_piece_one) { instance_double(ChessPiece, color: :black) }
+    let(:black_piece_2) { instance_double(ChessPiece, color: :black) }
 
     context 'when the piece is white and there are 2 black pieces and one other white piece' do
 
@@ -163,9 +163,9 @@ describe ChessBoard do
 
   describe '#get_opponent_possible_moves' do
     context 'when the piece is white and there are 3 black pieces on the board' do
-      let(:white_piece) { instance_double(ChessPiece, color: 'white', position: [3, 2]) }
-      let(:black_rook) { instance_double(ChessRook, color: 'black', position: [3, 4]) }
-      let(:black_knight) { instance_double(ChessKnight, color: 'black', position: [5, 6]) }
+      let(:white_piece) { instance_double(ChessPiece, color: :white, position: [3, 2]) }
+      let(:black_rook) { instance_double(ChessRook, color: :black, position: [3, 4]) }
+      let(:black_knight) { instance_double(ChessKnight, color: :black, position: [5, 6]) }
 
       before do
         chess_board.instance_variable_set(:@pieces, [white_piece, black_rook, black_knight])
@@ -183,8 +183,8 @@ describe ChessBoard do
 
   describe '#is_check?' do
     context 'when some of the opponents possible moves include the kings position' do
-      let(:white_king) { instance_double(ChessKing, color: 'white', position: [4, 2])}
-      let(:black_rook) { instance_double(ChessRook, color: 'black', position: [4, 6])}
+      let(:white_king) { instance_double(ChessKing, color: :white, position: [4, 2])}
+      let(:black_rook) { instance_double(ChessRook, color: :black, position: [4, 6])}
 
       before do
         # chess_board.instance_variable_set(:@pieces, [white_king, black_rook])

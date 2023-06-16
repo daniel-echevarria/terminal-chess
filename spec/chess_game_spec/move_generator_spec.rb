@@ -6,9 +6,9 @@ require_relative '../../lib/chess_game/chess_game_move_module'
 describe MoveGenerator do
   include MovePiece
 
-  let(:white_piece) { instance_double(ChessPiece, position: [4, 3], color: 'white') }
-  let(:white_ally) { instance_double(ChessPiece, position: [4, 4], color: 'white') }
-  let(:black_piece) { instance_double(ChessPiece, position: [3, 3], color: 'black') }
+  let(:white_piece) { instance_double(ChessPiece, position: [4, 3], color: :white) }
+  let(:white_ally) { instance_double(ChessPiece, position: [4, 4], color: :white) }
+  let(:black_piece) { instance_double(ChessPiece, position: [3, 3], color: :black) }
   let(:board) { instance_double(ChessBoard) }
   subject(:move_generator) { described_class.new(white_piece, board)}
 
@@ -18,7 +18,7 @@ describe MoveGenerator do
 
   describe '#generate_pawn_moves' do
     context 'when its a white pawn on [6, 1] and there are no opponents around'  do
-      let(:white_pawn) { instance_double(ChessPawn, color: 'white', position: [6, 1]) }
+      let(:white_pawn) { instance_double(ChessPawn, color: :white, position: [6, 1]) }
       let(:board) { instance_double(ChessBoard) }
       subject(:move_generator) { described_class.new(white_pawn, board)}
 
@@ -44,7 +44,7 @@ describe MoveGenerator do
 
   describe '#generate_moves' do
     context 'when the piece is a white rook on [4, 2]' do
-      let(:rook) { instance_double(ChessRook, color: 'white', position: [4, 2]) }
+      let(:rook) { instance_double(ChessRook, color: :white, position: [4, 2]) }
 
       context 'when the direction is up and there are no pieces on the way' do
 
@@ -64,7 +64,7 @@ describe MoveGenerator do
       end
 
       context 'when the direction is right and there is an ally on [4, 6]' do
-        let(:white_piece) { instance_double(ChessPiece, color: 'white', position: [4, 6])}
+        let(:white_piece) { instance_double(ChessPiece, color: :white, position: [4, 6])}
 
         before do
           allow(move_generator).to receive(:invalid_move?).and_return(false, false, false, true)
@@ -84,8 +84,8 @@ describe MoveGenerator do
 
   describe '#generate_up_vertical_moves' do
     context 'when the rook is white and on [4, 3]' do
-      let(:rook) { instance_double(ChessRook, color: 'white', position: [4, 3]) }
-      let(:white_piece) { instance_double(ChessPiece, color: 'white') }
+      let(:rook) { instance_double(ChessRook, color: :white, position: [4, 3]) }
+      let(:white_piece) { instance_double(ChessPiece, color: :white) }
       let(:board) { instance_double(ChessBoard) }
       let(:move_generator) { described_class.new(rook, board)}
 
@@ -120,7 +120,7 @@ describe MoveGenerator do
 
   describe '#generate_possible_moves' do
     context 'when the piece is a white pawn' do
-      let(:white_pawn) { instance_double(ChessPawn, color: 'white') }
+      let(:white_pawn) { instance_double(ChessPawn, color: :white) }
       let(:board) { instance_double(ChessBoard) }
       subject(:move_generator) { described_class.new(white_pawn, board)}
 
@@ -142,8 +142,8 @@ describe MoveGenerator do
   end
 
   describe '#is_ckeck_after_move?' do
-    let(:white_king) { instance_double(ChessKing, color: 'white', position: [3, 3]) }
-    let(:black_rook) { instance_double(ChessRook, color: 'black', position: [4, 2])}
+    let(:white_king) { instance_double(ChessKing, color: :white, position: [3, 3]) }
+    let(:black_rook) { instance_double(ChessRook, color: :black, position: [4, 2])}
 
     context 'when the player is check after the move' do
 
