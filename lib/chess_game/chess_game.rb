@@ -81,7 +81,7 @@ class ChessGame
 
   def player_cant_move?(player)
     pieces = select_player_pieces(player)
-    pieces_and_moves = get_possible_moves(pieces)
+    pieces_and_moves = get_possible_moves_for_pieces(pieces, MoveGenerator.new(@board))
     out_of_check_moves = []
     out_of_check_moves << select_check_free_moves(pieces_and_moves, player)
     out_of_check_moves.flatten.empty?
@@ -101,11 +101,10 @@ class ChessGame
     check_free
   end
 
-  def get_possible_moves(pieces)
+  def get_possible_moves_for_pieces(pieces, mover)
     pieces_possibles = []
     pieces.each do |piece|
-      mover = MoveGenerator.new(piece, @board)
-      moves = mover.generate_possible_moves
+      moves = mover.generate_possible_moves_for_piece(piece)
       pieces_possibles << { piece: piece, possibles: moves }
     end
     pieces_possibles
@@ -140,17 +139,16 @@ class ChessGame
   def move_piece_input(piece)
     move_piece_message
     input = gets.chomp
-    until valid_move?(piece, input) do
+    until valid_move?(input, piece, MoveGenerator.new(@board)) do
       puts 'please input a valid move'
       input = gets.chomp
     end
     translate_chess_to_array(input)
   end
 
-  def valid_move?(piece, input)
+  def valid_move?(input, piece, mover)
     position = translate_chess_to_array(input)
-    mover = MoveGenerator.new(piece, @board)
-    possible_moves = mover.generate_possible_moves
+    possible_moves = mover.generate_possible_moves_for_piece(piece)
     possible_moves.include?(position)
   end
 

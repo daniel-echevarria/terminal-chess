@@ -64,7 +64,7 @@ class ChessBoard
   end
 
   def move_piece(piece, future_position)
-    snacked_piece = snack_piece_at(future_position) if has_oponent?(piece, future_position)
+    snacked_piece = snack_piece_at(future_position) if position_has_oponent?(future_position, piece)
     snack_record = create_snack_record(snacked_piece, future_position) if snacked_piece
 
     move_record = create_move_record(piece, piece.position, future_position, snack_record)
@@ -103,21 +103,21 @@ class ChessBoard
     !positions.include?(position)
   end
 
-  def has_oponent?(moving_piece, position)
-    piece = select_piece_at(position)
-    return false if piece.nil?
+  def position_has_oponent?(position, piece)
+    opponent = select_piece_at(position)
+    return false if opponent.nil?
 
-    piece.color != moving_piece.color
+    piece.color != opponent.color
   end
 
-  def has_ally?(moving_piece, position)
-    piece = select_piece_at(position)
-    return false if piece.nil?
+  def position_has_ally?(position, piece)
+    ally = select_piece_at(position)
+    return false if ally.nil?
 
-    piece.color == moving_piece.color
+    piece.color == ally.color
   end
 
-  def is_out_of_board?(position)
+  def position_is_out_of_board?(position)
     row, col = position
     row.between?(0, 7) && col.between?(0, 7) ? false : true
   end
@@ -126,18 +126,17 @@ class ChessBoard
     opponent_pieces = @pieces.select { |p| p.color != piece.color }
   end
 
-  def get_opponent_possible_moves(king)
+  def get_opponent_possible_moves(king, mover)
     opponent_possible_moves = []
     opponent_pieces = select_opponent_pieces(king)
     opponent_pieces.each do |piece|
-      mover = MoveGenerator.new(piece, self)
-      opponent_possible_moves << mover.generate_possible_moves
+      opponent_possible_moves << mover.generate_possible_moves_for_piece(piece)
     end
     opponent_possible_moves.flatten(1)
   end
 
   def is_check?(king)
-    opp_possibles_moves = get_opponent_possible_moves(king)
+    opp_possibles_moves = get_opponent_possible_moves(king, MoveGenerator.new(self))
     opp_possibles_moves.include?(king.position)
   end
 end
