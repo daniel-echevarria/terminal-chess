@@ -16,12 +16,16 @@ class ChessGame
 
   def play
     players = [@player_1, @player_2]
-
     until game_over?
       current_player = players.shift
       play_turn(current_player)
       players << current_player
     end
+    puts 'game is over !! somebody is check mate!!'
+  end
+
+  def game_over?
+
   end
 
   def play_turn(current_player)
@@ -29,26 +33,9 @@ class ChessGame
     display_check_message(current_player) if is_player_check?(current_player)
     play_move(current_player)
     while is_player_check?(current_player)
+      break if is_player_check_mate?(current_player)
       out_of_check_loop(current_player)
     end
-  end
-
-  def game_over?
-  end
-
-  def out_of_check_loop(current_player)
-    @board.undo_last_move
-    puts "#{current_player} You have to keep your king out of check!"
-    play_move(current_player)
-  end
-
-  def is_player_check?(player)
-    player_king = select_player_king(player)
-    @board.is_check?(player_king)
-  end
-
-  def select_player_king(player)
-    king = @board.pieces.find { |piece| piece.is_a?(ChessKing) && piece.color == player.color }
   end
 
   def play_move(player)
@@ -57,6 +44,61 @@ class ChessGame
     to_position = move_piece_input(piece)
     @board.move_piece(piece, to_position)
     @board.clean_cell(start_position)
+  end
+
+  def out_of_check_loop(current_player)
+    @board.undo_last_move
+    puts "#{current_player.name} You have to keep your king out of check!"
+    play_move(current_player)
+  end
+
+  def is_player_check?(player)
+    player_king = select_player_king(player)
+    @board.is_check?(player_king)
+  end
+
+  # given a player in check, check all possible moves and make them
+  # check for each move if the player is still check after
+  # if the player is check after each move return true
+
+  def is_player_check_mate?(player)
+    pieces = select_player_pieces(player)
+    pieces_and_moves = get_possible_moves(pieces)
+    out_of_check_moves = []
+    out_of_check_moves << select_check_free_moves(pieces_and_moves, player)
+    out_of_check_moves.flatten.empty?
+  end
+
+  def select_check_free_moves(pieces_and_moves, player)
+    check_free = []
+    pieces_and_moves.each do |p_and_moves|
+      piece = p_and_moves[:piece]
+      possibles = p_and_moves[:possibles]
+      possibles.each do |move|
+        @board.move_piece(piece, move)
+        check_free << [piece, move] unless is_player_check?(player)
+        @board.undo_last_move
+      end
+    end
+    check_free
+  end
+
+  def get_possible_moves(pieces)
+    pieces_possibles = []
+    pieces.each do |piece|
+      mover = MoveGenerator.new(piece, @board)
+      moves = mover.generate_possible_moves
+      pieces_possibles << { piece: piece, possibles: moves }
+    end
+    pieces_possibles
+  end
+
+  def select_player_pieces(player)
+    pieces = @board.pieces.select { |p| p.color == player.color }
+  end
+
+  def select_player_king(player)
+    king = @board.pieces.find { |piece| piece.is_a?(ChessKing) && piece.color == player.color }
   end
 
   def select_piece_input(player)

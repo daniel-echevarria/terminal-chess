@@ -28,6 +28,8 @@ class MoveGenerator
       moves << generate_bishop_moves
     when 'ChessQueen'
       moves << generate_queen_moves
+    when 'ChessKing'
+      moves << generate_king_moves
     end
     moves.flatten(1)
   end
@@ -91,6 +93,21 @@ class MoveGenerator
     moves << generate_rook_moves
 
     moves.flatten(1)
+  end
+
+  def generate_king_moves
+    moves = []
+
+    possible_directions = [:up, :down, :left, :right, :main_diag_up, :main_diag_down, :sec_diag_up, :sec_diag_down]
+    potential_moves = possible_directions.map do |dir|
+      row, col = @piece.position.dup
+      row += DIRECTIONS[dir][0]
+      col += DIRECTIONS[dir][1]
+      [row, col]
+    end
+
+    possible_moves = potential_moves.select { |move| !invalid_move?(move) }
+    possible_moves
   end
 
 
