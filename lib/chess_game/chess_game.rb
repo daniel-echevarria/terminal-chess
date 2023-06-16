@@ -13,6 +13,7 @@ class ChessGame
     @player_1 = player_1
     @player_2 = player_2
     @check_mate = nil
+    @game_is_draw = false
   end
 
   def play
@@ -25,21 +26,28 @@ class ChessGame
   end
 
   def game_over?
-    @check_mate
+    @check_mate || @game_is_draw
   end
 
   def play_turn(current_player)
     @board.update_board
-    display_check_message(current_player) if is_player_check?(current_player) unless is_player_check_mate?(current_player)
-    if is_player_check_mate?(current_player)
-      @check_mate = current_player
-      display_check_mate_message(current_player)
+
+    if player_cant_move?(current_player)
+      is_player_check?(current_player) ? handle_chechmate(current_player) : handle_draw
       return
     end
+
+    display_check_message(current_player) if is_player_check?(current_player)
     play_move(current_player)
+
     while is_player_check?(current_player)
       out_of_check_loop(current_player)
     end
+  end
+
+  def is_player_check?(player)
+    player_king = select_player_king(player)
+    @board.is_check?(player_king)
   end
 
   def play_move(player)
@@ -50,22 +58,27 @@ class ChessGame
     @board.clean_cell(start_position)
   end
 
+  def handle_draw
+    @game_is_draw = true
+    display_draw_message
+  end
+
+  def handle_chechmate(player)
+    @check_mate = player
+    display_check_mate_message(player)
+  end
+
   def out_of_check_loop(current_player)
     @board.undo_last_move
     puts "#{current_player.name} You have to keep your king out of check!"
     play_move(current_player)
   end
 
-  def is_player_check?(player)
-    player_king = select_player_king(player)
-    @board.is_check?(player_king)
-  end
-
   # given a player in check, check all possible moves and make them
   # check for each move if the player is still check after
   # if the player is check after each move return true
 
-  def is_player_check_mate?(player)
+  def player_cant_move?(player)
     pieces = select_player_pieces(player)
     pieces_and_moves = get_possible_moves(pieces)
     out_of_check_moves = []
@@ -166,5 +179,9 @@ class ChessGame
 
   def display_check_mate_message(player)
     puts "Game is over, #{player.name} you are check_mate!"
+  end
+
+  def display_draw_message
+    puts 'Congratulations girls the game is draw and you both won! (or none of you did depending how you want to look at it)'
   end
 end
