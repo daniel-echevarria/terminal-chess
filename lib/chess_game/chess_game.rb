@@ -18,9 +18,12 @@ class ChessGame
 
   def play
     players = [@player_1, @player_2]
+    @board.update_board
     until game_over?
       current_player = players.shift
+      opponent = players.first
       play_turn(current_player)
+      handle_lost_or_draw(opponent) if player_cant_move?(opponent)
       players << current_player
     end
   end
@@ -29,13 +32,11 @@ class ChessGame
     @check_mate || @game_is_draw
   end
 
-  def play_turn(current_player)
-    @board.update_board
+  def handle_lost_or_draw(player)
+    is_player_check?(player) ? handle_chechmate(player) : handle_draw
+  end
 
-    if player_cant_move?(current_player)
-      is_player_check?(current_player) ? handle_chechmate(current_player) : handle_draw
-      return
-    end
+  def play_turn(current_player)
 
     display_check_message(current_player) if is_player_check?(current_player)
     play_move(current_player)
@@ -43,6 +44,8 @@ class ChessGame
     while is_player_check?(current_player)
       out_of_check_loop(current_player)
     end
+
+    @board.update_board
   end
 
   def is_player_check?(player)
