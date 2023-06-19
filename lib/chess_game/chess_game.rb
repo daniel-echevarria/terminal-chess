@@ -16,6 +16,10 @@ class ChessGame
     @game_is_draw = false
   end
 
+  def game_over?
+    @check_mate || @game_is_draw
+  end
+
   def play
     players = [@player_1, @player_2]
     @board.update_board
@@ -34,16 +38,17 @@ class ChessGame
     while is_player_check?(player)
       out_of_check_loop(player)
     end
-
     @board.update_board
   end
 
-  def game_over?
-    @check_mate || @game_is_draw
+  def out_of_check_loop(current_player)
+    @board.undo_last_move
+    puts "#{current_player.name} You have to keep your king out of check!"
+    play_move(current_player)
   end
 
   def handle_lost_or_draw(player)
-    is_player_check?(player) ? handle_chechmate(player) : handle_draw
+    is_player_check?(player) ? handle_chechmate(player) : game_is_draw
   end
 
   def is_player_check?(player)
@@ -59,7 +64,7 @@ class ChessGame
     @board.clean_cell(from_position)
   end
 
-  def handle_draw
+  def game_is_draw
     @game_is_draw = true
     display_draw_message
   end
@@ -67,12 +72,6 @@ class ChessGame
   def handle_chechmate(player)
     @check_mate = player
     display_check_mate_message(player)
-  end
-
-  def out_of_check_loop(current_player)
-    @board.undo_last_move
-    puts "#{current_player.name} You have to keep your king out of check!"
-    play_move(current_player)
   end
 
   # given a player in check, check all possible moves and make them

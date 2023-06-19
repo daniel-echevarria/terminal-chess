@@ -109,7 +109,6 @@ class MoveGenerator
 
 
   def generate_moves(piece, direction, next_move = move_one(piece.position, direction), moves = [])
-    p next_move
     return moves if invalid_move_for_piece?(next_move, piece)
     moves << next_move
     return moves if @board.position_has_oponent?(next_move, piece)
