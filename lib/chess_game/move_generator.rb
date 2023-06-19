@@ -31,6 +31,16 @@ class MoveGenerator
     moves.flatten(1)
   end
 
+  def get_possible_moves_for_color(color)
+    pieces_possibles = []
+    pieces = @board.pieces.select { |p| p.color == color }
+    pieces.each do |piece|
+      moves = generate_possible_moves_for_piece(piece)
+      pieces_possibles << { piece: piece, possibles: moves }
+    end
+    pieces_possibles
+  end
+
   def generate_pawn_moves(pawn)
     possible_moves = []
     direction = pawn.color == :white ? 1 : -1
