@@ -71,13 +71,6 @@ class ChessBoard
     piece.position = future_position
   end
 
-  def promote_pawn(pawn, major)
-    piece_creator = ChessPiecesCreator.new
-    new_piece = piece_creator.create_piece_at_position(major, pawn.position, pawn.color)
-    pawn.position = [-1, -1]
-    @pieces << new_piece
-  end
-
   def create_move_record(piece, previous, current, snack_record)
     move_hash = { piece: piece, from: previous, to: current, snack: snack_record }
   end
@@ -145,5 +138,12 @@ class ChessBoard
     opp_possibles_moves = get_opponent_possible_moves(king, MoveGenerator.new(self))
     opp_possibles_moves.include?(king.position)
   end
+
+  def create_major_like_pawn(major, pawn)
+    piece_creator = ChessPiecesCreator.new
+    new_piece = piece_creator.create_piece_at_position(major, pawn.position, pawn.color)
+  end
+
+
 end
 

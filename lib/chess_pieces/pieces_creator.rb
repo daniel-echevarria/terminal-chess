@@ -50,8 +50,9 @@ class ChessPiecesCreator
   # create a piece of that type at that position with the right color and unicode
 
   def create_piece_at_position(type, position, color)
-    constructor = type[:constructor]
-    unicodes = type[:unicodes]
+    major = MAJOR_PIECES_INITIAL_SETUP[type]
+    constructor = major[:constructor]
+    unicodes = major[:unicodes]
 
     unicode = assign_piece_unicode(color, unicodes)
     constructor.new(position, color, unicode)

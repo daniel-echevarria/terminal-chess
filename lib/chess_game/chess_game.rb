@@ -35,8 +35,8 @@ class ChessGame
     while is_player_check?(player)
       out_of_check_loop(player)
     end
-    # promoted_pawn = select_promoted_pawn(player)
-    # handle_promotion(promoted_pawn) if promoted_pawn
+    promoted_pawn = select_promoted_pawn(player)
+    handle_promotion(promoted_pawn) if promoted_pawn
     @board.update_board
   end
 
@@ -52,10 +52,10 @@ class ChessGame
   # Create a piece of that type at that position with the same color and appropriate unicode
   # remove the pawn from the board
 
-  # def handle_promotion(pawn)
-  #   piece_type = ChessQueen
-  #   @board.promoted_pawn(pawn, piece_type)
-  # end
+  def handle_promotion(pawn)
+    piece_type = ChessQueen
+    @board.promote_pawn(pawn, piece_type)
+  end
 
   def out_of_check_loop(current_player)
     @board.undo_last_move
