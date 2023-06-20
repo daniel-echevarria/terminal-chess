@@ -46,10 +46,21 @@ class ChessPiecesCreator
     @pieces = create_all_pieces
   end
 
-  def create_one_type_of_pieces(hash)
-    constructor = hash[:constructor]
-    positions = hash[:positions]
-    unicodes = hash[:unicodes]
+  # given a piece type a position and a color
+  # create a piece of that type at that position with the right color and unicode
+
+  def create_piece_at_position(type, position, color)
+    constructor = type[:constructor]
+    unicodes = type[:unicodes]
+
+    unicode = assign_piece_unicode(color, unicodes)
+    constructor.new(position, color, unicode)
+  end
+
+  def create_one_type_of_pieces(type)
+    constructor = type[:constructor]
+    positions = type[:positions]
+    unicodes = type[:unicodes]
 
     pieces = positions.map do |pos|
       color = assign_piece_color(pos)

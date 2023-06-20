@@ -9,4 +9,11 @@ class ChessPawn < ChessPiece
 
     current_row == initial_row
   end
+
+  def on_promotion_position?
+    current_row = @position[0]
+    promotion_row = @color == :white ? 0 : 7
+
+    current_row == promotion_row
+  end
 end

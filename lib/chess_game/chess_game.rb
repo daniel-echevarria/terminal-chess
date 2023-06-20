@@ -17,10 +17,6 @@ class ChessGame
     @game_is_draw = false
   end
 
-  def game_over?
-    @check_mate || @game_is_draw
-  end
-
   def play
     players = [@player_1, @player_2]
     @board.update_board
@@ -39,8 +35,27 @@ class ChessGame
     while is_player_check?(player)
       out_of_check_loop(player)
     end
+    # promoted_pawn = select_promoted_pawn(player)
+    # handle_promotion(promoted_pawn) if promoted_pawn
     @board.update_board
   end
+
+  def game_over?
+    @check_mate || @game_is_draw
+  end
+
+  # Promotion algo:
+  # After each move,
+  # Select all the player pawns
+  # check if a pawn is on the promotion raw,
+  # If it is, ask the player to choose what type of piece he wants to promote the pawn to
+  # Create a piece of that type at that position with the same color and appropriate unicode
+  # remove the pawn from the board
+
+  # def handle_promotion(pawn)
+  #   piece_type = ChessQueen
+  #   @board.promoted_pawn(pawn, piece_type)
+  # end
 
   def out_of_check_loop(current_player)
     @board.undo_last_move
@@ -54,6 +69,7 @@ class ChessGame
 
   def is_player_check?(player)
     player_king = select_player_king(player)
+    opponent_pieces = @board.select_opponent_pieces(player_king)
     @board.is_check?(player_king)
   end
 
@@ -75,15 +91,10 @@ class ChessGame
     display_check_mate_message(player)
   end
 
-  # given a player in check, check all possible moves and make them
-  # check for each move if the player is still check after
-  # if the player is check after each move return true
-
   def player_cant_move?(player)
     pieces_and_moves = @mover.get_possible_moves_for_color(player.color)
-    out_of_check_moves = []
-    out_of_check_moves << select_check_free_moves(pieces_and_moves, player)
-    out_of_check_moves.flatten.empty?
+    out_of_check_moves = select_check_free_moves(pieces_and_moves, player)
+    out_of_check_moves.empty?
   end
 
   def select_check_free_moves(pieces_and_moves, player)
@@ -106,6 +117,12 @@ class ChessGame
 
   def select_player_king(player)
     king = @board.pieces.find { |piece| piece.is_a?(ChessKing) && piece.color == player.color }
+  end
+
+  def select_promoted_pawn(player)
+    pieces = select_player_pieces(player)
+    pawns = pieces.select { |p| p.is_a?(ChessPawn) }
+    pawns.find { |pawn| pawn.on_promotion_position? }
   end
 
   def select_piece_input(player)

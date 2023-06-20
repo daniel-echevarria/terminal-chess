@@ -51,8 +51,8 @@ class MoveGenerator
     one_front = move_vertically(position, direction)
     two_front = move_vertically(position, 2 * direction)
 
-    possible_moves << main_diag if @board.position_has_oponent?(pawn, main_diag)
-    possible_moves << sec_diag if @board.position_has_oponent?(pawn, sec_diag)
+    possible_moves << main_diag if @board.position_has_oponent?(main_diag, pawn)
+    possible_moves << sec_diag if @board.position_has_oponent?(sec_diag, pawn)
     possible_moves << one_front if @board.position_is_free?(one_front)
     possible_moves << two_front if pawn.on_initial_position? && @board.position_is_free?(two_front) && @board.position_is_free?(one_front)
 

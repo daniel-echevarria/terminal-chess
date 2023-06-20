@@ -51,7 +51,6 @@ class ChessBoard
     populate_board(@pieces)
     display_board
   end
-
   # Pieces Related Methods
 
   def get_pieces
@@ -70,6 +69,13 @@ class ChessBoard
     move_record = create_move_record(piece, piece.position, future_position, snack_record)
     @move_history << move_record
     piece.position = future_position
+  end
+
+  def promote_pawn(pawn, major)
+    piece_creator = ChessPiecesCreator.new
+    new_piece = piece_creator.create_piece_at_position(major, pawn.position, pawn.color)
+    pawn.position = [-1, -1]
+    @pieces << new_piece
   end
 
   def create_move_record(piece, previous, current, snack_record)
