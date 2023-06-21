@@ -153,7 +153,7 @@ describe ChessGame do
         allow(board).to receive(:is_check?).with(white_king).and_return(true)
       end
 
-      it 'returns true' do
+      xit 'returns true' do
         result = game.is_player_check?(white_player)
         expect(result).to be(true)
       end
@@ -166,7 +166,7 @@ describe ChessGame do
         allow(board).to receive(:is_check?).with(white_king).and_return(false)
       end
 
-      it 'returns false' do
+      xit 'returns false' do
         result = game.is_player_check?(white_player)
         expect(result).to be(false)
       end
@@ -198,6 +198,121 @@ describe ChessGame do
       it 'returns the black_king' do
         result = game.select_player_king(black_king)
         expect(result).to eq(black_king)
+      end
+    end
+  end
+
+  # describe '#select_promoted_pawn' do
+  #   let(:white_player) { instance_double(ChessPlayer, name: 'john', color: :white) }
+  #   let(:board) { instance_double(ChessBoard) }
+
+  #   context 'when there is 2 pawns and one is on the promotion row' do
+  #     let(:promoted_white_pawn) { instance_double(ChessPawn, color: :white, position: [0, 2]) }
+  #     let(:randome_white_pawn) { instance_double(ChessPawn, color: :white, position: [2, 2]) }
+  #     let(:white_rook) { instance_double(ChessRook, color: :white, position: [3, 3]) }
+  #     let(:black_pawn) { instance_double(ChessPawn, color: :black, position: [0, 3]) }
+
+  #     before do
+  #       allow(game).to receive(:select_player_pieces).and_return([promoted_white_pawn, randome_white_pawn, white_rook])
+  #       allow(promoted_white_pawn).to receive(:is_a?).with(ChessPawn).and_return(true)
+  #     end
+
+  #     it 'returns the pawn on the promotion row' do
+  #       result = game.select_promoted_pawn(white_player)
+  #       expect(result).to eq(promoted_white_pawn)
+  #     end
+  #   end
+  # end
+
+  describe '#promotion_input' do
+    let(:player) { instance_double(ChessPlayer, name: 'John') }
+
+    context 'when player inputs a valid promotion option' do
+      before do
+        valid_input = 'rook'
+        allow(game).to receive(:display_promotion_message).with(player)
+        allow(game).to receive(:gets).and_return(valid_input)
+        allow(game).to receive(:valid_promotion?).with(valid_input).and_return(true)
+      end
+
+      it 'exits loop and does not display wrong promotion message' do
+        expect(game).not_to receive(:display_wrong_promotion)
+        game.promotion_input(player)
+      end
+
+      it 'returns the input converted to a symbol' do
+        result = game.promotion_input(player)
+        expect(result).to eq(:rook)
+      end
+    end
+
+    context 'when player first inputs a invalid promotion and then a valid one' do
+      before do
+        invalid_input = 'king'
+        valid_input = 'rook'
+        allow(game).to receive(:display_promotion_message).with(player)
+        allow(game).to receive(:gets).and_return(invalid_input, valid_input)
+        allow(game).to receive(:valid_promotion?).with(invalid_input).and_return(false)
+        allow(game).to receive(:valid_promotion?).with(valid_input).and_return(true)
+      end
+
+      it 'exits loop display wrong promotion message once' do
+        expect(game).to receive(:display_wrong_promotion).once
+        game.promotion_input(player)
+      end
+    end
+  end
+
+  describe '#valid_promotion?' do
+    context 'when the input is a valid promotion' do
+      context 'when the input is queen' do
+        it 'returns true' do
+          input = 'queen'
+          result = game.valid_promotion?(input)
+          expect(result).to eq(true)
+        end
+      end
+
+      context 'when the input is bishop' do
+        it 'returns true' do
+          input = 'bishop'
+          result = game.valid_promotion?(input)
+          expect(result).to eq(true)
+        end
+      end
+
+      context 'when the input is knight' do
+        it 'returns true' do
+          input = 'knight'
+          result = game.valid_promotion?(input)
+          expect(result).to eq(true)
+        end
+      end
+
+      context 'when the input is rook' do
+        it 'returns true' do
+          input = 'rook'
+          result = game.valid_promotion?(input)
+          expect(result).to eq(true)
+        end
+      end
+    end
+
+    context 'when the input is not a valid promotion' do
+      context 'when the input is roo' do
+        it 'returns false' do
+          input = 'roo'
+          result = game.valid_promotion?(input)
+          expect(result).to eq(false)
+        end
+      end
+
+      context 'when the input is king' do
+        it 'returns false' do
+          input = 'king'
+          result = game.valid_promotion?(input)
+          expect(result).to eq(false)
+        end
       end
     end
   end

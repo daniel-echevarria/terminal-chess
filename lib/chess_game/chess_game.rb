@@ -36,7 +36,7 @@ class ChessGame
       out_of_check_loop(player)
     end
     promoted_pawn = select_promoted_pawn(player)
-    handle_promotion(promoted_pawn) if promoted_pawn
+    handle_promotion(promoted_pawn, player) if promoted_pawn
     @board.update_board
   end
 
@@ -44,16 +44,8 @@ class ChessGame
     @check_mate || @game_is_draw
   end
 
-  # Promotion algo:
-  # After each move,
-  # Select all the player pawns
-  # check if a pawn is on the promotion raw,
-  # If it is, ask the player to choose what type of piece he wants to promote the pawn to
-  # Create a piece of that type at that position with the same color and appropriate unicode
-  # remove the pawn from the board
-
-  def handle_promotion(pawn)
-    piece_type = :queens
+  def handle_promotion(pawn, player)
+    piece_type = promotion_input(player)
     @board.promote_pawn(pawn, piece_type)
   end
 
@@ -122,9 +114,7 @@ class ChessGame
   def select_promoted_pawn(player)
     pieces = select_player_pieces(player)
     pawns = pieces.select { |p| p.is_a?(ChessPawn) }
-    promoted = pawns.find(&:on_promotion_position?)
-    p promoted
-    promoted
+    pawns.find(&:on_promotion_position?)
   end
 
   def select_piece_input(player)
@@ -161,6 +151,21 @@ class ChessGame
     possible_moves.include?(position)
   end
 
+  def promotion_input(player)
+    display_promotion_message(player)
+    input = gets.chomp
+    until valid_promotion?(input) do
+      display_wrong_promotion
+      input = gets.chomp
+    end
+    input.to_sym
+  end
+
+  def valid_promotion?(input)
+    valid_promotions = %w[queen bishop knight rook]
+    valid_promotions.include?(input)
+  end
+
   def translate_chess_to_array(input)
     chess_rows = (8).downto(1).to_a
     chess_columns = ('a').upto('h').to_a
@@ -189,7 +194,22 @@ class ChessGame
     puts "Game is over, #{player.name} you are check_mate!"
   end
 
+  def display_promotion_message(player)
+    puts "Hey #{player} which piece do you want to promote the pawn to ?"
+  end
+
+  def display_wrong_promotion
+    puts <<~HEREDOC
+      Please input a valid piece to promote the pawn to, the options are:
+      queen
+      bishop
+      knight
+      rook
+    HEREDOC
+  end
+
   def display_draw_message
     puts 'Congratulations girls the game is draw and you both won! (or none of you did depending how you want to look at it)'
   end
+
 end
