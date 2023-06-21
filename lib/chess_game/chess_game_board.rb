@@ -144,6 +144,10 @@ class ChessBoard
     new_piece = piece_creator.create_piece_at_position(major, pawn.position, pawn.color)
   end
 
-
+  def promote_pawn(pawn, major)
+    upgrade = create_major_like_pawn(major, pawn)
+    pawn.position = [-1, -1]
+    @pieces << upgrade
+  end
 end
 

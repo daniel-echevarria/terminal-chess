@@ -53,7 +53,7 @@ class ChessGame
   # remove the pawn from the board
 
   def handle_promotion(pawn)
-    piece_type = ChessQueen
+    piece_type = :queens
     @board.promote_pawn(pawn, piece_type)
   end
 
@@ -122,7 +122,9 @@ class ChessGame
   def select_promoted_pawn(player)
     pieces = select_player_pieces(player)
     pawns = pieces.select { |p| p.is_a?(ChessPawn) }
-    pawns.find { |pawn| pawn.on_promotion_position? }
+    promoted = pawns.find(&:on_promotion_position?)
+    p promoted
+    promoted
   end
 
   def select_piece_input(player)

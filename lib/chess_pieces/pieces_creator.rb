@@ -24,7 +24,7 @@ class ChessPiecesCreator
     },
     queens: {
       constructor: ChessQueen,
-     positions: [[0, 3], [7, 3]],
+      positions: [[0, 3], [7, 3]],
       unicodes: ["\u265B", "\u2655"]
     },
     kings: {
