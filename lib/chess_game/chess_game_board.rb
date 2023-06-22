@@ -24,6 +24,8 @@ class ChessBoard
 
   def populate_board(pieces)
     pieces.each do |piece|
+      next if piece.position.any?(&:negative?)
+
       row, col = piece.position
       @board[row][col] = piece.unicode
     end
@@ -60,6 +62,21 @@ class ChessBoard
 
   def select_piece_at(position)
     @pieces.find { |piece| piece.position == position }
+  end
+
+  def select_pieces_of_color(color)
+    @pieces.select { |piece| piece.color == color }
+  end
+
+  def select_promoted_pawn_of_color(color)
+    pieces = select_pieces_of_color(color)
+    pawns = pieces.select { |p| p.is_a?(ChessPawn) }
+    pawns.find(&:on_promotion_position?)
+  end
+
+  def select_king_of_color(color)
+    pieces = select_pieces_of_color(color)
+    king = pieces.find { |piece| piece.is_a?(ChessKing) }
   end
 
   def move_piece(piece, future_position)
@@ -148,6 +165,14 @@ class ChessBoard
     upgrade = create_major_like_pawn(major, pawn)
     pawn.position = [-1, -1]
     @pieces << upgrade
+  end
+
+  def valid_pick?(color, input)
+    position = translate_chess_to_array(input)
+    piece = @board.select_piece_at(position)
+    return if piece.nil?
+
+    piece.color == color
   end
 end
 

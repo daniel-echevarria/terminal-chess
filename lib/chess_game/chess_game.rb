@@ -19,7 +19,7 @@ class ChessGame
 
   def play
     players = [@player_1, @player_2]
-    @board.update_board
+    update_board
     until game_over?
       current_player = players.shift
       opponent = players.first
@@ -29,14 +29,7 @@ class ChessGame
     end
   end
 
-  def play_turn(player)
-    display_check_message(player) if is_player_check?(player)
-    play_move(player)
-    while is_player_check?(player)
-      out_of_check_loop(player)
-    end
-    promoted_pawn = select_promoted_pawn(player)
-    handle_promotion(promoted_pawn, player) if promoted_pawn
+  def update_board
     @board.update_board
   end
 
@@ -44,9 +37,29 @@ class ChessGame
     @check_mate || @game_is_draw
   end
 
-  def handle_promotion(pawn, player)
-    piece_type = promotion_input(player)
-    @board.promote_pawn(pawn, piece_type)
+  def play_turn(player)
+    display_check_message(player) if is_player_check?(player)
+    play_move(player)
+    while is_player_check?(player)
+      out_of_check_loop(player)
+    end
+    promoted_pawn = @board.select_promoted_pawn_of_color(player.color)
+    handle_promotion(promoted_pawn, player) if promoted_pawn
+    update_board
+  end
+
+  def is_player_check?(player)
+    player_king = @board.select_king_of_color(player.color)
+    @board.is_check?(player_king)
+  end
+
+  def play_move(player)
+
+    from_position = select_piece_input(player)
+    piece = @board.select_piece_at(from_position)
+    to_position = move_piece_input(piece)
+    @board.move_piece(piece, to_position)
+    @board.clean_cell(from_position)
   end
 
   def out_of_check_loop(current_player)
@@ -55,22 +68,13 @@ class ChessGame
     play_move(current_player)
   end
 
+  def handle_promotion(pawn, player)
+    piece_type = promotion_input(player)
+    @board.promote_pawn(pawn, piece_type)
+  end
+
   def handle_lost_or_draw(player)
     is_player_check?(player) ? handle_chechmate(player) : game_is_draw
-  end
-
-  def is_player_check?(player)
-    player_king = select_player_king(player)
-    opponent_pieces = @board.select_opponent_pieces(player_king)
-    @board.is_check?(player_king)
-  end
-
-  def play_move(player)
-    from_position = select_piece_input(player)
-    piece = @board.select_piece_at(from_position)
-    to_position = move_piece_input(piece)
-    @board.move_piece(piece, to_position)
-    @board.clean_cell(from_position)
   end
 
   def game_is_draw
@@ -101,20 +105,6 @@ class ChessGame
       end
     end
     check_free
-  end
-
-  def select_player_pieces(player)
-    pieces = @board.pieces.select { |p| p.color == player.color }
-  end
-
-  def select_player_king(player)
-    king = @board.pieces.find { |piece| piece.is_a?(ChessKing) && piece.color == player.color }
-  end
-
-  def select_promoted_pawn(player)
-    pieces = select_player_pieces(player)
-    pawns = pieces.select { |p| p.is_a?(ChessPawn) }
-    pawns.find(&:on_promotion_position?)
   end
 
   def select_piece_input(player)
@@ -211,5 +201,4 @@ class ChessGame
   def display_draw_message
     puts 'Congratulations girls the game is draw and you both won! (or none of you did depending how you want to look at it)'
   end
-
 end
