@@ -13,19 +13,19 @@ class MoveGenerator
 
   def generate_possible_moves_for_piece(piece)
     moves = []
-    piece_type = piece.class.name
-    case piece_type
-    when 'ChessPawn'
+    specie = piece.specie
+    case specie
+    when :pawn
       moves << generate_pawn_moves(piece)
-    when 'ChessRook'
+    when :rook
       moves << generate_rook_moves(piece)
-    when 'ChessKnight'
+    when :knight
       moves << generate_knight_moves(piece)
-    when 'ChessBishop'
+    when :bishop
       moves << generate_bishop_moves(piece)
-    when 'ChessQueen'
+    when :queen
       moves << generate_queen_moves(piece)
-    when 'ChessKing'
+    when :king
       moves << generate_king_moves(piece)
     end
     moves.flatten(1)
@@ -54,7 +54,7 @@ class MoveGenerator
     possible_moves << main_diag if @board.position_has_oponent?(main_diag, pawn)
     possible_moves << sec_diag if @board.position_has_oponent?(sec_diag, pawn)
     possible_moves << one_front if @board.position_is_free?(one_front)
-    possible_moves << two_front if pawn.on_initial_position? && @board.position_is_free?(two_front) && @board.position_is_free?(one_front)
+    possible_moves << two_front if @board.pawn_on_initial_position?(pawn) && @board.position_is_free?(two_front) && @board.position_is_free?(one_front)
 
     possible_moves
   end

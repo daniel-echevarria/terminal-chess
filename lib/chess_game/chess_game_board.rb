@@ -24,6 +24,7 @@ class ChessBoard
 
   def populate_board(pieces)
     pieces.each do |piece|
+      p piece
       next if piece.position.any?(&:negative?)
 
       row, col = piece.position
@@ -70,13 +71,13 @@ class ChessBoard
 
   def select_promoted_pawn_of_color(color)
     pieces = select_pieces_of_color(color)
-    pawns = pieces.select { |p| p.is_a?(ChessPawn) }
-    pawns.find(&:on_promotion_position?)
+    pawns = pieces.select { |p| p.specie == :pawn }
+    pawns.find { |p| pawn_on_promotion_position?(p) }
   end
 
   def select_king_of_color(color)
     pieces = select_pieces_of_color(color)
-    king = pieces.find { |piece| piece.is_a?(ChessKing) }
+    king = pieces.find { |piece| piece.specie == :king }
   end
 
   def move_piece(piece, future_position)
@@ -173,6 +174,20 @@ class ChessBoard
     return if piece.nil?
 
     piece.color == color
+  end
+
+  def pawn_on_initial_position?(pawn)
+    current_row = pawn.position[0]
+    initial_row = pawn.color == :white ? 6 : 1
+
+    current_row == initial_row
+  end
+
+  def pawn_on_promotion_position?(pawn)
+    current_row = pawn.position[0]
+    promotion_row = pawn.color == :white ? 0 : 7
+
+    current_row == promotion_row
   end
 end
 

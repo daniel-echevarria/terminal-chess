@@ -8,32 +8,32 @@ require_relative '../chess_pieces/chess_pawn.rb'
 class ChessPiecesCreator
   PIECES_INITIAL_SETUP = {
     rook: {
-      constructor: ChessRook,
+      specie: :rook,
       positions: [[0, 0], [0, 7], [7, 0], [7, 7]],
       unicodes: ["\u265C", "\u2656"]
     },
     knight: {
-      constructor: ChessKnight,
+      specie: :knight,
       positions: [[0, 1], [0, 6], [7, 1], [7, 6]],
       unicodes: ["\u265E", "\u2658"]
     },
     bishop: {
-      constructor: ChessBishop,
+      specie: :bihsop,
       positions: [[0, 2], [0, 5], [7, 2], [7, 5]],
       unicodes: ["\u265D", "\u2657"]
     },
     queen: {
-      constructor: ChessQueen,
+      specie: :queen,
       positions: [[0, 3], [7, 3]],
       unicodes: ["\u265B", "\u2655"]
     },
     king: {
-      constructor: ChessKing,
+      specie: :king,
       positions: [[0, 4], [7, 4]],
       unicodes: ["\u265A", "\u2654"]
     },
     pawn: {
-      constructor: ChessPawn,
+      specie: :pawn,
       positions: [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7],
       [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7]],
       unicodes: ["\u265F", "\u2659"]
@@ -51,22 +51,22 @@ class ChessPiecesCreator
 
   def create_piece_at_position(type, position, color)
     major = PIECES_INITIAL_SETUP[type]
-    constructor = major[:constructor]
     unicodes = major[:unicodes]
+    specie = major[:specie]
 
     unicode = assign_piece_unicode(color, unicodes)
-    constructor.new(position, color, unicode)
+    ChessPiece.new(specie, position, color, unicode)
   end
 
   def create_one_type_of_pieces(type)
-    constructor = type[:constructor]
+    specie = type[:specie]
     positions = type[:positions]
     unicodes = type[:unicodes]
 
     pieces = positions.map do |pos|
       color = assign_piece_color(pos)
       unicode = assign_piece_unicode(color, unicodes)
-      constructor.new(pos, color, unicode)
+      ChessPiece.new(specie, pos, color, unicode)
     end
   end
 
