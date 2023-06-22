@@ -54,12 +54,21 @@ class ChessGame
   end
 
   def play_move(player)
-
     from_position = select_piece_input(player)
     piece = @board.select_piece_at(from_position)
+    until piece_can_move?(piece)
+      puts "This piece can't move!"
+      from_position = select_piece_input(player)
+      piece = @board.select_piece_at(from_position)
+    end
     to_position = move_piece_input(piece)
     @board.move_piece(piece, to_position)
     @board.clean_cell(from_position)
+  end
+
+  def piece_can_move?(piece)
+    possible_moves = @mover.generate_possible_moves_for_piece(piece)
+    !possible_moves.empty?
   end
 
   def out_of_check_loop(current_player)
@@ -166,9 +175,9 @@ class ChessGame
   end
 
   def select_piece_message(player)
+    # Hey #{player.name} you are playing with #{player.color} pieces,
     puts <<~HEREDOC
-      Hey #{player.name} you are playing with #{player.color} pieces,
-      select the piece you would like to move by typing it\'s position
+      #{player.name} select the piece you would like to move by typing it\'s position
     HEREDOC
   end
 
