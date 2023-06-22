@@ -8,7 +8,8 @@ class ChessBoard
 
   def initialize
     @board = create_board
-    @pieces = get_pieces
+    @pieces_creator = ChessPiecesCreator.new
+    @pieces = @pieces_creator.pieces
     @move_history = []
   end
 
@@ -54,11 +55,6 @@ class ChessBoard
     display_board
   end
   # Pieces Related Methods
-
-  def get_pieces
-    piece_creator = ChessPiecesCreator.new
-    piece_creator.pieces
-  end
 
   def select_piece_at(position)
     @pieces.find { |piece| piece.position == position }
@@ -156,13 +152,8 @@ class ChessBoard
     opp_possibles_moves.include?(king.position)
   end
 
-  def create_major_like_pawn(major, pawn)
-    piece_creator = ChessPiecesCreator.new
-    new_piece = piece_creator.create_piece_at_position(major, pawn.position, pawn.color)
-  end
-
-  def promote_pawn(pawn, major)
-    upgrade = create_major_like_pawn(major, pawn)
+  def transform_pawn(pawn, major)
+    upgrade = @pieces_creator.create_piece_at_position(major, pawn.position, pawn.color)
     pawn.position = [-1, -1]
     @pieces << upgrade
   end

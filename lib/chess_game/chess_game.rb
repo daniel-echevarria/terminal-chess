@@ -76,7 +76,7 @@ class ChessGame
 
   def handle_promotion(pawn, player)
     piece_type = promotion_input(player)
-    @board.promote_pawn(pawn, piece_type)
+    @board.transform_pawn(pawn, piece_type)
   end
 
   def handle_lost_or_draw(player)
