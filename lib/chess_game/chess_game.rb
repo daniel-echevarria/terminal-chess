@@ -175,7 +175,6 @@ class ChessGame
   end
 
   def select_piece_message(player)
-    # Hey #{player.name} you are playing with #{player.color} pieces,
     puts <<~HEREDOC
       #{player.name} select the piece you would like to move by typing it\'s position
     HEREDOC

@@ -6,7 +6,7 @@ require_relative '../chess_pieces/chess_king.rb'
 require_relative '../chess_pieces/chess_pawn.rb'
 
 class ChessPiecesCreator
-  MAJOR_PIECES_INITIAL_SETUP = {
+  PIECES_INITIAL_SETUP = {
     rook: {
       constructor: ChessRook,
       positions: [[0, 0], [0, 7], [7, 0], [7, 7]],
@@ -50,7 +50,7 @@ class ChessPiecesCreator
   # create a piece of that type at that position with the right color and unicode
 
   def create_piece_at_position(type, position, color)
-    major = MAJOR_PIECES_INITIAL_SETUP[type]
+    major = PIECES_INITIAL_SETUP[type]
     constructor = major[:constructor]
     unicodes = major[:unicodes]
 
@@ -81,7 +81,7 @@ class ChessPiecesCreator
 
   def create_all_pieces
     pieces = []
-    MAJOR_PIECES_INITIAL_SETUP.values.each do |type|
+    PIECES_INITIAL_SETUP.values.each do |type|
       pieces << create_one_type_of_pieces(type)
     end
     pieces.flatten(1)
