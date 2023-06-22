@@ -1,3 +1,0 @@
-
-class ChessQueen < ChessPiece
-end

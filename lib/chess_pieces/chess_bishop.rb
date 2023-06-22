@@ -1,3 +1,0 @@
-
-class ChessBishop < ChessPiece
-end

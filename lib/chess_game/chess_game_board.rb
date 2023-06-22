@@ -24,7 +24,6 @@ class ChessBoard
 
   def populate_board(pieces)
     pieces.each do |piece|
-      p piece
       next if piece.position.any?(&:negative?)
 
       row, col = piece.position

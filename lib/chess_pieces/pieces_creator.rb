@@ -1,9 +1,5 @@
-require_relative '../chess_pieces/chess_rook.rb'
-require_relative '../chess_pieces/chess_knight.rb'
-require_relative '../chess_pieces/chess_bishop.rb'
-require_relative '../chess_pieces/chess_queen.rb'
-require_relative '../chess_pieces/chess_king.rb'
-require_relative '../chess_pieces/chess_pawn.rb'
+require_relative 'chess_piece.rb'
+
 
 class ChessPiecesCreator
   PIECES_INITIAL_SETUP = {
