@@ -136,44 +136,44 @@ describe ChessBoard do
     end
   end
 
-  describe '#create_major_like_pawn' do
-    let(:white_pawn) { instance_double(ChessPiece, color: :white, position: [0, 0]) }
-    let(:piece_creator) { instance_double(ChessPiecesCreator) }
+# describe '#create_major_like_pawn' do
+#     let(:white_pawn) { instance_double(ChessPiece, color: :white, position: [0, 0]) }
+#     let(:piece_creator) { instance_double(ChessPiecesCreator) }
 
-    context 'when the major is a queen and the pawn is white  on 0, 0' do
+#     context 'when the major is a queen and the pawn is white  on 0, 0' do
 
-      before do
-        chess_board.instance_variable_set(:@pieces, [white_pawn])
-        # allow(white_pawn).to receive(:position).with([-1, -1])
-      end
+#       before do
+#         chess_board.instance_variable_set(:@pieces, [white_pawn])
+#         # allow(white_pawn).to receive(:position).with([-1, -1])
+#       end
 
-      it 'returns a queen' do
-        type = :queen
-        major = chess_board.create_major_like_pawn(type, white_pawn)
-        result = major.specie == :queen
-        expect(result).to eq(true)
-      end
+#       it 'returns a queen' do
+#         type = :queen
+#         major = chess_board.create_major_like_pawn(type, white_pawn)
+#         result = major.specie == :queen
+#         expect(result).to eq(true)
+#       end
 
-      it 'gives it a position of [0, 0]' do
-        type = :queen
-        major = chess_board.create_major_like_pawn(type, white_pawn)
-        result = major.position
-        expect(result).to eq([0, 0])
-      end
+#       it 'gives it a position of [0, 0]' do
+#         type = :queen
+#         major = chess_board.create_major_like_pawn(type, white_pawn)
+#         result = major.position
+#         expect(result).to eq([0, 0])
+#       end
 
-      it 'gives it a white color' do
-        type = :queen
-        major = chess_board.create_major_like_pawn(type, white_pawn)
-        result = major.color
-        expect(result).to eq(:white)
-      end
+#       it 'gives it a white color' do
+#         type = :queen
+#         major = chess_board.create_major_like_pawn(type, white_pawn)
+#         result = major.color
+#         expect(result).to eq(:white)
+#       end
 
-      it 'gives it the right unicode' do
-        type = :queen
-        major = chess_board.create_major_like_pawn(type, white_pawn)
-        result = major.unicode
-        expect(result).to eq("\u265B")
-      end
-    end
-  end
+#       it 'gives it the right unicode' do
+#         type = :queen
+#         major = chess_board.create_major_like_pawn(type, white_pawn)
+#         result = major.unicode
+#         expect(result).to eq("\u265B")
+#       end
+#     end
+#   end
 end

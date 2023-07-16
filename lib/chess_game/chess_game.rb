@@ -65,6 +65,7 @@ class ChessGame
 
   def piece_can_move?(piece)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
+    puts "This are the possible moves for #{piece.specie} #{possible_moves}"
     !possible_moves.empty?
   end
 

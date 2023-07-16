@@ -13,8 +13,7 @@ class MoveGenerator
 
   def generate_possible_moves_for_piece(piece)
     moves = []
-    specie = piece.specie
-    case specie
+    case piece.specie
     when :pawn
       moves << generate_pawn_moves(piece)
     when :rook
@@ -112,10 +111,35 @@ class MoveGenerator
       col += DIRECTIONS[dir][1]
       [row, col]
     end
-
     possible_moves = potential_moves.select { |move| !invalid_move_for_piece?(move, king) }
     possible_moves
   end
+
+  def generate_small_castling_moves(king)
+    king.color == :white ? { king: [7, 6], rook: [7, 5] } : { king: [0, 1], rook: [0, 2] }
+  end
+
+  # Algo for castling
+  # given a king who is asked to move 2 squares right or left
+  # Check if castling conditions are met:
+  # Check if that king is check or moved before,
+  # Check if any of the 2 square he would pass by is check
+  # Check if the rook towards which he is moving moved before
+  # If any of these are true, castling conditions are not met
+  # if castling conditions are met:
+  # Generetate castling moves and apply them
+  # Select the tower towards the king is trying to move, if that tower moved before mov is invalid
+  #
+  # Check if castling is possible,
+  # given a
+  # make that the king can only move 2 squares when this 3 condition are met:
+    # None of the 3 squares he is passing by is check
+    # Neither pieces participating in the castling moved before
+    # There are no pieces on the way
+
+  # when a king is moved 2 squares to his right move that tower past him (2 sqaures to its left)
+  # when a king is moved 2 square to its left move that tower past him (2 squares to its right)
+
 
 
   def generate_moves(piece, direction, next_move = move_one(piece.position, direction), moves = [])

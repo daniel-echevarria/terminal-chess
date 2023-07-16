@@ -9,6 +9,7 @@ class ChessBoard
   def initialize
     @board = create_board
     @pieces_creator = ChessPiecesCreator.new
+    @mover = MoveGenerator.new(self)
     @pieces = @pieces_creator.pieces
     @move_history = []
   end
@@ -75,6 +76,12 @@ class ChessBoard
     king = pieces.find { |piece| piece.specie == :king }
   end
 
+  def small_castling(king, rook)
+    small_castling_positions = @mover.generate_small_castling_moves(king)
+    move_piece(king, small_castling_positions[:king])
+    move_piece(rook, small_castling_positions[:rook])
+  end
+
   def move_piece(piece, future_position)
     snacked_piece = snack_piece_at(future_position) if position_has_oponent?(future_position, piece)
     snack_record = create_snack_record(snacked_piece, future_position) if snacked_piece
@@ -138,17 +145,17 @@ class ChessBoard
     opponent_pieces = @pieces.select { |p| p.color != piece.color }
   end
 
-  def get_opponent_possible_moves(king, mover)
+  def get_opponent_possible_moves(king)
     opponent_possible_moves = []
     opponent_pieces = select_opponent_pieces(king)
     opponent_pieces.each do |piece|
-      opponent_possible_moves << mover.generate_possible_moves_for_piece(piece)
+      opponent_possible_moves << @mover.generate_possible_moves_for_piece(piece)
     end
     opponent_possible_moves.flatten(1)
   end
 
   def is_check?(king)
-    opp_possibles_moves = get_opponent_possible_moves(king, MoveGenerator.new(self))
+    opp_possibles_moves = get_opponent_possible_moves(king)
     opp_possibles_moves.include?(king.position)
   end
 
@@ -178,6 +185,10 @@ class ChessBoard
     promotion_row = pawn.color == :white ? 0 : 7
 
     current_row == promotion_row
+  end
+
+  def piece_moved?(piece)
+    @move_history.any?(&:piece) == piece
   end
 end
 

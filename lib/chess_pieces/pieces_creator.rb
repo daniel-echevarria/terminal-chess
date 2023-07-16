@@ -14,7 +14,7 @@ class ChessPiecesCreator
       unicodes: ["\u265E", "\u2658"]
     },
     bishop: {
-      specie: :bihsop,
+      specie: :bishop,
       positions: [[0, 2], [0, 5], [7, 2], [7, 5]],
       unicodes: ["\u265D", "\u2657"]
     },
