@@ -79,7 +79,7 @@ describe ChessBoard do
     end
   end
 
-  describe '#select_opponent_pieces' do
+  describe '#select_pieces_of_color' do
     let(:white_piece) { instance_double(ChessPiece, color: :white) }
     let(:white_piece_2) { instance_double(ChessPiece, color: :white) }
     let(:black_piece_one) { instance_double(ChessPiece, color: :black) }
@@ -91,9 +91,9 @@ describe ChessBoard do
         chess_board.instance_variable_set(:@pieces, [black_piece_one, black_piece_2, white_piece_2, white_piece])
       end
 
-      it 'return an array with all the black pieces' do
-        color = :white
-        result = chess_board.select_opponent_pieces(color)
+      it 'return an array with only the black pieces' do
+        color = :black
+        result = chess_board.select_pieces_of_color(color)
         expect(result).to eq([black_piece_one, black_piece_2])
       end
     end
