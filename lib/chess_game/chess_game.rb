@@ -60,6 +60,7 @@ class ChessGame
     end
     to_position = move_piece_input(piece)
     @board.move_piece(piece, to_position)
+    puts "#{@board.move_history}"
     @board.clean_cell(from_position)
   end
 

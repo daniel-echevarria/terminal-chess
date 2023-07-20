@@ -4,7 +4,7 @@ require_relative '../chess_game/move_generator.rb'
 class ChessBoard
   # A Hash containing the info for setting up the major pieces as the game starts
   # the unicodes array follow the convention black unicode first (but it appears white on my terminal somehow)
-  attr_reader :board, :pieces
+  attr_reader :board, :pieces, :move_history
 
   def initialize
     @board = create_board
@@ -76,11 +76,11 @@ class ChessBoard
     king = pieces.find { |piece| piece.specie == :king }
   end
 
-  def small_castling(king, rook)
-    small_castling_positions = @mover.generate_small_castling_moves(king)
-    move_piece(king, small_castling_positions[:king])
-    move_piece(rook, small_castling_positions[:rook])
-  end
+  # def small_castling(king, rook)
+  #   small_castling_positions = @mover.generate_small_castling_moves(king)
+  #   move_piece(king, small_castling_positions[:king])
+  #   move_piece(rook, small_castling_positions[:rook])
+  # end
 
   def move_piece(piece, future_position)
     snacked_piece = snack_piece_at(future_position) if position_has_oponent?(future_position, piece)
@@ -89,6 +89,12 @@ class ChessBoard
     move_record = create_move_record(piece, piece.position, future_position, snack_record)
     @move_history << move_record
     piece.position = future_position
+  end
+
+  def snack_piece_at(position)
+    piece = select_piece_at(position)
+    piece.position = [-1, -1]
+    piece
   end
 
   def create_move_record(piece, previous, current, snack_record)
@@ -109,12 +115,6 @@ class ChessBoard
 
     piece = last_move[:piece]
     piece.position = last_move[:from]
-  end
-
-  def snack_piece_at(position)
-    piece = select_piece_at(position)
-    piece.position = [-1, -1]
-    piece
   end
 
   def position_is_free?(position)
@@ -141,22 +141,23 @@ class ChessBoard
     row.between?(0, 7) && col.between?(0, 7) ? false : true
   end
 
-  def select_opponent_pieces(piece)
-    opponent_pieces = @pieces.select { |p| p.color != piece.color }
+  def position_is_threatened?(position, opponent_color)
+    opponent_moves = get_possible_moves_for_color(opponent_color)
+    opponent_moves.include?(position)
   end
 
-  def get_opponent_possible_moves(king)
-    opponent_possible_moves = []
-    opponent_pieces = select_opponent_pieces(king)
-    opponent_pieces.each do |piece|
-      opponent_possible_moves << @mover.generate_possible_moves_for_piece(piece)
+  def get_possible_moves_for_color(color)
+    possible_moves = []
+    pieces = select_pieces_of_color(color)
+    pieces.each do |piece|
+      possible_moves << @mover.generate_possible_moves_for_piece(piece)
     end
-    opponent_possible_moves.flatten(1)
+    possible_moves.flatten(1)
   end
 
   def is_check?(king)
-    opp_possibles_moves = get_opponent_possible_moves(king)
-    opp_possibles_moves.include?(king.position)
+    opponent_color = king.color == :white ? :black : :white
+    position_is_threatened?(king.position, opponent_color)
   end
 
   def transform_pawn(pawn, major)
@@ -187,8 +188,15 @@ class ChessBoard
     current_row == promotion_row
   end
 
+  def king_can_castle?(king, rook)
+    piece_moved?(king) || piece_moved?(rook) || is_check?(king)
+  end
+
+  def generate_trajectory(a, b)
+
+  end
+
   def piece_moved?(piece)
     @move_history.any?(&:piece) == piece
   end
 end
-

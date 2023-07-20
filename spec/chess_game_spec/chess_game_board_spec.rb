@@ -92,7 +92,8 @@ describe ChessBoard do
       end
 
       it 'return an array with all the black pieces' do
-        result = chess_board.select_opponent_pieces(white_piece)
+        color = :white
+        result = chess_board.select_opponent_pieces(color)
         expect(result).to eq([black_piece_one, black_piece_2])
       end
     end
@@ -136,44 +137,46 @@ describe ChessBoard do
     end
   end
 
-# describe '#create_major_like_pawn' do
-#     let(:white_pawn) { instance_double(ChessPiece, color: :white, position: [0, 0]) }
-#     let(:piece_creator) { instance_double(ChessPiecesCreator) }
+  describe '#position_is_threatened' do
 
-#     context 'when the major is a queen and the pawn is white  on 0, 0' do
+    before do
+      color = :white
+      allow(chess_board).to receive(:get_opponent_possible_moves).with(color).and_return([[2, 1], [2, 2]])
+    end
 
-#       before do
-#         chess_board.instance_variable_set(:@pieces, [white_pawn])
-#         # allow(white_pawn).to receive(:position).with([-1, -1])
-#       end
+    context 'when the opposite color can snack on that square' do
+      it 'returns true' do
+        position = [2, 2]
+        result = chess_board.position_is_threatened?(position, :white)
+        expect(result).to eq(true)
+      end
+    end
 
-#       it 'returns a queen' do
-#         type = :queen
-#         major = chess_board.create_major_like_pawn(type, white_pawn)
-#         result = major.specie == :queen
-#         expect(result).to eq(true)
-#       end
+    context 'when the opponent can not snack on that square' do
+      it 'returns false' do
+        position = [3, 3]
+        result = chess_board.position_is_threatened?(position, :white)
+        expect(result).to eq(false)
+      end
+    end
+  end
 
-#       it 'gives it a position of [0, 0]' do
-#         type = :queen
-#         major = chess_board.create_major_like_pawn(type, white_pawn)
-#         result = major.position
-#         expect(result).to eq([0, 0])
-#       end
+  describe '#piece_moved?' do
+    context 'when the piece moved before' do
+      it 'returns true' do
+      end
+    end
 
-#       it 'gives it a white color' do
-#         type = :queen
-#         major = chess_board.create_major_like_pawn(type, white_pawn)
-#         result = major.color
-#         expect(result).to eq(:white)
-#       end
+    context 'when the piece did not move' do
+      it 'returns false' do
+      end
+    end
+  end
 
-#       it 'gives it the right unicode' do
-#         type = :queen
-#         major = chess_board.create_major_like_pawn(type, white_pawn)
-#         result = major.unicode
-#         expect(result).to eq("\u265B")
-#       end
-#     end
-#   end
+  describe '#generate_trajectory' do
+    context 'when the start position is [7, 4] and the end position is [7, 7]' do
+      it 'returns [[7, 5], [7, 6]]' do
+      end
+    end
+  end
 end
