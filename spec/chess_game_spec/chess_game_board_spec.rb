@@ -141,7 +141,7 @@ describe ChessBoard do
 
     before do
       color = :white
-      allow(chess_board).to receive(:get_opponent_possible_moves).with(color).and_return([[2, 1], [2, 2]])
+      allow(chess_board).to receive(:get_possible_moves_for_color).with(color).and_return([[2, 1], [2, 2]])
     end
 
     context 'when the opposite color can snack on that square' do
