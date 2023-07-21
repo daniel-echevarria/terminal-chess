@@ -173,9 +173,22 @@ describe ChessBoard do
     end
   end
 
-  describe '#generate_trajectory' do
+  describe '#get_horizontal_trajectory' do
     context 'when the start position is [7, 4] and the end position is [7, 7]' do
       it 'returns [[7, 5], [7, 6]]' do
+        position_a = [7, 4]
+        position_b = [7, 7]
+        result = chess_board.get_horizontal_trajectory(position_a, position_b)
+        expect(result).to eq([[7, 5], [7, 6]])
+      end
+    end
+
+    context 'when the start positions is [7, 4] and the end positions is [7, 0]' do
+      it 'returns [[7, 3], [7, 2], [7, 1]]' do
+        pos_a = [7, 4]
+        pos_b = [7, 0]
+        result = chess_board.get_horizontal_trajectory(pos_a, pos_b)
+        expect(result).to eq([[7, 3], [7, 2], [7, 1]])
       end
     end
   end

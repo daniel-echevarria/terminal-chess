@@ -189,14 +189,26 @@ class ChessBoard
   end
 
   def king_can_castle?(king, rook)
+    trajectory = get_horizontal_trajectory(king.position, rook.position)
     piece_moved?(king) || piece_moved?(rook) || is_check?(king)
-  end
-
-  def generate_trajectory(a, b)
-
   end
 
   def piece_moved?(piece)
     @move_history.any?(&:piece) == piece
+  end
+
+  def get_horizontal_trajectory(pos_a, pos_b)
+    a_row, a_col = pos_a
+    b_row, b_col = pos_b
+
+    positions = []
+    direction = a_col < b_col ? +1 : -1
+
+    until a_col == (b_col - direction)
+      a_col += direction
+      positions << [a_row, a_col]
+    end
+
+    positions
   end
 end
