@@ -62,7 +62,7 @@ class MoveGenerator
     moves = []
 
     possible_directions = [:up, :down, :left, :right]
-    possible_directions.each { |direction| moves << generate_moves(rook, direction) }
+    possible_directions.each { |direction| moves << generate_moves_non_recursivly(rook, direction) }
 
     moves.flatten(1)
   end
@@ -71,7 +71,7 @@ class MoveGenerator
     moves = []
 
     possible_directions = [:main_diag_up, :main_diag_down, :sec_diag_up, :sec_diag_down]
-    possible_directions.each { |direction| moves << generate_moves(bishop, direction) }
+    possible_directions.each { |direction| moves << generate_moves_non_recursivly(bishop, direction) }
 
     moves.flatten(1)
   end
@@ -135,4 +135,24 @@ class MoveGenerator
     next_move = move_one(next_move, direction)
     generate_moves(piece, direction, next_move, moves)
   end
+
+  def generate_moves_non_recursivly(piece, direction)
+    moves = []
+    next_position = move_one(piece.position, direction)
+    until invalid_move_for_piece?(next_position, piece)
+      moves << next_position
+      return moves if @board.position_has_oponent?(next_position, piece)
+
+      next_position = move_one(next_position, direction)
+    end
+    moves
+  end
+
+  # algo generate moves non recursively
+  # given a piece and a direction,
+  # declare an empty array for the possible moves
+  # define the current_position as the piece position
+  # until the current_position of the piece is invalid do the following
+  # add the current position to the possible moves
+  # if the current position has an opponent, return moves
 end

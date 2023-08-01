@@ -16,7 +16,7 @@ class ChessGame
 
   def play
     players = [@player_one, @player_two]
-    update_board
+    display_board
     until game_over?
       current_player = players.shift
       opponent = players.first
@@ -26,7 +26,7 @@ class ChessGame
     end
   end
 
-  def update_board
+  def display_board
     @board.update_board
   end
 
@@ -42,7 +42,7 @@ class ChessGame
     end
     promoted_pawn = @board.select_promoted_pawn_of_color(player.color)
     handle_promotion(promoted_pawn, player) if promoted_pawn
-    update_board
+    display_board
   end
 
   def is_player_check?(player)
