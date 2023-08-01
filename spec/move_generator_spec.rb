@@ -1,7 +1,7 @@
 require_relative '../lib/move_generator.rb'
-require_relative '../lib/chess_game_board.rb'
-require_relative '../lib/chess_piece.rb'
-require_relative '../lib/chess_game_move_module'
+require_relative '../lib/board.rb'
+require_relative '../lib/piece.rb'
+require_relative '../lib/move_module'
 
 describe MoveGenerator do
   include MovePiece
