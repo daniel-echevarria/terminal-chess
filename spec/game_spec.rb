@@ -1,5 +1,6 @@
 require_relative '../lib/game.rb'
 require_relative '../lib/player.rb'
+require_relative '../lib/piece.rb'
 require_relative '../lib/board.rb'
 
 describe ChessGame do
@@ -45,7 +46,7 @@ describe ChessGame do
 
   describe '#valid_pick?' do
     context 'when player is white and picks a white piece' do
-      let(:white_pawn) { instance_double(ChessPawn, color: :white) }
+      let(:white_pawn) { instance_double(ChessPiece, specie: :pawn, color: :white) }
 
       before do
         pick = 'a2'
@@ -62,7 +63,7 @@ describe ChessGame do
     end
 
     context 'when player is white and picks a blackpiece' do
-      let(:black_pawn) { instance_double(ChessPawn, color: :black) }
+      let(:black_pawn) { instance_double(ChessPiece, specie: :pawn, color: :black) }
 
       before do
         pick = 'a7'
@@ -80,7 +81,7 @@ describe ChessGame do
   end
 
   describe '#move_piece_input' do
-    let(:white_pawn) { instance_double(ChessPawn, color: :white, position: [6, 0])}
+    let(:white_pawn) { instance_double(ChessPiece, specie: :pawn, color: :white, position: [6, 0])}
 
     context 'when player inputs a valid position to move the piece' do
       before do
@@ -229,6 +230,35 @@ describe ChessGame do
           result = game.valid_promotion?(input)
           expect(result).to eq(false)
         end
+      end
+    end
+  end
+
+  describe '#king_castled?' do
+    context 'when the piece is a king and moved 2 squares' do
+      it 'returns true' do
+        piece = ChessPiece.new(:king, [7, 4], :white)
+        target_position = [7, 6]
+        result = game.king_castled?(piece, target_position)
+        expect(result).to eq(true)
+      end
+    end
+
+    context 'when the piece is not a king' do
+      it 'returns false' do
+        piece = ChessPiece.new(:rook, [7, 4], :white)
+        target_position = [7, 6]
+        result = game.king_castled?(piece, target_position)
+        expect(result).to eq(false)
+      end
+    end
+
+    context 'when the king did not move more than one square' do
+      it 'returns false' do
+        piece = ChessPiece.new(:king, [7, 4], :white)
+        target_position = [7, 5]
+        result = game.king_castled?(piece, target_position)
+        expect(result).to eq(false)
       end
     end
   end

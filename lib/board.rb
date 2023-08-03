@@ -89,6 +89,14 @@ class ChessBoard
     piece.position = future_position
   end
 
+  def castling(king, rook, future_position)
+    king_col = king.position[1]
+    future_col = future_position[1]
+    direction = king_col < future_col ? -1 : 1
+    king.position = future_position
+    rook.position[1] = king.position[1] + direction
+  end
+
   def snack_piece_at(position)
     piece = select_piece_at(position)
     piece.position = [-1, -1]
@@ -140,8 +148,7 @@ class ChessBoard
   end
 
   def position_is_threatened?(position, opponent_color)
-    opponent_possible_moves_by_piece = @mover.get_possible_moves_for_color(opponent_color)
-    opponent_possible_moves = opponent_possible_moves_by_piece.flat_map { |hash| hash[:possibles] }
+    opponent_possible_moves = @mover.get_possible_moves_for_color(opponent_color)
     opponent_possible_moves.include?(position)
   end
 
@@ -178,6 +185,10 @@ class ChessBoard
     current_row == promotion_row
   end
 
+  def piece_moved?(piece)
+    @move_history.any? { |p| p == piece }
+  end
+
   def castling_is_permitted?(king, rook)
     castling_trajectory = get_castling_trajectory(king, rook)
     king_trajectory = castling_trajectory[0..1]
@@ -188,10 +199,6 @@ class ChessBoard
     return false if king_trajectory.any? { |pos| position_is_threatened?(pos, opponent_color) }
 
     true
-  end
-
-  def piece_moved?(piece)
-    @move_history.any? { |p| p == piece }
   end
 
   def get_castling_trajectory(king, rook)
@@ -212,7 +219,15 @@ class ChessBoard
   def get_same_color_rooks(king)
     @pieces.select { |piece| piece.specie == :rook && piece.color == king.color }
   end
+
+  def castle(king, target_position)
+    castling_rook = select_closest_rook(target_position)
+  end
 end
 
 
-# Algo for castling,
+# Algo for castle:
+# Given a king and a target position
+# Select the same colored rook closer to the target position
+# move the king to the target position and move the select rook just before
+

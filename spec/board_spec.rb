@@ -1,9 +1,10 @@
-require_relative '../lib/game_board.rb'
+require_relative '../lib/board.rb'
 require_relative '../lib/piece.rb'
+require_relative '../lib/move_generator.rb'
 
 describe ChessBoard do
 
-  subject(:chess_board) { described_class.new}
+  subject(:chess_board) { described_class.new }
 
   describe '#create_board' do
     it 'creates a 8x8 empty board' do
@@ -138,10 +139,13 @@ describe ChessBoard do
   end
 
   describe '#position_is_threatened' do
+    let(:move_generator) { instance_double(MoveGenerator) }
 
     before do
       color = :white
-      allow(chess_board).to receive(:get_possible_moves_for_color).with(color).and_return([[2, 1], [2, 2]])
+      chess_board.instance_variable_set(:@mover, move_generator)
+      allow(move_generator).to receive(:get_possible_moves_for_color).with(color).and_return([[2, 2]])
+      move_generator.instance_variable_set(:@board, chess_board)
     end
 
     context 'when the opposite color can snack on that square' do
@@ -173,27 +177,7 @@ describe ChessBoard do
     end
   end
 
-  describe '#get_horizontal_trajectory' do
-    context 'when the start position is [7, 4] and the end position is [7, 7]' do
-      it 'returns [[7, 5], [7, 6]]' do
-        position_a = [7, 4]
-        position_b = [7, 7]
-        result = chess_board.get_horizontal_trajectory(position_a, position_b)
-        expect(result).to eq([[7, 5], [7, 6]])
-      end
-    end
-
-    context 'when the start positions is [7, 4] and the end positions is [7, 0]' do
-      it 'returns [[7, 3], [7, 2], [7, 1]]' do
-        pos_a = [7, 4]
-        pos_b = [7, 0]
-        result = chess_board.get_horizontal_trajectory(pos_a, pos_b)
-        expect(result).to eq([[7, 3], [7, 2], [7, 1]])
-      end
-    end
-  end
-
-  describe '#get_king_castling_trajectory' do
+  describe '#get_castling_trajectory' do
     context 'when the king is white' do
       let(:white_king) { instance_double(ChessPiece, specie: :king, color: :white, position: [7, 4]) }
 
@@ -201,17 +185,17 @@ describe ChessBoard do
         let(:white_rook) { instance_double(ChessPiece, specie: :rook, color: :white, position: [7, 7]) }
 
         it 'returns [[7, 5], [7, 6]]' do
-          result = chess_board.get_king_castling_trajectory(white_king, white_rook)
+          result = chess_board.get_castling_trajectory(white_king, white_rook)
           expect(result).to eq([[7, 5], [7, 6]])
         end
       end
 
-      context 'when dong the big castling' do
+      context 'when doing the big castling' do
         let(:white_rook) { instance_double(ChessPiece, specie: :rook, color: :white, position: [7, 0]) }
 
         it 'returns [[7, 3], [7, 2]]' do
-          result = chess_board.get_king_castling_trajectory(white_king, white_rook)
-          expect(result).to eq([[7, 3], [7, 2]])
+          result = chess_board.get_castling_trajectory(white_king, white_rook)
+          expect(result).to eq([[7, 3], [7, 2], [7, 1]])
         end
       end
     end
@@ -223,7 +207,7 @@ describe ChessBoard do
         let(:black_rook) { instance_double(ChessPiece, specie: :rook, color: :black, position: [0, 7]) }
 
         it 'returns [[0, 5], [0, 6]]' do
-          result = chess_board.get_king_castling_trajectory(black_king, black_rook)
+          result = chess_board.get_castling_trajectory(black_king, black_rook)
           expect(result).to eq([[0, 5], [0, 6]])
         end
       end
@@ -232,8 +216,8 @@ describe ChessBoard do
         let(:black_rook) { instance_double(ChessPiece, specie: :rook, color: :black, position: [0, 0]) }
 
         it 'returns [[0, 3], [0, 2]]' do
-          result = chess_board.get_king_castling_trajectory(black_king, black_rook)
-          expect(result).to eq([[0, 3], [0, 2]])
+          result = chess_board.get_castling_trajectory(black_king, black_rook)
+          expect(result).to eq([[0, 3], [0, 2], [0, 1]])
         end
       end
     end
@@ -257,6 +241,27 @@ describe ChessBoard do
       it 'returns the two white rooks' do
         result = chess_board.get_same_color_rooks(white_king)
         expect(result).to eq([white_rook_1, white_rook_2])
+      end
+    end
+  end
+
+  describe '#castle' do
+    let(:white_king) { instance_double(ChessPiece, specie: :king, color: :white, position: [7, 4]) }
+    let(:white_rook_one) { instance_double(ChessPiece, specie: :rook, color: :white, position: [7, 7]) }
+    let(:white_rook_two) { instance_double(ChessPiece, specie: :rook, color: :white, position: [7, 0]) }
+
+    context 'when the target position is [7, 6]' do
+      before do
+        target_position = [7, 6]
+        chess_board.castle(white_king, target_position)
+      end
+
+      it 'moves the king to [7, 6]' do
+        expect(white_king.position).to eq([7, 6])
+      end
+
+      it 'moves the closest rook to [7, 5]' do
+        expect(white_rook_one.position).to eq([7, 5])
       end
     end
   end

@@ -58,8 +58,9 @@ class ChessGame
       start_position = select_piece_input(player)
       piece = @board.select_piece_at(start_position)
     end
-    end_position = move_piece_input(piece)
-    @board.move_piece(piece, end_position)
+    target_position = move_piece_input(piece)
+    handle_castling(piece)
+    @board.move_piece(piece, target_position)
     @board.clean_cell(start_position)
   end
 
@@ -78,6 +79,27 @@ class ChessGame
     piece_type = promotion_input(player)
     @board.transform_pawn(pawn, piece_type)
   end
+
+  def handle_castling(piece, target_position)
+    return unless king_castled?(piece, target_position)
+
+    @board.castle(piece, target_position)
+  end
+
+  def king_castled?(piece, target_position)
+    return false unless piece.specie == :king
+
+    step_size = piece.position[1] - target_position[1]
+    step_size.abs > 1
+  end
+
+  # Should I create a method that tells me how many square are in between 2 positions?
+
+  # Algo handle castling:
+  # Given a piece, and an ending position
+  # If the piece is a king, check if the piece moved 2 squares
+  # If it did, call castling with the king and the end position
+  # Otherwise return nill
 
   def handle_lost_or_draw(player)
     player_check?(player) ? handle_chechmate(player) : game_is_draw
@@ -145,7 +167,6 @@ class ChessGame
     position = translate_chess_to_array(input)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
     possible_moves << @mover.generate_castling_moves(piece) if piece.specie == :king
-    # moves = possible_moves.map { |move| translate_array_to_chess(move) }
     puts "This are the possible moves for #{piece.specie} #{possible_moves}"
     possible_moves.include?(position)
   end

@@ -35,9 +35,11 @@ class MoveGenerator
     pieces = @board.select_pieces_of_color(color)
     pieces.each do |piece|
       moves = generate_possible_moves_for_piece(piece)
-      pieces_possibles << { piece: piece, possibles: moves }
+      # will check if necessary to have the piece info, bypassed for now
+      # pieces_possibles << { piece: piece, possibles: moves }
+      pieces_possibles << moves
     end
-    pieces_possibles
+    pieces_possibles.flatten(1)
   end
 
   def generate_pawn_moves(pawn)
