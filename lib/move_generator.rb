@@ -112,18 +112,17 @@ class MoveGenerator
       [row, col]
     end
     moves << potential_moves.reject { |move| invalid_move_for_piece?(move, king) }
-    moves << generate_potential_castling_moves(king)
     moves.flatten(1)
   end
 
-  def generate_potential_castling_moves(king)
+  def generate_castling_moves(king)
     potential_castling_moves = []
     same_color_rooks = @board.get_same_color_rooks(king)
     same_color_rooks.each do |rook|
       castling_trajectory = @board.get_castling_trajectory(king, rook)
-      potential_castling_moves << castling_trajectory[1]
+      potential_castling_moves << castling_trajectory[1] if @board.castling_is_permitted?(king, rook)
     end
-    potential_castling_moves
+    potential_castling_moves.flatten(1)
   end
 
   def generate_moves(piece, direction, next_move = move_one(piece.position, direction), moves = [])

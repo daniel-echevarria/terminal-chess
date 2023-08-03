@@ -35,9 +35,9 @@ class ChessGame
   end
 
   def play_turn(player)
-    display_check_message(player) if is_player_check?(player)
+    display_check_message(player) if player_check?(player)
     play_move(player)
-    while is_player_check?(player)
+    while player_check?(player)
       out_of_check_loop(player)
     end
     promoted_pawn = @board.select_promoted_pawn_of_color(player.color)
@@ -45,7 +45,7 @@ class ChessGame
     display_board
   end
 
-  def is_player_check?(player)
+  def player_check?(player)
     player_king = @board.select_king_of_color(player.color)
     @board.check?(player_king)
   end
@@ -65,8 +65,6 @@ class ChessGame
 
   def piece_can_move?(piece)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
-    moves = possible_moves.map { |move| translate_array_to_chess(move) }
-    puts "This are the possible moves for #{piece.specie} #{moves}"
     !possible_moves.empty?
   end
 
@@ -82,7 +80,7 @@ class ChessGame
   end
 
   def handle_lost_or_draw(player)
-    is_player_check?(player) ? handle_chechmate(player) : game_is_draw
+    player_check?(player) ? handle_chechmate(player) : game_is_draw
   end
 
   def game_is_draw
@@ -108,7 +106,7 @@ class ChessGame
       possibles = p_and_moves[:possibles]
       possibles.each do |move|
         @board.move_piece(piece, move)
-        check_free << [piece, move] unless is_player_check?(player)
+        check_free << [piece, move] unless player_check?(player)
         @board.undo_last_move
       end
     end
@@ -146,6 +144,9 @@ class ChessGame
   def valid_move?(input, piece)
     position = translate_chess_to_array(input)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
+    possible_moves << @mover.generate_castling_moves(piece) if piece.specie == :king
+    # moves = possible_moves.map { |move| translate_array_to_chess(move) }
+    puts "This are the possible moves for #{piece.specie} #{possible_moves}"
     possible_moves.include?(position)
   end
 
