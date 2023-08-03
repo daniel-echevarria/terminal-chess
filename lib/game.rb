@@ -47,7 +47,7 @@ class ChessGame
 
   def is_player_check?(player)
     player_king = @board.select_king_of_color(player.color)
-    @board.is_check?(player_king)
+    @board.check?(player_king)
   end
 
   def play_move(player)
@@ -65,7 +65,8 @@ class ChessGame
 
   def piece_can_move?(piece)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
-    puts "This are the possible moves for #{piece.specie} #{possible_moves}"
+    moves = possible_moves.map { |move| translate_array_to_chess(move) }
+    puts "This are the possible moves for #{piece.specie} #{moves}"
     !possible_moves.empty?
   end
 
@@ -172,6 +173,15 @@ class ChessGame
     [a_row, a_col]
   end
 
+  def translate_array_to_chess(position)
+    chess_rows = (8).downto(1).to_a
+    chess_columns = ('a').upto('h').to_a
+    row, col = position
+    c_row = chess_rows[row]
+    c_col = chess_columns[col]
+    [c_col, c_row].join
+  end
+
   def select_piece_message(player)
     puts <<~HEREDOC
       #{player.name} select the piece you would like to move by typing it\'s position
@@ -203,7 +213,7 @@ class ChessGame
       rook
     HEREDOC
   end
-
+#
   def display_draw_message
     puts 'Congratulations girls the game is draw and you both won! (or none of you did depending how you want to look at it)'
   end

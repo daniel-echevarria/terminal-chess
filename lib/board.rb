@@ -145,7 +145,7 @@ class ChessBoard
     opponent_possible_moves.include?(position)
   end
 
-  def is_check?(king)
+  def check?(king)
     opponent_color = king.color == :white ? :black : :white
     position_is_threatened?(king.position, opponent_color)
   end
@@ -179,42 +179,38 @@ class ChessBoard
   end
 
   def castling_is_permitted?(king, rook)
-    trajectory = get_horizontal_trajectory(king.position, rook.position)
-    king_trajectory = get_king_castling_trajectory(king, rook)
+    castling_trajectory = get_castling_trajectory(king, rook)
+    king_trajectory = castling_trajectory[0..1]
+    opponent_color = king.color == :white ? :black : :white
 
-    return false if piece_moved?(king) || piece_moved?(rook) || is_check?(king)
-    return false unless trajectory.all? { |pos| position_is_free?(pos) }
-    return false if king_trajectory.any? { |pos| position_is_threatened?(pos) }
+    return false if piece_moved?(king) || piece_moved?(rook)
+    return false unless castling_trajectory.all? { |pos| position_is_free?(pos) }
+    return false if king_trajectory.any? { |pos| position_is_threatened?(pos, opponent_color) }
 
     true
   end
 
   def piece_moved?(piece)
-    @move_history.any?(&:piece) == piece
+    @move_history.any? { |p| p == piece }
   end
 
-  def get_horizontal_trajectory(pos_a, pos_b)
-    a_row, a_col = pos_a
-    b_row, b_col = pos_b
+  def get_castling_trajectory(king, rook)
+    king_row, king_col = king.position
+    rook_col = rook.position[1]
 
     positions = []
-    direction = a_col < b_col ? +1 : -1
+    direction = king_col < rook_col ? +1 : -1
 
-    until a_col == (b_col - direction)
-      a_col += direction
-      positions << [a_row, a_col]
+    until king_col == (rook_col - direction)
+      king_col += direction
+      positions << [king_row, king_col]
     end
 
     positions
   end
 
-  def get_king_castling_trajectory(king, rook)
-    traj = get_horizontal_trajectory(king.position, rook.position)
-    traj[0..1]
-  end
-
   def get_same_color_rooks(king)
-    rooks = @pieces.select { |piece| piece.specie == :rook && piece.color == king.color }
+    @pieces.select { |piece| piece.specie == :rook && piece.color == king.color }
   end
 end
 

@@ -111,20 +111,19 @@ class MoveGenerator
       col += DIRECTIONS[dir][1]
       [row, col]
     end
-    moves << potential_moves.select { |move| !invalid_move_for_piece?(move, king) }
-    # moves << generate_possible_castling_moves(king)
+    moves << potential_moves.reject { |move| invalid_move_for_piece?(move, king) }
+    moves << generate_potential_castling_moves(king)
     moves.flatten(1)
   end
 
-  def generate_possible_castling_moves(king)
+  def generate_potential_castling_moves(king)
+    potential_castling_moves = []
     same_color_rooks = @board.get_same_color_rooks(king)
     same_color_rooks.each do |rook|
-      if @board.castling_is_permitted?(king, rook)
-        p "The king #{king} can rook with this rook #{rook} "
-      else
-        p 'castling is not permitted'
-      end
+      castling_trajectory = @board.get_castling_trajectory(king, rook)
+      potential_castling_moves << castling_trajectory[1]
     end
+    potential_castling_moves
   end
 
   def generate_moves(piece, direction, next_move = move_one(piece.position, direction), moves = [])
