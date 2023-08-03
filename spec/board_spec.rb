@@ -3,7 +3,6 @@ require_relative '../lib/piece.rb'
 require_relative '../lib/move_generator.rb'
 
 describe ChessBoard do
-
   subject(:chess_board) { described_class.new }
 
   describe '#create_board' do
@@ -262,6 +261,22 @@ describe ChessBoard do
 
       it 'moves the closest rook to [7, 5]' do
         expect(white_rook_one.position).to eq([7, 5])
+      end
+    end
+  end
+
+  describe '#select_closest_rook' do
+    context 'when the king is on [7, 4] and there is a rook on [7, 7 and another on [7, 0]'
+    let(:white_king) { instance_double(ChessPiece, specie: :king, color: :white, position: [7, 4]) }
+    let(:east_rook) { instance_double(ChessPiece, specie: :rook, color: :white, position: [7, 7]) }
+    let(:west_rook) { instance_double(ChessPiece, specie: :rook, color: :white, position: [7, 0]) }
+
+    context 'when the target position is [7, 6]' do
+      it 'selects the rook on [7, 7]' do
+        rooks = [east_rook, west_rook]
+        target_position = [7, 6]
+        result = chess_board.select_closest_rook(rooks, target_position)
+        expect(result).to eq(east_rook)
       end
     end
   end

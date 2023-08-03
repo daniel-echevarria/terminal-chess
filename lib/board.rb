@@ -221,7 +221,20 @@ class ChessBoard
   end
 
   def castle(king, target_position)
-    castling_rook = select_closest_rook(target_position)
+    rooks = get_same_color_rooks(king)
+    castling_rook = select_closest_rook(rooks, target_position)
+  end
+
+  def select_closest_rook(rooks, target_position)
+    return rooks.first if rooks.length < 2
+
+    first_rook = rooks[0]
+    second_rook = rooks[1]
+
+    distance_first_rook = first_rook.position[1] - target_position[1]
+    disance_second_rook = second_rook.position[1] - target_position[1]
+
+    distance_first_rook.abs < disance_second_rook.abs ? first_rook : second_rook
   end
 end
 
