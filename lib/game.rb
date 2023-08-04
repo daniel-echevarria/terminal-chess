@@ -19,9 +19,9 @@ class ChessGame
     display_board
     until game_over?
       current_player = players.shift
-      opponent = players.first
+      current_opponent = players.first
       play_turn(current_player)
-      handle_lost_or_draw(opponent) if player_cant_move?(opponent)
+      handle_lost_or_draw(current_opponent) if player_cant_move?(current_opponent)
       players << current_player
     end
   end
