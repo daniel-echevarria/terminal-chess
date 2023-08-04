@@ -82,12 +82,14 @@ class ChessBoard
   end
 
   def move_piece(piece, future_position)
+    original_position = piece.position.dup
     snacked_piece = snack_piece_at(future_position) if position_has_oponent?(future_position, piece)
     snack_record = create_snack_record(snacked_piece, future_position) if snacked_piece
 
     move_record = create_move_record(piece, piece.position, future_position, snack_record)
     @move_history << move_record
     piece.position = future_position
+    clean_cell(original_position)
   end
 
   def snack_piece_at(position)
@@ -219,7 +221,6 @@ class ChessBoard
     rook_row, rook_col = castling_rook.position
     direction = king.position[1] > target_position[1] ? 1 : -1
     rook_target_position = [rook_row, target_position[1] + direction]
-    p rook_target_position
     move_piece(king, target_position)
     move_piece(castling_rook, rook_target_position)
     clean_cell([rook_row, rook_col])

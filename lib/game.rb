@@ -60,7 +60,6 @@ class ChessGame
     end
     target_position = move_piece_input(piece)
     handle_castling(piece, target_position) || @board.move_piece(piece, target_position)
-    @board.clean_cell(start_position)
   end
 
   def piece_can_move?(piece)
@@ -80,12 +79,12 @@ class ChessGame
   end
 
   def handle_castling(piece, target_position)
-    return unless king_castled?(piece, target_position)
+    return unless castling?(piece, target_position)
 
     @board.castle(piece, target_position)
   end
 
-  def king_castled?(piece, target_position)
+  def castling?(piece, target_position)
     return false unless piece.specie == :king
 
     step_size = piece.position[1] - target_position[1]
@@ -93,12 +92,6 @@ class ChessGame
   end
 
   # Should I create a method that tells me how many square are in between 2 positions?
-
-  # Algo handle castling:
-  # Given a piece, and an ending position
-  # If the piece is a king, check if the piece moved 2 squares
-  # If it did, call castling with the king and the end position
-  # Otherwise return nill
 
   def handle_lost_or_draw(player)
     player_check?(player) ? handle_chechmate(player) : game_is_draw

@@ -35,8 +35,6 @@ class MoveGenerator
     pieces = @board.select_pieces_of_color(color)
     pieces.each do |piece|
       moves = generate_possible_moves_for_piece(piece)
-      # will check if necessary to have the piece info, bypassed for now
-      # pieces_possibles << { piece: piece, possibles: moves }
       pieces_possibles << moves
     end
     pieces_possibles.flatten(1)
@@ -47,7 +45,6 @@ class MoveGenerator
     pieces = @board.select_pieces_of_color(color)
     pieces.each do |piece|
       moves = generate_possible_moves_for_piece(piece)
-      # will check if necessary to have the piece info, bypassed for now
       pieces_possibles << { piece: piece, possibles: moves }
     end
     pieces_possibles.flatten(1)
