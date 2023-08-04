@@ -35,7 +35,6 @@ class ChessBoard
       row, col = piece.position
       @board[row][col] = piece.unicode
     end
-    p @move_history
   end
 
   def clean_cell(position)
@@ -181,7 +180,8 @@ class ChessBoard
   end
 
   def piece_moved?(piece)
-    @move_history.any? { |p| p == piece }
+    moved_pieces = @move_history.map { |hash| hash[:piece] }
+    moved_pieces.any? { |p| p == piece }
   end
 
   def castling_is_permitted?(king, rook)
@@ -223,7 +223,6 @@ class ChessBoard
     rook_target_position = [rook_row, target_position[1] + direction]
     move_piece(king, target_position)
     move_piece(castling_rook, rook_target_position)
-    clean_cell([rook_row, rook_col])
   end
 
   def select_closest_rook(rooks, target_position)
