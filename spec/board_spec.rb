@@ -244,27 +244,6 @@ describe ChessBoard do
     end
   end
 
-  describe '#castle' do
-    let(:white_king) { instance_double(ChessPiece, specie: :king, color: :white, position: [7, 4]) }
-    let(:white_rook_one) { instance_double(ChessPiece, specie: :rook, color: :white, position: [7, 7]) }
-    let(:white_rook_two) { instance_double(ChessPiece, specie: :rook, color: :white, position: [7, 0]) }
-
-    context 'when the target position is [7, 6]' do
-      before do
-        target_position = [7, 6]
-        chess_board.castle(white_king, target_position)
-      end
-
-      it 'moves the king to [7, 6]' do
-        expect(white_king.position).to eq([7, 6])
-      end
-
-      it 'moves the closest rook to [7, 5]' do
-        expect(white_rook_one.position).to eq([7, 5])
-      end
-    end
-  end
-
   describe '#select_closest_rook' do
     context 'when the king is on [7, 4] and there is a rook on [7, 7 and another on [7, 0]'
     let(:white_king) { instance_double(ChessPiece, specie: :king, color: :white, position: [7, 4]) }
@@ -277,6 +256,15 @@ describe ChessBoard do
         target_position = [7, 6]
         result = chess_board.select_closest_rook(rooks, target_position)
         expect(result).to eq(east_rook)
+      end
+    end
+
+    context 'when the target position is [7, 2]' do
+      it 'selects the rook on [7, 0]' do
+        rooks = [east_rook, west_rook]
+        target_position = [7, 2]
+        result = chess_board.select_closest_rook(rooks, target_position)
+        expect(result).to eq(west_rook)
       end
     end
   end

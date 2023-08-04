@@ -35,6 +35,7 @@ class ChessBoard
       row, col = piece.position
       @board[row][col] = piece.unicode
     end
+    p @move_history
   end
 
   def clean_cell(position)
@@ -87,14 +88,6 @@ class ChessBoard
     move_record = create_move_record(piece, piece.position, future_position, snack_record)
     @move_history << move_record
     piece.position = future_position
-  end
-
-  def castling(king, rook, future_position)
-    king_col = king.position[1]
-    future_col = future_position[1]
-    direction = king_col < future_col ? -1 : 1
-    king.position = future_position
-    rook.position[1] = king.position[1] + direction
   end
 
   def snack_piece_at(position)
@@ -223,6 +216,13 @@ class ChessBoard
   def castle(king, target_position)
     rooks = get_same_color_rooks(king)
     castling_rook = select_closest_rook(rooks, target_position)
+    rook_row, rook_col = castling_rook.position
+    direction = king.position[1] > target_position[1] ? 1 : -1
+    rook_target_position = [rook_row, target_position[1] + direction]
+    p rook_target_position
+    move_piece(king, target_position)
+    move_piece(castling_rook, rook_target_position)
+    clean_cell([rook_row, rook_col])
   end
 
   def select_closest_rook(rooks, target_position)

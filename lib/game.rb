@@ -59,8 +59,7 @@ class ChessGame
       piece = @board.select_piece_at(start_position)
     end
     target_position = move_piece_input(piece)
-    handle_castling(piece)
-    @board.move_piece(piece, target_position)
+    handle_castling(piece, target_position) || @board.move_piece(piece, target_position)
     @board.clean_cell(start_position)
   end
 
@@ -116,7 +115,7 @@ class ChessGame
   end
 
   def player_cant_move?(player)
-    pieces_and_moves = @mover.get_possible_moves_for_color(player.color)
+    pieces_and_moves = @mover.get_possible_moves_for_color_by_piece(player.color)
     out_of_check_moves = select_check_free_moves(pieces_and_moves, player)
     out_of_check_moves.empty?
   end
