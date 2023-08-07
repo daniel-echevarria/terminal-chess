@@ -10,36 +10,38 @@ class ChessGame
     @player_one = player_one
     @player_two = player_two
     @mover = MoveGenerator.new(@board)
-    @check_mate = nil
-    @game_is_draw = false
+    @game_over = false
   end
 
   def play
     players = [@player_one, @player_two]
     display_board
-    until game_over?
+    until @game_over
       current_player = players.shift
-      current_opponent = players.first
-      play_turn(current_player)
-      handle_lost_or_draw(current_opponent) if player_cant_move?(current_opponent)
+      assess_situation(current_player)
+      play_turn(current_player) unless @game_over
       players << current_player
     end
+  end
+
+  def assess_situation(player)
+    handle_end_game(player) || return if player_cant_move?(player)
+
+    display_check_message(player) if player_check?(player)
+  end
+
+  def handle_end_game(player)
+    @game_over = true
+    player_check?(player) ? display_check_mate_message(player) : display_draw_message(player)
   end
 
   def display_board
     @board.update_board
   end
 
-  def game_over?
-    @check_mate || @game_is_draw
-  end
-
   def play_turn(player)
-    display_check_message(player) if player_check?(player)
     play_move(player)
-    while player_check?(player)
-      out_of_check_loop(player)
-    end
+    out_of_check_loop(player) while player_check?(player)
     promoted_pawn = @board.select_promoted_pawn_of_color(player.color)
     handle_promotion(promoted_pawn, player) if promoted_pawn
     display_board
@@ -91,46 +93,30 @@ class ChessGame
     step_size.abs > 1
   end
 
-  # Should I create a method that tells me how many square are in between 2 positions?
-
-  def handle_lost_or_draw(player)
-    player_check?(player) ? handle_chechmate(player) : game_is_draw
-  end
-
-  def game_is_draw
-    @game_is_draw = true
-    display_draw_message
-  end
-
-  def handle_chechmate(player)
-    @check_mate = player
-    display_check_mate_message(player)
-  end
-
   def player_cant_move?(player)
-    pieces_and_moves = @mover.get_possible_moves_for_color_by_piece(player.color)
-    out_of_check_moves = select_check_free_moves(pieces_and_moves, player)
+    moves_by_piece = @mover.get_possible_moves_for_color_by_piece(player.color)
+    out_of_check_moves = select_check_free_moves(moves_by_piece, player)
     out_of_check_moves.empty?
   end
 
-  def select_check_free_moves(pieces_and_moves, player)
-    check_free = []
-    pieces_and_moves.each do |p_and_moves|
-      piece = p_and_moves[:piece]
-      possibles = p_and_moves[:possibles]
-      possibles.each do |move|
+  def select_check_free_moves(moves_by_piece, player)
+    check_free_moves = []
+    moves_by_piece.each do |piece_and_moves|
+      piece = piece_and_moves[:piece]
+      possible_moves = piece_and_moves[:possibles]
+      possible_moves.each do |move|
         @board.move_piece(piece, move)
-        check_free << [piece, move] unless player_check?(player)
+        check_free_moves << [piece, move] unless player_check?(player)
         @board.undo_last_move
       end
     end
-    check_free
+    check_free_moves
   end
 
   def select_piece_input(player)
     select_piece_message(player)
     input = gets.chomp
-    until valid_pick?(player, input) do
+    until valid_pick?(player, input)
       puts "Please input the position of a #{player.color} piece"
       input = gets.chomp
     end
@@ -148,7 +134,7 @@ class ChessGame
   def move_piece_input(piece)
     move_piece_message
     input = gets.chomp
-    until valid_move?(input, piece) do
+    until valid_move?(input, piece)
       puts 'please input a valid move'
       input = gets.chomp
     end
@@ -166,7 +152,7 @@ class ChessGame
   def promotion_input(player)
     display_promotion_message(player)
     input = gets.chomp
-    until valid_promotion?(input) do
+    until valid_promotion?(input)
       display_wrong_promotion
       input = gets.chomp
     end
@@ -179,8 +165,8 @@ class ChessGame
   end
 
   def translate_chess_to_array(input)
-    chess_rows = (8).downto(1).to_a
-    chess_columns = ('a').upto('h').to_a
+    chess_rows = 8.downto(1).to_a
+    chess_columns = 'a'.upto('h').to_a
     col, row = input.split('')
     a_col = chess_columns.index(col)
     a_row = chess_rows.index(row.to_i)
@@ -227,7 +213,7 @@ class ChessGame
       rook
     HEREDOC
   end
-#
+
   def display_draw_message
     puts 'Congratulations girls the game is draw and you both won! (or none of you did depending how you want to look at it)'
   end
