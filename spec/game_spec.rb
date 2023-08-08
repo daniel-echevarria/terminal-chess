@@ -234,12 +234,12 @@ describe ChessGame do
     end
   end
 
-  describe '#king_castled?' do
+  describe '#castling?' do
     context 'when the piece is a king and moved 2 squares' do
       it 'returns true' do
         piece = ChessPiece.new(:king, [7, 4], :white)
         target_position = [7, 6]
-        result = game.king_castled?(piece, target_position)
+        result = game.castling?(piece, target_position)
         expect(result).to eq(true)
       end
     end
@@ -248,7 +248,7 @@ describe ChessGame do
       it 'returns false' do
         piece = ChessPiece.new(:rook, [7, 4], :white)
         target_position = [7, 6]
-        result = game.king_castled?(piece, target_position)
+        result = game.castling?(piece, target_position)
         expect(result).to eq(false)
       end
     end
@@ -257,7 +257,7 @@ describe ChessGame do
       it 'returns false' do
         piece = ChessPiece.new(:king, [7, 4], :white)
         target_position = [7, 5]
-        result = game.king_castled?(piece, target_position)
+        result = game.castling?(piece, target_position)
         expect(result).to eq(false)
       end
     end

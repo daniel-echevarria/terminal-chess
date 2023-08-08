@@ -2,7 +2,6 @@ require_relative 'move_module.rb'
 require_relative 'move_generator.rb'
 
 class ChessGame
-
   include MovePiece
 
   def initialize(board, player_one, player_two)
@@ -24,8 +23,12 @@ class ChessGame
     end
   end
 
+  def display_board
+    @board.update_board
+  end
+
   def assess_situation(player)
-    handle_end_game(player) || return if player_cant_move?(player)
+    return handle_end_game(player) if player_cant_move?(player)
 
     display_check_message(player) if player_check?(player)
   end
@@ -33,10 +36,6 @@ class ChessGame
   def handle_end_game(player)
     @game_over = true
     player_check?(player) ? display_check_mate_message(player) : display_draw_message(player)
-  end
-
-  def display_board
-    @board.update_board
   end
 
   def play_turn(player)
@@ -174,8 +173,8 @@ class ChessGame
   end
 
   def translate_array_to_chess(position)
-    chess_rows = (8).downto(1).to_a
-    chess_columns = ('a').upto('h').to_a
+    chess_rows = 8.downto(1).to_a
+    chess_columns = 'a'.upto('h').to_a
     row, col = position
     c_row = chess_rows[row]
     c_col = chess_columns[col]
