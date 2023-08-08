@@ -83,12 +83,37 @@ class ChessBoard
   def move_piece(piece, future_position)
     original_position = piece.position.dup
     snacked_piece = snack_piece_at(future_position) if position_has_oponent?(future_position, piece)
+    snacked_piece = snack_piece_en_passant_at(future_position, piece) if pawn_snacking_en_passant?(piece, future_position)
     snack_record = create_snack_record(snacked_piece, future_position) if snacked_piece
 
     move_record = create_move_record(piece, piece.position, future_position, snack_record)
     @move_history << move_record
     piece.position = future_position
     clean_cell(original_position)
+  end
+
+  # Algo for pawn_snacking_en_passant?
+  # Given a piece and its future position
+  # return unless the piece is a pawn
+  # If the future position is not on the same column as the pawn and the future position has no opponent
+  # the pawn is snacking en passant
+
+  def pawn_snacking_en_passant?(piece, future_position)
+    return unless piece.specie == :pawn
+    return if position_has_oponent?(future_position, piece)
+
+    pawn_col = piece.position[1]
+    future_col = future_position[1]
+    pawn_col != future_col
+  end
+
+  def snack_piece_en_passant_at(future_position, piece)
+    direction = piece.color == :white ? 1 : -1
+    futur_row, futur_col = future_position
+    snack_row = futur_row + direction
+    snack_position = [snack_row, futur_col]
+    clean_cell(snack_position)
+    snack_piece_at(snack_position) if position_has_oponent?(snack_position, piece)
   end
 
   def snack_piece_at(position)
@@ -191,7 +216,6 @@ class ChessBoard
     row, col = diagonal_move
     snack_row = row + direction
     snack = select_piece_at([snack_row, col])
-    p snack
     return snack if snack && snack.specie == :pawn
   end
 
@@ -204,27 +228,17 @@ class ChessBoard
 
     potential_snack = select_potential_en_passant_snack(pawn, diagonal_move)
     return unless potential_snack == select_last_moved_piece
-    return unless piece_moved_two_rows(@move_history.last)
+    return unless piece_moved_two_rows?(@move_history.last)
 
     true
   end
 
-  def piece_moved_two_rows(move_record)
+  def piece_moved_two_rows?(move_record)
     start_row = move_record[:from][0]
     target_row = move_record[:to][0]
     step_size = start_row - target_row
     step_size.abs == 2
   end
-
-
-
-  # Algo for en-passant-permitted?
-  # Given a pawn and a diagonal movement, check if it is on the en-passant-position
-  # If it is check if it has a pawn just above the diagonal movmement
-  # Otherwise do nothing
-  # If it has a pawn just above the diagonal movement check if that pawn was the last piece to move
-  # Otherwise do nothing
-  # If it was check if that pawn moved 2 squares, if it has en-passant is permitted
 
   def piece_moved?(piece)
     moved_pieces = @move_history.map { |hash| hash[:piece] }
