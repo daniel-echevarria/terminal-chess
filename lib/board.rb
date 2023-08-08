@@ -77,7 +77,7 @@ class ChessBoard
 
   def select_king_of_color(color)
     pieces = select_pieces_of_color(color)
-    king = pieces.find { |piece| piece.specie == :king }
+    pieces.find { |piece| piece.specie == :king }
   end
 
   def move_piece(piece, future_position)
@@ -98,11 +98,11 @@ class ChessBoard
   end
 
   def create_move_record(piece, previous, current, snack_record)
-    move_hash = { piece: piece, from: previous, to: current, snack: snack_record }
+    { piece: piece, from: previous, to: current, snack: snack_record }
   end
 
   def create_snack_record(piece, previous)
-    snack_hash = { piece: piece, from: previous}
+    { piece: piece, from: previous }
   end
 
   def undo_last_move
@@ -179,6 +179,53 @@ class ChessBoard
     current_row == promotion_row
   end
 
+  def pawn_on_en_passant_position?(pawn)
+    current_row = pawn.position[0]
+    en_passant_row = pawn.color == :white ? 3 : 4
+
+    current_row == en_passant_row
+  end
+
+  def select_potential_en_passant_snack(pawn, diagonal_move)
+    direction = pawn.color == :white ? 1 : -1
+    row, col = diagonal_move
+    snack_row = row + direction
+    snack = select_piece_at([snack_row, col])
+    p snack
+    return snack if snack && snack.specie == :pawn
+  end
+
+  def select_last_moved_piece
+    @move_history.last[:piece]
+  end
+
+  def en_passant_permitted?(pawn, diagonal_move)
+    return unless pawn_on_en_passant_position?(pawn)
+
+    potential_snack = select_potential_en_passant_snack(pawn, diagonal_move)
+    return unless potential_snack == select_last_moved_piece
+    return unless piece_moved_two_rows(@move_history.last)
+
+    true
+  end
+
+  def piece_moved_two_rows(move_record)
+    start_row = move_record[:from][0]
+    target_row = move_record[:to][0]
+    step_size = start_row - target_row
+    step_size.abs == 2
+  end
+
+
+
+  # Algo for en-passant-permitted?
+  # Given a pawn and a diagonal movement, check if it is on the en-passant-position
+  # If it is check if it has a pawn just above the diagonal movmement
+  # Otherwise do nothing
+  # If it has a pawn just above the diagonal movement check if that pawn was the last piece to move
+  # Otherwise do nothing
+  # If it was check if that pawn moved 2 squares, if it has en-passant is permitted
+
   def piece_moved?(piece)
     moved_pieces = @move_history.map { |hash| hash[:piece] }
     moved_pieces.any? { |p| p == piece }
@@ -237,10 +284,3 @@ class ChessBoard
     distance_first_rook.abs < disance_second_rook.abs ? first_rook : second_rook
   end
 end
-
-
-# Algo for castle:
-# Given a king and a target position
-# Select the same colored rook closer to the target position
-# move the king to the target position and move the select rook just before
-

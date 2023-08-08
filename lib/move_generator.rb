@@ -60,10 +60,12 @@ class MoveGenerator
     one_front = move_vertically(position, direction)
     two_front = move_vertically(position, 2 * direction)
 
-    possible_moves << main_diag if @board.position_has_oponent?(main_diag, pawn)
-    possible_moves << sec_diag if @board.position_has_oponent?(sec_diag, pawn)
+    possible_moves << main_diag if @board.position_has_oponent?(main_diag, pawn) || @board.en_passant_permitted?(pawn, main_diag)
+    possible_moves << sec_diag if @board.position_has_oponent?(sec_diag, pawn) || @board.en_passant_permitted?(pawn, sec_diag)
     possible_moves << one_front if @board.position_is_free?(one_front)
-    possible_moves << two_front if @board.pawn_on_initial_position?(pawn) && @board.position_is_free?(two_front) && @board.position_is_free?(one_front)
+    if @board.pawn_on_initial_position?(pawn) && @board.position_is_free?(two_front) && @board.position_is_free?(one_front)
+      possible_moves << two_front
+    end
 
     possible_moves
   end
@@ -72,7 +74,7 @@ class MoveGenerator
     moves = []
 
     possible_directions = [:up, :down, :left, :right]
-    possible_directions.each { |direction| moves << generate_moves_non_recursivly(rook, direction) }
+    possible_directions.each { |direction| moves << generate_moves(rook, direction) }
 
     moves.flatten(1)
   end
@@ -81,14 +83,12 @@ class MoveGenerator
     moves = []
 
     possible_directions = [:main_diag_up, :main_diag_down, :sec_diag_up, :sec_diag_down]
-    possible_directions.each { |direction| moves << generate_moves_non_recursivly(bishop, direction) }
+    possible_directions.each { |direction| moves << generate_moves(bishop, direction) }
 
     moves.flatten(1)
   end
 
   def generate_knight_moves(knight)
-    moves = []
-
     possible_directions = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [2, -1], [2, 1], [1, -2], [1, 2]]
 
     potential_moves = possible_directions.map do |dir|
@@ -98,8 +98,7 @@ class MoveGenerator
       [row, col]
     end
 
-    possible_moves = potential_moves.select { |move| !invalid_move_for_piece?(move, knight) }
-    possible_moves
+    potential_moves.reject { |move| invalid_move_for_piece?(move, knight) }
   end
 
   def generate_queen_moves(queen)
@@ -135,16 +134,7 @@ class MoveGenerator
     potential_castling_moves.flatten(1)
   end
 
-  def generate_moves(piece, direction, next_move = move_one(piece.position, direction), moves = [])
-    return moves if invalid_move_for_piece?(next_move, piece)
-    moves << next_move
-    return moves if @board.position_has_oponent?(next_move, piece)
-
-    next_move = move_one(next_move, direction)
-    generate_moves(piece, direction, next_move, moves)
-  end
-
-  def generate_moves_non_recursivly(piece, direction)
+  def generate_moves(piece, direction)
     moves = []
     next_position = move_one(piece.position, direction)
     until invalid_move_for_piece?(next_position, piece)
@@ -155,12 +145,4 @@ class MoveGenerator
     end
     moves
   end
-
-  # algo generate moves non recursively
-  # given a piece and a direction,
-  # declare an empty array for the possible moves
-  # define the current_position as the piece position
-  # until the current_position of the piece is invalid do the following
-  # add the current position to the possible moves
-  # if the current position has an opponent, return moves
 end
