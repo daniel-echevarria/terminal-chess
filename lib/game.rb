@@ -88,7 +88,11 @@ class ChessGame
   def castling?(piece, target_position)
     return false unless piece.specie == :king
 
-    step_size = piece.position[1] - target_position[1]
+    step_size_bigger_than_one?(piece.position[1], target_position[1])
+  end
+
+  def step_size_bigger_than_one?(start, target)
+    step_size = start - target
     step_size.abs > 1
   end
 
