@@ -82,8 +82,7 @@ class ChessBoard
 
   def move_piece(piece, future_position)
     original_position = piece.position.dup
-    snacked_piece = snack_piece_at(future_position) if position_has_oponent?(future_position, piece)
-    snacked_piece = snack_piece_en_passant_at(future_position, piece) if pawn_snacking_en_passant?(piece, future_position)
+    snacked_piece = handle_snack(future_position, piece)
     snack_record = create_snack_record(snacked_piece, future_position) if snacked_piece
 
     move_record = create_move_record(piece, piece.position, future_position, snack_record)
@@ -92,28 +91,41 @@ class ChessBoard
     clean_cell(original_position)
   end
 
+  def handle_snack(future_position, piece)
+    if position_has_oponent?(future_position, piece)
+      snack_piece_at(future_position)
+    elsif pawn_snacking_en_passant?(piece, future_position)
+      snack_piece_en_passant_at(future_position, piece)
+    end
+  end
+
   # Algo for pawn_snacking_en_passant?
   # Given a piece and its future position
   # return unless the piece is a pawn
   # If the future position is not on the same column as the pawn and the future position has no opponent
   # the pawn is snacking en passant
 
-  def pawn_snacking_en_passant?(piece, future_position)
-    return unless piece.specie == :pawn
-    return if position_has_oponent?(future_position, piece)
+  def pawn_snacking_en_passant?(pawn, future_position)
+    return unless pawn.specie == :pawn && position_is_free?(future_position)
 
-    pawn_col = piece.position[1]
+    pawn_changing_columns?(pawn, future_position)
+  end
+
+  def pawn_changing_columns?(pawn, future_position)
+    pawn_col = pawn.position[1]
     future_col = future_position[1]
     pawn_col != future_col
   end
 
   def snack_piece_en_passant_at(future_position, piece)
+    # p "snack piece en passant gets called by #{piece} for #{future_position}"
     direction = piece.color == :white ? 1 : -1
     futur_row, futur_col = future_position
     snack_row = futur_row + direction
     snack_position = [snack_row, futur_col]
+    # p snack_position
     clean_cell(snack_position)
-    snack_piece_at(snack_position) if position_has_oponent?(snack_position, piece)
+    snack_piece_at(snack_position)
   end
 
   def snack_piece_at(position)
@@ -142,9 +154,9 @@ class ChessBoard
     piece.position = last_move[:from]
   end
 
-  def position_is_free?(position)
+  def position_is_free?(pos)
     positions = @pieces.map(&:position)
-    !positions.include?(position)
+    !positions.include?(pos)
   end
 
   def position_has_oponent?(position, piece)

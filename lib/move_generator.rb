@@ -63,9 +63,7 @@ class MoveGenerator
     possible_moves << main_diag if @board.position_has_oponent?(main_diag, pawn) || @board.en_passant_permitted?(pawn, main_diag)
     possible_moves << sec_diag if @board.position_has_oponent?(sec_diag, pawn) || @board.en_passant_permitted?(pawn, sec_diag)
     possible_moves << one_front if @board.position_is_free?(one_front)
-    if @board.pawn_on_initial_position?(pawn) && @board.position_is_free?(two_front) && @board.position_is_free?(one_front)
-      possible_moves << two_front
-    end
+    possible_moves << two_front if @board.pawn_on_initial_position?(pawn) && @board.position_is_free?(two_front) && @board.position_is_free?(one_front)
 
     possible_moves
   end

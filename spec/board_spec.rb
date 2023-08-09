@@ -30,8 +30,17 @@ describe ChessBoard do
       end
     end
 
-    context 'when there is an opponent' do
-      xit 'returns false' do
+    context 'when there is a piece opponent' do
+      let(:white_pawn) { instance_double(ChessPiece, position: [2, 2]) }
+
+      before do
+        chess_board.instance_variable_set(:@pieces, [white_pawn])
+      end
+
+      it 'returns false' do
+        position = [2, 2]
+        result = chess_board.position_is_free?(position)
+        expect(result).to eq(false)
       end
     end
 
