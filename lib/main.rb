@@ -18,8 +18,8 @@ def ask_player_name_message(num)
   puts
 end
 
-player_names = get_player_names(2)
-# player_names = ['Daniel', 'Bruna']
+# player_names = get_player_names(2)
+player_names = ['Daniel', 'Bruna']
 
 player_one = ChessPlayer.new(:white, player_names[0])
 player_two = ChessPlayer.new(:black, player_names[1])

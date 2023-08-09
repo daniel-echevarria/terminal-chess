@@ -52,15 +52,19 @@ class ChessGame
   end
 
   def play_move(player)
-    start_position = select_piece_input(player)
-    piece = @board.select_piece_at(start_position)
-    until piece_can_move?(piece)
-      puts "This piece can't move!"
-      start_position = select_piece_input(player)
-      piece = @board.select_piece_at(start_position)
-    end
+    piece = piece_selection_loop(player)
     target_position = move_piece_input(piece)
     handle_castling(piece, target_position) || @board.move_piece(piece, target_position)
+  end
+
+  def piece_selection_loop(player)
+    loop do
+      start_position = select_piece_input(player)
+      piece = @board.select_piece_at(start_position)
+      return piece if piece_can_move?(piece)
+
+      puts "This piece can't move!"
+    end
   end
 
   def piece_can_move?(piece)
@@ -135,11 +139,12 @@ class ChessGame
   end
 
   def move_piece_input(piece)
-    move_piece_message
+    move_piece_message(piece)
     input = gets.chomp
     until valid_move?(input, piece)
-      puts 'please input a valid move'
+      puts 'please input a valid move or type "exit" to select another piece'
       input = gets.chomp
+      return if input == 'exit'
     end
     translate_chess_to_array(input)
   end
@@ -188,12 +193,15 @@ class ChessGame
 
   def select_piece_message(player)
     puts <<~HEREDOC
-      #{player.name} select the piece you would like to move by typing it\'s position
+      \e[33m#{player.name} select the piece you would like to move by typing it\'s position\e[0m
     HEREDOC
   end
 
-  def move_piece_message
-    puts 'Type the square you want to move the piece to'
+  def move_piece_message(piece)
+    translated_piece_position = translate_array_to_chess(piece.position)
+    puts
+    puts "\e[32mYou just selected the #{piece.specie} on #{translated_piece_position}\e[0m"
+    puts "\e[33mType the square you want to move the #{piece.specie} to\e[0m"
   end
 
   def display_check_message(player)
