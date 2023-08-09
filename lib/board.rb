@@ -83,12 +83,15 @@ class ChessBoard
   def move_piece(piece, future_position)
     original_position = piece.position.dup
     snacked_piece = handle_snack(future_position, piece)
-    snack_record = create_snack_record(snacked_piece, future_position) if snacked_piece
-
-    move_record = create_move_record(piece, piece.position, future_position, snack_record)
-    @move_history << move_record
+    handle_move_recording(piece, future_position, snacked_piece)
     piece.position = future_position
     clean_cell(original_position)
+  end
+
+  def handle_move_recording(piece, future_position, snacked_piece)
+    snack_record = create_snack_record(snacked_piece, future_position) if snacked_piece
+    move_record = create_move_record(piece, piece.position, future_position, snack_record)
+    @move_history << move_record
   end
 
   def handle_snack(future_position, piece)
