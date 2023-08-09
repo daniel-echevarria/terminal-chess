@@ -1,6 +1,5 @@
 
 class ChessPiece
-
   attr_accessor :specie, :position, :color, :unicode
 
   def initialize(specie, position, color, unicode = 'piece')
