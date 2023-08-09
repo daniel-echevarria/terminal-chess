@@ -1,14 +1,18 @@
 require_relative 'move_module.rb'
+require_relative 'display.rb'
 require_relative 'move_generator.rb'
+require_relative 'chess_array_translator.rb'
 
 class ChessGame
   include MovePiece
+  include ChessArrayTranslator
 
   def initialize(board, player_one, player_two)
     @board = board
     @player_one = player_one
     @player_two = player_two
     @mover = MoveGenerator.new(@board)
+    @display = ChessDisplay.new
     @game_over = false
   end
 
@@ -30,12 +34,12 @@ class ChessGame
   def assess_situation(player)
     return handle_end_game(player) if player_cant_move?(player)
 
-    display_check_message(player) if player_check?(player)
+    @display.check_message(player) if player_check?(player)
   end
 
   def handle_end_game(player)
     @game_over = true
-    player_check?(player) ? display_check_mate_message(player) : display_draw_message(player)
+    player_check?(player) ? @display.check_mate_message(player) : @display.draw_message(player)
   end
 
   def play_turn(player)
@@ -121,7 +125,7 @@ class ChessGame
   end
 
   def select_piece_input(player)
-    select_piece_message(player)
+    @display.select_piece_message(player)
     input = gets.chomp
     until valid_pick?(player, input)
       puts "Please input the position of a #{player.color} piece"
@@ -139,7 +143,7 @@ class ChessGame
   end
 
   def move_piece_input(piece)
-    move_piece_message(piece)
+    @display.move_piece_message(piece)
     input = gets.chomp
     until valid_move?(input, piece)
       puts 'please input a valid move or type "exit" to select another piece'
@@ -159,7 +163,7 @@ class ChessGame
   end
 
   def promotion_input(player)
-    display_promotion_message(player)
+    @display.promotion_message(player)
     input = gets.chomp
     until valid_promotion?(input)
       display_wrong_promotion
@@ -171,62 +175,5 @@ class ChessGame
   def valid_promotion?(input)
     valid_promotions = %w[queen bishop knight rook]
     valid_promotions.include?(input)
-  end
-
-  def translate_chess_to_array(input)
-    chess_rows = 8.downto(1).to_a
-    chess_columns = 'a'.upto('h').to_a
-    col, row = input.split('')
-    a_col = chess_columns.index(col)
-    a_row = chess_rows.index(row.to_i)
-    [a_row, a_col]
-  end
-
-  def translate_array_to_chess(position)
-    chess_rows = 8.downto(1).to_a
-    chess_columns = 'a'.upto('h').to_a
-    row, col = position
-    c_row = chess_rows[row]
-    c_col = chess_columns[col]
-    [c_col, c_row].join
-  end
-
-  def select_piece_message(player)
-    puts <<~HEREDOC
-      \e[33m#{player.name} select the piece you would like to move by typing it\'s position\e[0m
-    HEREDOC
-  end
-
-  def move_piece_message(piece)
-    translated_piece_position = translate_array_to_chess(piece.position)
-    puts
-    puts "\e[32mYou just selected the #{piece.specie} on #{translated_piece_position}\e[0m"
-    puts "\e[33mType the square you want to move the #{piece.specie} to\e[0m"
-  end
-
-  def display_check_message(player)
-    puts "#{player.name} you are in check!"
-  end
-
-  def display_check_mate_message(player)
-    puts "Game is over, #{player.name} you are check_mate!"
-  end
-
-  def display_promotion_message(player)
-    puts "Hey #{player} which piece do you want to promote the pawn to ?"
-  end
-
-  def display_wrong_promotion
-    puts <<~HEREDOC
-      Please input a valid piece to promote the pawn to, the options are:
-      queen
-      bishop
-      knight
-      rook
-    HEREDOC
-  end
-
-  def display_draw_message
-    puts 'Congratulations girls the game is draw and you both won! (or none of you did depending how you want to look at it)'
   end
 end
