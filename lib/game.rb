@@ -148,7 +148,8 @@ class ChessGame
     position = translate_chess_to_array(input)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
     possible_moves << @mover.generate_castling_moves(piece) if piece.specie == :king
-    puts "This are the possible moves for #{piece.specie} #{possible_moves}"
+    translated_moves = possible_moves.map { |move| translate_array_to_chess(move) }
+    puts "These are the possible moves for #{piece.specie} #{translated_moves}"
     possible_moves.include?(position)
   end
 
