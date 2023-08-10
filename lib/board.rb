@@ -8,8 +8,9 @@ class ChessBoard
 
   def initialize
     @board = create_board
-    @pieces = create_pieces
     @mover = MoveGenerator.new(self)
+    @pieces_creator = ChessPiecesCreator.new
+    @pieces = @pieces_creator.pieces
     @move_history = []
   end
 
@@ -24,7 +25,9 @@ class ChessBoard
 
   def reset_board
     @board = create_board
-    @pieces = create_pieces
+    @mover = MoveGenerator.new(self)
+    @pieces_creator = ChessPiecesCreator.new
+    @pieces = @pieces_creator.pieces
     @move_history = []
   end
 

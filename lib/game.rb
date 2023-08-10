@@ -18,7 +18,7 @@ class ChessGame
 
   def play
     players = [@player_one, @player_two]
-    display_board
+    @board.update_board
     until @game_over
       current_player = players.shift
       assess_situation(current_player)
@@ -27,19 +27,10 @@ class ChessGame
     end
   end
 
-  def display_board
-    @board.update_board
-  end
-
   def assess_situation(player)
     return handle_end_game(player) if player_cant_move?(player)
 
     @display.check_message(player) if player_check?(player)
-  end
-
-  def handle_end_game(player)
-    @game_over = true
-    player_check?(player) ? @display.check_mate_message(player) : @display.draw_message(player)
   end
 
   def play_turn(player)
@@ -47,7 +38,12 @@ class ChessGame
     out_of_check_loop(player) while player_check?(player)
     promoted_pawn = @board.select_promoted_pawn_of_color(player.color)
     handle_promotion(promoted_pawn, player) if promoted_pawn
-    display_board
+    @board.update_board
+  end
+
+  def handle_end_game(player)
+    @game_over = true
+    player_check?(player) ? @display.check_mate_message(player) : @display.draw_message(player)
   end
 
   def player_check?(player)
@@ -56,34 +52,42 @@ class ChessGame
   end
 
   def play_move(player)
-    piece = piece_selection_loop(player)
-    target_position = move_piece_input(piece)
-    handle_castling(piece, target_position) || @board.move_piece(piece, target_position)
+    loop do
+      piece = select_movable_piece(player)
+      target_position = moving_piece_loop(piece)
+      next if target_position == 'exit'
+
+      @display.confirm_move_message(piece)
+      return handle_castling(piece, target_position) || @board.move_piece(piece, target_position)
+    end
   end
 
-  def piece_selection_loop(player)
+  def select_movable_piece(player)
     loop do
-      start_position = select_piece_input(player)
+      start_position = piece_selection_loop(player)
       piece = @board.select_piece_at(start_position)
       return piece if piece_can_move?(piece)
 
-      puts "This piece can't move!"
+      @display.piece_cant_move_message(piece)
     end
   end
 
   def piece_can_move?(piece)
+    @display.confirm_selection_message(piece)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
+    @display.possible_moves_message(piece, possible_moves)
     !possible_moves.empty?
   end
 
   def out_of_check_loop(current_player)
     @board.undo_last_move
-    puts "#{current_player.name} You have to keep your king out of check!"
+    @display.keep_out_of_check_message(current_player)
     play_move(current_player)
   end
 
   def handle_promotion(pawn, player)
-    piece_type = promotion_input(player)
+    @board.update_board
+    piece_type = promotion_input_loop(player)
     @board.transform_pawn(pawn, piece_type)
   end
 
@@ -124,14 +128,14 @@ class ChessGame
     check_free_moves
   end
 
-  def select_piece_input(player)
+  def piece_selection_loop(player)
     @display.select_piece_message(player)
-    input = gets.chomp
-    until valid_pick?(player, input)
-      puts "Please input the position of a #{player.color} piece"
+    loop do
       input = gets.chomp
+      return translate_chess_to_array(input) if valid_pick?(player, input)
+
+      @display.wrong_piece_selection_message(player)
     end
-    translate_chess_to_array(input)
   end
 
   def valid_pick?(player, input)
@@ -142,34 +146,32 @@ class ChessGame
     piece.color == player.color
   end
 
-  def move_piece_input(piece)
+  def moving_piece_loop(piece)
     @display.move_piece_message(piece)
-    input = gets.chomp
-    until valid_move?(input, piece)
-      puts 'please input a valid move or type "exit" to select another piece'
+    loop do
       input = gets.chomp
-      return if input == 'exit'
+      return input if input == 'exit'
+      return translate_chess_to_array(input) if valid_move?(input, piece)
+
+      @display.wrong_move_message(input, piece)
     end
-    translate_chess_to_array(input)
   end
 
   def valid_move?(input, piece)
     position = translate_chess_to_array(input)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
     possible_moves << @mover.generate_castling_moves(piece) if piece.specie == :king
-    translated_moves = possible_moves.map { |move| translate_array_to_chess(move) }
-    puts "These are the possible moves for #{piece.specie} #{translated_moves}"
     possible_moves.include?(position)
   end
 
-  def promotion_input(player)
+  def promotion_input_loop(player)
     @display.promotion_message(player)
-    input = gets.chomp
-    until valid_promotion?(input)
-      display_wrong_promotion
+    loop do
       input = gets.chomp
+      return input.to_sym if valid_promotion?(input)
+
+      @display.wrong_promotion
     end
-    input.to_sym
   end
 
   def valid_promotion?(input)
