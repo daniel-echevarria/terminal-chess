@@ -21,8 +21,7 @@ def get_player_name_message(num)
 end
 
 
-# player_names = get_player_names(2)
-player_names = ['Daniel', 'Bruna']
+player_names = get_player_names(2)
 
 board = ChessBoard.new
 player_one = ChessPlayer.new(:white, player_names[0])
