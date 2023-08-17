@@ -3,6 +3,9 @@ require_relative 'display.rb'
 require_relative 'move_generator.rb'
 require_relative 'chess_array_translator.rb'
 
+require 'yaml'
+
+
 class ChessGame
   include MovePiece
   include ChessArrayTranslator
@@ -16,6 +19,22 @@ class ChessGame
     @game_over = false
   end
 
+  def save_game
+    data = {
+      board: @board,
+      player_one: @player_one,
+      player_two: @player_two,
+    }
+    File.open('games.yaml', 'w') do |file|
+      file.puts YAML.dump(data)
+    end
+  end
+
+  def self.load_game(path)
+    data = YAML.unsafe_load(File.read(path))
+    ChessGame.new(data[:board], data[:player_one], data[:player_two])
+  end
+
   def play
     players = [@player_one, @player_two]
     @board.update_board
@@ -23,6 +42,7 @@ class ChessGame
       current_player = players.shift
       assess_situation(current_player)
       play_turn(current_player) unless @game_over
+      save_game
       players << current_player
     end
   end
