@@ -10,6 +10,8 @@ class ChessGame
   include MovePiece
   include ChessArrayTranslator
 
+  attr_accessor :players
+
   def initialize(board, player_one, player_two)
     @board = board
     @player_one = player_one
@@ -17,6 +19,7 @@ class ChessGame
     @mover = MoveGenerator.new(@board)
     @display = ChessDisplay.new
     @game_over = false
+    @players = [@player_one, @player_two]
   end
 
   def save_game
@@ -24,6 +27,8 @@ class ChessGame
       board: @board,
       player_one: @player_one,
       player_two: @player_two,
+      game_over: @game_over,
+      players: @players
     }
     File.open('games.yaml', 'w') do |file|
       file.puts YAML.dump(data)
@@ -32,18 +37,18 @@ class ChessGame
 
   def self.load_game(path)
     data = YAML.unsafe_load(File.read(path))
-    ChessGame.new(data[:board], data[:player_one], data[:player_two])
+    loaded_game = ChessGame.new(data[:board], data[:player_one], data[:player_two])
+    loaded_game.players = data[:players]
+    loaded_game
   end
 
   def play
-    players = [@player_one, @player_two]
     @board.update_board
     until @game_over
-      current_player = players.shift
+      current_player = @players.shift
       assess_situation(current_player)
       play_turn(current_player) unless @game_over
-      save_game
-      players << current_player
+      @players << current_player
     end
   end
 
