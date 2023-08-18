@@ -10,7 +10,7 @@ class ChessGame
   include MovePiece
   include ChessArrayTranslator
 
-  attr_accessor :players
+  attr_accessor :current_player
 
   def initialize(board, player_one, player_two)
     @board = board
@@ -19,7 +19,7 @@ class ChessGame
     @mover = MoveGenerator.new(@board)
     @display = ChessDisplay.new
     @game_over = false
-    @players = [@player_one, @player_two]
+    @current_player = @player_one
   end
 
   def save_game
@@ -28,28 +28,32 @@ class ChessGame
       player_one: @player_one,
       player_two: @player_two,
       game_over: @game_over,
-      players: @players
+      current_player: @current_player
     }
     File.open('games.yaml', 'w') do |file|
       file.puts YAML.dump(data)
     end
+    @display.confirm_saving_message
   end
 
   def self.load_game(path)
     data = YAML.unsafe_load(File.read(path))
-    loaded_game = ChessGame.new(data[:board], data[:player_one], data[:player_two])
-    loaded_game.players = data[:players]
-    loaded_game
+    fresh_game = ChessGame.new(data[:board], data[:player_one], data[:player_two])
+    fresh_game.current_player = data[:current_player]
+    fresh_game
   end
 
   def play
     @board.update_board
     until @game_over
-      current_player = @players.shift
-      assess_situation(current_player)
-      play_turn(current_player) unless @game_over
-      @players << current_player
+      assess_situation(@current_player)
+      play_turn(@current_player) unless @game_over
+      change_current_player
     end
+  end
+
+  def change_current_player
+    @current_player = @current_player == @player_one ? @player_two : @player_one
   end
 
   def assess_situation(player)
@@ -157,6 +161,7 @@ class ChessGame
     @display.select_piece_message(player)
     loop do
       input = gets.chomp
+      (save_game; next) if input == 'save'
       return translate_chess_to_array(input) if valid_pick?(player, input)
 
       @display.wrong_piece_selection_message(player)
@@ -175,6 +180,7 @@ class ChessGame
     @display.move_piece_message(piece)
     loop do
       input = gets.chomp
+      (save_game; next) if input == 'save'
       return input if input == 'exit'
       return translate_chess_to_array(input) if valid_move?(input, piece)
 
@@ -193,6 +199,7 @@ class ChessGame
     @display.promotion_message(player)
     loop do
       input = gets.chomp
+      (save_game; next) if input == 'save'
       return input.to_sym if valid_promotion?(input)
 
       @display.wrong_promotion

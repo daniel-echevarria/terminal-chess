@@ -43,6 +43,11 @@ class ChessDisplay
 
   # Confirmation messages are in green
 
+  def confirm_saving_message
+    message = 'Game was successfuly saved'
+    display_message_in_color(message, :green)
+  end
+
   def confirm_selection_message(piece)
     chess_position = translate_array_to_chess(piece.position)
     message = "You just selected the #{piece.specie} on #{chess_position}"
@@ -77,7 +82,7 @@ class ChessDisplay
 
   def wrong_move_message(input, piece)
     message = <<~HEREDOC
-    #{input} is not a valid move for the #{piece.specie}
+    #{input} is not a valid move for the #{piece.specie} on #{piece.position}
     please input a valid move or type exit to select another piece!
     HEREDOC
     display_message_in_color(message, :red)
