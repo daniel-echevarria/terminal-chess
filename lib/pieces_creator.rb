@@ -1,38 +1,39 @@
 require_relative 'piece.rb'
 
+require 'colorize'
 
 class ChessPiecesCreator
   PIECES_INITIAL_SETUP = {
     rook: {
       specie: :rook,
       positions: [[0, 0], [0, 7], [7, 0], [7, 7]],
-      unicodes: ["\u265C", "\u2656"]
+      unicodes: ["\u2656", "\u265C"]
     },
     knight: {
       specie: :knight,
       positions: [[0, 1], [0, 6], [7, 1], [7, 6]],
-      unicodes: ["\u265E", "\u2658"]
+      unicodes: ["\u2658", "\u265E"]
     },
     bishop: {
       specie: :bishop,
       positions: [[0, 2], [0, 5], [7, 2], [7, 5]],
-      unicodes: ["\u265D", "\u2657"]
+      unicodes: ["\u2657", "\u265D"]
     },
     queen: {
       specie: :queen,
       positions: [[0, 3], [7, 3]],
-      unicodes: ["\u265B", "\u2655"]
+      unicodes: ["\u2655", "\u265B"]
     },
     king: {
       specie: :king,
       positions: [[0, 4], [7, 4]],
-      unicodes: ["\u265A", "\u2654"]
+      unicodes: ["\u2654", "\u265A"]
     },
     pawn: {
       specie: :pawn,
       positions: [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7],
       [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7]],
-      unicodes: ["\u265F", "\u2659"]
+      unicodes: ["\u2659", "\u265F"]
     }
   }
 

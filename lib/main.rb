@@ -4,9 +4,6 @@ require_relative 'board.rb'
 require_relative 'display.rb'
 require 'yaml'
 
-
-
-
 def get_player_names(num_players)
   names = []
   num_players.times do |num|

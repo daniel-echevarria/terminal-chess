@@ -81,9 +81,11 @@ class ChessDisplay
   end
 
   def wrong_move_message(input, piece)
+    chess_piece = piece.specie
+    chess_position = translate_array_to_chess(piece.position)
     message = <<~HEREDOC
-    #{input} is not a valid move for the #{piece.specie} on #{piece.position}
-    please input a valid move or type exit to select another piece!
+      #{input} is not a valid move for the #{chess_piece} on #{chess_position}
+      please input a valid move or type exit to select another piece!
     HEREDOC
     display_message_in_color(message, :red)
   end

@@ -17,18 +17,19 @@ class ChessBoard
   end
 
   def create_board
-    Array.new(8) { Array.new(8, '   ') }
+    board = Array.new(8) { Array.new(8, '   ') }
+    colorize_board(board)
   end
 
   def define_background_color(num)
-    num.odd? ? :cyan : :magenta
+    num.odd? ? :cyan : :yellow
   end
 
-  def colorize_board
-    @board.each_with_index do |row, ind|
+  def colorize_board(board)
+    board.each_with_index do |row, ind|
       row.each_with_index do |col, i|
         color = define_background_color(ind + i)
-        @board[ind][i] = '   '.colorize(background: color)
+        board[ind][i] = '   '.colorize(background: color)
       end
     end
   end
@@ -63,8 +64,6 @@ class ChessBoard
   end
 
   def display_board
-    colorize_board
-    populate_board(@pieces)
     i = 8
     print "    #{('a'..'h').to_a.join('  ')}  "
     puts

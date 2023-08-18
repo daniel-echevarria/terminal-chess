@@ -179,7 +179,7 @@ class ChessGame
   def moving_piece_loop(piece)
     @display.move_piece_message(piece)
     loop do
-    input = gets.chomp
+      input = gets.chomp
       (save_game; next) if input == 'save'
       return input if input == 'exit'
       return translate_chess_to_array(input) if valid_move?(input, piece)
