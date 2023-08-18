@@ -17,7 +17,20 @@ class ChessBoard
   end
 
   def create_board
-    Array.new(8) { Array.new(8, '  '.colorize(background: :white)) }
+    Array.new(8) { Array.new(8, '   ') }
+  end
+
+  def define_background_color(num)
+    num.odd? ? :cyan : :magenta
+  end
+
+  def colorize_board
+    @board.each_with_index do |row, ind|
+      row.each_with_index do |col, i|
+        color = define_background_color(ind + i)
+        @board[ind][i] = '   '.colorize(background: color)
+      end
+    end
   end
 
   def create_pieces
@@ -38,25 +51,28 @@ class ChessBoard
       next if piece.position.any?(&:negative?)
 
       row, col = piece.position
-      @board[row][col] = " #{piece.unicode} ".colorize(background: :blue)
+      color = define_background_color(row + col)
+      @board[row][col] = " #{piece.unicode} ".colorize(color: :black, background: color)
     end
   end
 
   def clean_cell(position)
     row, col = position
-    @board[row][col] = " "
+    color = define_background_color(row + col)
+    @board[row][col] = '   '.colorize(background: color)
   end
 
   def display_board
+    colorize_board
+    populate_board(@pieces)
     i = 8
-    p "   #{('a'..'h').to_a.join('   ')}  "
-    puts '   -------------------------------'
+    print "    #{('a'..'h').to_a.join('  ')}  "
+    puts
     @board.each do |row|
-      puts " #{i}  #{row.join(' | ') }  #{i}"
-      puts '   -------------------------------'
+      puts " #{i} #{row.join} #{i}"
       i -= 1
     end
-    p "   #{('a'..'h').to_a.join('   ')}  "
+    print "    #{('a'..'h').to_a.join('  ')}  "
     puts
   end
 
