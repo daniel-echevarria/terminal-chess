@@ -1,6 +1,8 @@
 require_relative 'pieces_creator.rb'
 require_relative 'move_generator.rb'
 
+require 'colorize'
+
 class ChessBoard
   # A Hash containing the info for setting up the major pieces as the game starts
   # the unicodes array follow the convention black unicode first (but it appears white on my terminal somehow)
@@ -15,7 +17,7 @@ class ChessBoard
   end
 
   def create_board
-    Array.new(8) { Array.new(8, " ") }
+    Array.new(8) { Array.new(8, '  '.colorize(background: :white)) }
   end
 
   def create_pieces
@@ -36,7 +38,7 @@ class ChessBoard
       next if piece.position.any?(&:negative?)
 
       row, col = piece.position
-      @board[row][col] = piece.unicode
+      @board[row][col] = " #{piece.unicode} ".colorize(background: :blue)
     end
   end
 
@@ -50,7 +52,7 @@ class ChessBoard
     p "   #{('a'..'h').to_a.join('   ')}  "
     puts '   -------------------------------'
     @board.each do |row|
-      puts " #{i}  #{row.join(' | ')}  #{i}"
+      puts " #{i}  #{row.join(' | ') }  #{i}"
       puts '   -------------------------------'
       i -= 1
     end
