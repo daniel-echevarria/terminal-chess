@@ -86,7 +86,7 @@ class ChessGame
       target_position = moving_piece_loop(piece)
       next if target_position == 'exit'
 
-      @display.confirm_move_message(piece)
+      @display.confirm_move_message(piece, target_position)
       return handle_castling(piece, target_position) || @board.move_piece(piece, target_position)
     end
   end
@@ -199,7 +199,6 @@ class ChessGame
     @display.promotion_message(player)
     loop do
       input = gets.chomp
-      (save_game; next) if input == 'save'
       return input.to_sym if valid_promotion?(input)
 
       @display.wrong_promotion

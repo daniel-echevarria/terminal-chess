@@ -55,8 +55,8 @@ class ChessDisplay
   end
 
 
-  def confirm_move_message(piece)
-    chess_position = translate_array_to_chess(piece.position)
+  def confirm_move_message(piece, target_position)
+    chess_position = translate_array_to_chess(target_position)
     message = "You just moved the #{piece.specie} to #{chess_position}"
     display_message_in_color(message, :green)
   end
