@@ -16,10 +16,10 @@ class ChessGame
     @board = board
     @player_one = player_one
     @player_two = player_two
+    @current_player = @player_one
     @mover = MoveGenerator.new(@board)
     @display = ChessDisplay.new
     @game_over = false
-    @current_player = @player_one
   end
 
   def save_game
