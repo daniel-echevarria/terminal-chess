@@ -7,40 +7,32 @@ describe ChessGame do
   let(:board) { double('board') }
   let(:player_1) { instance_double(ChessPlayer, color: :white) }
   let(:player_2) { instance_double(ChessPlayer, color: :black) }
+  let(:display) { double('display')}
   subject(:game) { described_class.new(board, player_1, player_2) }
 
-  describe "#select_piece_input" do
-    context 'when player inputs a valid position' do
+  before do
+    game.instance_variable_set(:@display, display)
+  end
 
-      before do
-        valid_input = 'a2'
-        allow(game).to receive(:select_piece_message)
-        allow(game).to receive(:valid_pick?).and_return(true)
-        allow(game).to receive(:gets).and_return(valid_input)
-      end
+  describe '#piece_selection_loop' do
+    let(:chess_piece) { instance_double(ChessPiece, specie: :pawn, color: :white, position: [7, 0]) }
 
-      it 'completes loop and does not display error message' do
-        error_message = "Please input the position of a #{player_1.color} piece"
-        expect(game).not_to receive(:puts).with(error_message)
-        game.select_piece_input(player_1)
+    before do
+      player = player_1
+      board.instance_variable_set(:@pieces, [chess_piece])
+      allow(display).to receive(:select_piece_message).with(player)
+      allow(game).to receive(:valid_pick?).and_return(true)
+    end
+
+    context 'when player selects a piece of they color' do
+      it 'ends loop and does not display error message' do
+        expect(display).not_to receive(:wrong_piece_selection_message)
+        game.piece_selection_loop(player_1)
       end
     end
 
-    context 'when player inputs a invalid position and then a valid position' do
+    context 'when player selects an empty square' do
 
-      before do
-        invalid_input = 'a'
-        valid_input = 'a2'
-        allow(game).to receive(:select_piece_message)
-        allow(game).to receive(:gets).and_return(invalid_input, valid_input)
-        allow(game).to receive(:valid_pick?).and_return(false, true)
-      end
-
-      it 'completes loop and display error message once' do
-        error_message = "Please input the position of a #{player_1.color} piece"
-        expect(game).to receive(:puts).with(error_message).once
-        game.select_piece_input(player_1)
-      end
     end
   end
 
@@ -80,21 +72,24 @@ describe ChessGame do
     end
   end
 
-  describe '#move_piece_input' do
+  describe '#moving_piece_loop' do
     let(:white_pawn) { instance_double(ChessPiece, specie: :pawn, color: :white, position: [6, 0])}
+
+    before do
+      allow(display).to receive(:move_piece_message)
+    end
 
     context 'when player inputs a valid position to move the piece' do
       before do
         valid_move = 'a3'
-        allow(game).to receive(:move_piece_message)
-        allow(game).to receive(:valid_move?).and_return(true)
+        piece = white_pawn
         allow(game).to receive(:gets).and_return(valid_move)
+        allow(game).to receive(:valid_move?).with(valid_move, piece).and_return(true)
       end
 
       it 'completes the loop and does not display error message' do
-        error_message = 'please input a valid move'
-        expect(game).not_to receive(:puts).with(error_message)
-        game.move_piece_input(white_pawn)
+        expect(display).not_to receive(:wrong_move_message)
+        game.moving_piece_loop(white_pawn)
       end
     end
 
@@ -102,15 +97,14 @@ describe ChessGame do
       before do
         invalid_move = 'c3'
         valid_move = 'a3'
-        allow(game).to receive(:move_piece_message)
-        allow(game).to receive(:valid_move?).and_return(false, true)
         allow(game).to receive(:gets).and_return(invalid_move, valid_move)
+        allow(game).to receive(:valid_move?).and_return(false, true)
       end
 
       it 'completes the loop and display error message once' do
-        error_message = 'please input a valid move'
-        expect(game).to receive(:puts).with(error_message).once
-        game.move_piece_input(white_pawn)
+        invalid_input = 'c3'
+        expect(display).to receive(:wrong_move_message).with(invalid_input, white_pawn).once
+        game.moving_piece_loop(white_pawn)
       end
     end
   end
@@ -141,24 +135,24 @@ describe ChessGame do
     end
   end
 
-  describe '#promotion_input' do
+  describe '#promotion_input_loop' do
     let(:player) { instance_double(ChessPlayer, name: 'John') }
 
     context 'when player inputs a valid promotion option' do
       before do
         valid_input = 'rook'
-        allow(game).to receive(:display_promotion_message).with(player)
+        allow(display).to receive(:promotion_message).with(player)
         allow(game).to receive(:gets).and_return(valid_input)
         allow(game).to receive(:valid_promotion?).with(valid_input).and_return(true)
       end
 
       it 'exits loop and does not display wrong promotion message' do
-        expect(game).not_to receive(:display_wrong_promotion)
-        game.promotion_input(player)
+        expect(display).not_to receive(:wrong_promotion)
+        game.promotion_input_loop(player)
       end
 
       it 'returns the input converted to a symbol' do
-        result = game.promotion_input(player)
+        result = game.promotion_input_loop(player)
         expect(result).to eq(:rook)
       end
     end
@@ -167,15 +161,15 @@ describe ChessGame do
       before do
         invalid_input = 'king'
         valid_input = 'rook'
-        allow(game).to receive(:display_promotion_message).with(player)
+        allow(display).to receive(:promotion_message).with(player)
         allow(game).to receive(:gets).and_return(invalid_input, valid_input)
         allow(game).to receive(:valid_promotion?).with(invalid_input).and_return(false)
         allow(game).to receive(:valid_promotion?).with(valid_input).and_return(true)
       end
 
       it 'exits loop display wrong promotion message once' do
-        expect(game).to receive(:display_wrong_promotion).once
-        game.promotion_input(player)
+        expect(display).to receive(:wrong_promotion).once
+        game.promotion_input_loop(player)
       end
     end
   end
