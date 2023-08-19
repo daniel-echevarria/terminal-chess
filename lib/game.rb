@@ -20,7 +20,7 @@ class ChessGame
     @mover = MoveGenerator.new(@board)
     @display = ChessDisplay.new
     @game_over = false
-    @board.update_board
+    @board.update_board_without_moves
     @display.introduction(@player_one, @player_two)
   end
 
@@ -44,7 +44,6 @@ class ChessGame
 
   def play_turn(player)
     play_move_loop(player)
-    out_of_check_loop(player) while player_check?(player)
     promoted_pawn = @board.select_promoted_pawn_of_color(player.color)
     handle_promotion(promoted_pawn, player) if promoted_pawn
   end
@@ -81,17 +80,10 @@ class ChessGame
   end
 
   def get_possible_moves_for_piece(piece, player)
-    possibles = @mover.generate_possible_moves_for_piece(piece)
-    possibles << @mover.generate_castling_moves(piece) if piece.specie == :king
-    possibles << @mover.generate_en_passant_moves(piece) if piece.specie == :pawn
-    moves_by_piece = { piece: piece, possibles: possibles }
-    check_free_moves = select_check_free_moves([moves_by_piece], player)
-  end
-
-  def out_of_check_loop(current_player)
-    @board.undo_last_move
-    @display.keep_out_of_check_message(current_player)
-    play_move_loop(current_player)
+    moves = @mover.generate_possible_moves_for_piece(piece)
+    moves << @mover.generate_castling_moves(piece) if piece.specie == :king
+    moves << @mover.generate_en_passant_moves(piece) if piece.specie == :pawn
+    select_check_free_moves_for_piece(piece, moves, player)
   end
 
   def handle_promotion(pawn, player)
@@ -112,21 +104,27 @@ class ChessGame
   end
 
   def player_cant_move?(player)
-    moves_by_piece = @mover.get_possible_moves_for_color_by_piece(player.color)
+    moves_by_piece = @mover.get_possibles_moves_by_piece_for_color(player.color)
     out_of_check_moves = select_check_free_moves(moves_by_piece, player)
     out_of_check_moves.empty?
+  end
+
+  def select_check_free_moves_for_piece(piece, moves, player)
+    check_free_moves = []
+    moves.each do |move|
+      @board.move_piece(piece, move)
+      check_free_moves << move unless player_check?(player)
+      @board.undo_last_move
+    end
+    check_free_moves
   end
 
   def select_check_free_moves(moves_by_piece, player)
     check_free_moves = []
     moves_by_piece.each do |piece_and_moves|
       piece = piece_and_moves[:piece]
-      possible_moves = piece_and_moves[:possibles]
-      possible_moves.each do |move|
-        @board.move_piece(piece, move)
-        check_free_moves << move unless player_check?(player)
-        @board.undo_last_move
-      end
+      moves = piece_and_moves[:possibles]
+      check_free_moves << select_check_free_moves_for_piece(piece, moves, player)
     end
     check_free_moves
   end

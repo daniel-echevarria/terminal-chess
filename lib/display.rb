@@ -24,14 +24,16 @@ class ChessDisplay
   def introduction(player1, player2)
     message = <<~HEREDOC
       Welcome #{player1.name} and #{player2.name} to your new favorite chess game
-      In this game you select the positions by typing a combination of 2 characters.
-      A letter as given by the horizontal axis and a number as given by the vertical axis.
+      In this game you select the positions by typing a combination of 2 characters:
+
+      The first character denoting the horizontal axis and the second character
+      representing the vertical axis.
       Here are some exemples a2, f3, c8 etc.
 
       Before you play your turn you can also decide to save the game by typing save
       That's it! You are all set! Further instructions will come along the way if needed ;)
     HEREDOC
-    display_message_in_color(message, :yellow)
+    display_message_in_color(message, :white)
   end
 
   def select_piece_message(player)

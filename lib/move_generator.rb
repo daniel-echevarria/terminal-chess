@@ -40,7 +40,7 @@ class MoveGenerator
     pieces_possibles.flatten(1)
   end
 
-  def get_possible_moves_for_color_by_piece(color)
+  def get_possibles_moves_by_piece_for_color(color)
     pieces_possibles = []
     pieces = @board.select_pieces_of_color(color)
     pieces.each do |piece|

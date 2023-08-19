@@ -94,11 +94,6 @@ class ChessBoard
     puts
   end
 
-  def update_board
-    populate_board(@pieces)
-    display_board
-  end
-
   def update_board_with_moves(moves)
     populate_board(@pieces)
     display_moves(moves)
@@ -144,11 +139,27 @@ class ChessBoard
     @move_history << move_record
   end
 
-  def handle_snack(future_position, piece)
-    if position_has_oponent?(future_position, piece)
-      snack_piece_at(future_position)
-    elsif pawn_snacking_en_passant?(piece, future_position)
-      snack_piece_en_passant_at(future_position, piece)
+
+  # Implement a get_piece_last_position method
+  # move the snacked piece to it's last position instead of the current way
+
+  # Algo select piece last position
+  # given a piece, check the entries in the move_history
+  # select all the moves that include the piece
+  # return the before last
+
+  def get_piece_previous_position(piece)
+    previous_moves = move_history.select { |moves| moves[:piece] == piece }
+    return if previous_moves.empty?
+
+    previous_moves.last[:to]
+  end
+
+  def handle_snack(position, piece)
+    if position_has_oponent?(position, piece)
+      snack_piece_at(position)
+    elsif pawn_snacking_en_passant?(piece, position)
+      snack_piece_en_passant_at(position, piece)
     end
   end
 
@@ -171,7 +182,6 @@ class ChessBoard
     futur_row, futur_col = future_position
     snack_row = futur_row + direction
     snack_position = [snack_row, futur_col]
-    clean_cell(snack_position)
     snack_piece_at(snack_position)
   end
 
@@ -194,7 +204,7 @@ class ChessBoard
 
     if last_move[:snack]
       snacked_piece = last_move[:snack][:piece]
-      snacked_piece.position = last_move[:snack][:from]
+      snacked_piece.position = get_piece_previous_position(snacked_piece)
     end
 
     piece = last_move[:piece]
