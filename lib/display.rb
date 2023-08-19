@@ -48,16 +48,16 @@ class ChessDisplay
     display_message_in_color(message, :green)
   end
 
-  def confirm_selection_message(piece)
+  def confirm_selection_message(player, piece)
     chess_position = translate_array_to_chess(piece.position)
-    message = "You just selected the #{piece.specie} on #{chess_position}"
+    message = "#{player.name} you just selected the #{piece.specie} on #{chess_position}"
     display_message_in_color(message, :green)
   end
 
 
-  def confirm_move_message(piece, target_position)
+  def confirm_move_message(player, piece, target_position)
     chess_position = translate_array_to_chess(target_position)
-    message = "You just moved the #{piece.specie} to #{chess_position}"
+    message = "#{player.name} just moved the #{piece.specie} to #{chess_position}"
     display_message_in_color(message, :green)
   end
 

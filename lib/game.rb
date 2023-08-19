@@ -22,27 +22,6 @@ class ChessGame
     @game_over = false
   end
 
-  def save_game
-    data = {
-      board: @board,
-      player_one: @player_one,
-      player_two: @player_two,
-      game_over: @game_over,
-      current_player: @current_player
-    }
-    File.open('games.yaml', 'w') do |file|
-      file.puts YAML.dump(data)
-    end
-    @display.confirm_saving_message
-  end
-
-  def self.load_game(path)
-    data = YAML.unsafe_load(File.read(path))
-    fresh_game = ChessGame.new(data[:board], data[:player_one], data[:player_two])
-    fresh_game.current_player = data[:current_player]
-    fresh_game
-  end
-
   def play
     @board.update_board
     until @game_over
@@ -63,11 +42,10 @@ class ChessGame
   end
 
   def play_turn(player)
-    play_move(player)
+    play_move_loop(player)
     out_of_check_loop(player) while player_check?(player)
     promoted_pawn = @board.select_promoted_pawn_of_color(player.color)
     handle_promotion(promoted_pawn, player) if promoted_pawn
-    @board.update_board_without_moves
   end
 
   def handle_end_game(player)
@@ -80,42 +58,44 @@ class ChessGame
     @board.check?(player_king)
   end
 
-  def play_move(player)
+  def play_move_loop(player)
     loop do
       @display.select_piece_message(player)
       piece = piece_selection_loop(player)
-      @display.confirm_selection_message(piece)
-      @display.move_piece_message(piece)
-      target_position = moving_piece_loop(piece)
-      next if target_position == 'exit'
+      possible_moves = get_possible_moves_for_piece(piece)
+      (@display.piece_cant_move_message(piece); next) if possible_moves.empty?
 
-      @display.confirm_move_message(piece, target_position)
-      return handle_castling(piece, target_position) || @board.move_piece(piece, target_position)
+      @board.update_board_with_moves(possible_moves)
+      @display.confirm_selection_message(player, piece)
+
+      @display.move_piece_message(piece)
+      target_position = moving_piece_loop(piece, possible_moves)
+      (@board.update_board_without_moves; next) if target_position == 'exit'
+
+      castling?(piece, target_position) ? @board.castle(piece, target_position) : @board.move_piece(piece, target_position)
+      @board.update_board_without_moves
+      @display.confirm_move_message(player, piece, target_position)
+      return
     end
   end
 
-  def piece_can_move?(piece)
-    possible_moves = @mover.generate_possible_moves_for_piece(piece)
-    @board.update_board_with_moves(possible_moves)
-    !possible_moves.empty?
+  def get_possible_moves_for_piece(piece)
+    possibles = @mover.generate_possible_moves_for_piece(piece)
+    possibles << @mover.generate_castling_moves(piece) if piece.specie == :king
+    possibles << @mover.generate_en_passant_moves(piece) if piece.specie == :pawn
+    possibles
   end
 
   def out_of_check_loop(current_player)
     @board.undo_last_move
     @display.keep_out_of_check_message(current_player)
-    play_move(current_player)
+    play_move_loop(current_player)
   end
 
   def handle_promotion(pawn, player)
-    @board.update_board
     piece_type = promotion_input_loop(player)
     @board.transform_pawn(pawn, piece_type)
-  end
-
-  def handle_castling(piece, target_position)
-    return unless castling?(piece, target_position)
-
-    @board.castle(piece, target_position)
+    @board.update_board_without_moves
   end
 
   def castling?(piece, target_position)
@@ -155,9 +135,9 @@ class ChessGame
       (save_game; next) if input == 'save'
       position = translate_chess_to_array(input)
       piece = @board.select_piece_at(position)
-      return piece if valid_pick?(piece, player) && piece_can_move?(piece)
+      return piece if valid_pick?(piece, player)
 
-      valid_pick?(piece, player) ? @display.piece_cant_move_message(piece) : @display.wrong_piece_selection_message(player)
+      @display.wrong_piece_selection_message(player)
     end
   end
 
@@ -167,22 +147,17 @@ class ChessGame
     piece.color == player.color
   end
 
-  def moving_piece_loop(piece)
+  def moving_piece_loop(piece, possible_moves)
     loop do
       input = gets.chomp
       (save_game; next) if input == 'save'
       return input if input == 'exit'
-      return translate_chess_to_array(input) if valid_move?(input, piece)
+
+      target_position = translate_chess_to_array(input)
+      return target_position if possible_moves.include?(target_position)
 
       @display.wrong_move_message(input, piece)
     end
-  end
-
-  def valid_move?(input, piece)
-    position = translate_chess_to_array(input)
-    possible_moves = @mover.generate_possible_moves_for_piece(piece)
-    possible_moves << @mover.generate_castling_moves(piece) if piece.specie == :king
-    possible_moves.include?(position)
   end
 
   def promotion_input_loop(player)
@@ -198,5 +173,26 @@ class ChessGame
   def valid_promotion?(input)
     valid_promotions = %w[queen bishop knight rook]
     valid_promotions.include?(input)
+  end
+
+  def save_game
+    data = {
+      board: @board,
+      player_one: @player_one,
+      player_two: @player_two,
+      game_over: @game_over,
+      current_player: @current_player
+    }
+    File.open('games.yaml', 'w') do |file|
+      file.puts YAML.dump(data)
+    end
+    @display.confirm_saving_message
+  end
+
+  def self.load_game(path)
+    data = YAML.unsafe_load(File.read(path))
+    fresh_game = ChessGame.new(data[:board], data[:player_one], data[:player_two])
+    fresh_game.current_player = data[:current_player]
+    fresh_game
   end
 end

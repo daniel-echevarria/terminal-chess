@@ -41,10 +41,11 @@ class ChessBoard
   end
 
   def display_move(position)
+    return if position.empty?
     color = define_background_color(position)
     row, col = position
     if position_is_free?(position)
-      @board[row][col] = " \u25CF ".colorize(color: :red, background: color)
+      @board[row][col] = " \u25CF ".colorize(color: :blue, background: color)
     else
       cell = @board[row][col]
       @board[row][col] = cell.colorize(background: :red)
@@ -270,8 +271,9 @@ class ChessBoard
     direction = pawn.color == :white ? 1 : -1
     row, col = diagonal_move
     snack_row = row + direction
-    snack = select_piece_at([snack_row, col])
-    return snack if snack && snack.specie == :pawn
+    snack_position = [snack_row, col]
+    piece = select_piece_at(snack_position)
+    return piece if piece && piece.specie == :pawn
   end
 
   def select_last_moved_piece
@@ -283,12 +285,12 @@ class ChessBoard
 
     potential_snack = select_potential_en_passant_snack(pawn, diagonal_move)
     return unless potential_snack == select_last_moved_piece
-    return unless piece_moved_two_rows?(@move_history.last)
+    return unless last_moved_piece_moved_two_rows?(@move_history.last)
 
     true
   end
 
-  def piece_moved_two_rows?(move_record)
+  def last_moved_piece_moved_two_rows?(move_record)
     start_row = move_record[:from][0]
     target_row = move_record[:to][0]
     step_size = start_row - target_row
