@@ -4,8 +4,6 @@ require_relative 'move_generator.rb'
 require 'colorize'
 
 class ChessBoard
-  # A Hash containing the info for setting up the major pieces as the game starts
-  # the unicodes array follow the convention black unicode first (but it appears white on my terminal somehow)
   attr_reader :board, :pieces, :move_history
 
   def initialize
@@ -42,7 +40,12 @@ class ChessBoard
   def display_move(position)
     row, col = position
     color = define_background_color(row + col)
-    @board[row][col] = " \u25CF ".colorize(color: :red, background: color)
+    if position_is_free?(position)
+      @board[row][col] = " \u25CF ".colorize(color: :red, background: color)
+    else
+      cell = @board[row][col]
+      @board[row][col] = cell.colorize(background: :red)
+    end
   end
 
   def create_pieces
@@ -88,6 +91,12 @@ class ChessBoard
 
   def update_board
     populate_board(@pieces)
+    display_board
+  end
+
+  def update_board_with_moves(moves)
+    populate_board(@pieces)
+    display_moves(moves)
     display_board
   end
 

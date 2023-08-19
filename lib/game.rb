@@ -105,8 +105,7 @@ class ChessGame
   def piece_can_move?(piece)
     @display.confirm_selection_message(piece)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
-    @board.display_moves(possible_moves)
-    @board.update_board
+    @board.update_board_with_moves(possible_moves)
     @display.possible_moves_message(piece, possible_moves)
     !possible_moves.empty?
   end
