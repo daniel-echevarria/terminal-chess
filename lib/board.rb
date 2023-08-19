@@ -29,9 +29,16 @@ class ChessBoard
     board.each_with_index do |row, ind|
       row.each_with_index do |col, i|
         color = define_background_color(ind + i)
+        col.colorize(background: color)
         board[ind][i] = '   '.colorize(background: color)
       end
     end
+  end
+
+  def display_move(position)
+    row, col = position
+    color = define_background_color(row + col)
+    @board[row][col] = " \u25CF ".colorize(color: :red, background: color)
   end
 
   def create_pieces
@@ -77,6 +84,7 @@ class ChessBoard
 
   def update_board
     populate_board(@pieces)
+    display_move([3, 3])
     display_board
   end
   # Pieces Related Methods
@@ -122,12 +130,6 @@ class ChessBoard
     end
   end
 
-  # Algo for pawn_snacking_en_passant?
-  # Given a piece and its future position
-  # return unless the piece is a pawn
-  # If the future position is not on the same column as the pawn and the future position has no opponent
-  # the pawn is snacking en passant
-
   def pawn_snacking_en_passant?(pawn, future_position)
     return unless pawn.specie == :pawn && position_is_free?(future_position)
 
@@ -141,12 +143,10 @@ class ChessBoard
   end
 
   def snack_piece_en_passant_at(future_position, piece)
-    # p "snack piece en passant gets called by #{piece} for #{future_position}"
     direction = piece.color == :white ? 1 : -1
     futur_row, futur_col = future_position
     snack_row = futur_row + direction
     snack_position = [snack_row, futur_col]
-    # p snack_position
     clean_cell(snack_position)
     snack_piece_at(snack_position)
   end
