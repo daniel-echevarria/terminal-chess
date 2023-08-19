@@ -83,7 +83,7 @@ class ChessDisplay
   def wrong_move_message(input, piece)
     chess_piece = piece.specie
     chess_position = translate_array_to_chess(piece.position)
-    message = <<~HEREDOC
+    message = <<~HEREDOC.chomp
       #{input} is not a valid move for the #{chess_piece} on #{chess_position}
       please input a valid move or type exit to select another piece!
     HEREDOC
@@ -91,7 +91,11 @@ class ChessDisplay
   end
 
   def wrong_piece_selection_message(player)
-    message = "Please input the position of a #{player.color} piece!"
+    message = <<~HEREDOC.chomp
+      Please input the position of a #{player.color} piece
+      following the notation letter + num.
+      ex: a2, f7, c3 etc
+      HEREDOC
     display_message_in_color(message, :red)
   end
 
@@ -101,7 +105,7 @@ class ChessDisplay
   end
 
   def wrong_promotion
-    message = <<~HEREDOC
+    message = <<~HEREDOC.chomp
       Please input a valid piece to promote the pawn to, the options are:
       queen
       bishop

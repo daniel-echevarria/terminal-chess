@@ -48,12 +48,12 @@ class ChessGame
     until @game_over
       assess_situation(@current_player)
       play_turn(@current_player) unless @game_over
-      change_current_player
+      change_current_player(@current_player)
     end
   end
 
-  def change_current_player
-    @current_player = @current_player == @player_one ? @player_two : @player_one
+  def change_current_player(player)
+    @current_player = player == @player_one ? @player_two : @player_one
   end
 
   def assess_situation(player)
@@ -67,7 +67,7 @@ class ChessGame
     out_of_check_loop(player) while player_check?(player)
     promoted_pawn = @board.select_promoted_pawn_of_color(player.color)
     handle_promotion(promoted_pawn, player) if promoted_pawn
-    @board.update_board
+    @board.update_board_without_moves
   end
 
   def handle_end_game(player)
@@ -82,31 +82,21 @@ class ChessGame
 
   def play_move(player)
     loop do
-      piece = select_movable_piece(player)
+      @display.select_piece_message(player)
+      piece = piece_selection_loop(player)
+      @display.confirm_selection_message(piece)
+      @display.move_piece_message(piece)
       target_position = moving_piece_loop(piece)
       next if target_position == 'exit'
 
       @display.confirm_move_message(piece, target_position)
-      @board.update_board_without_moves
       return handle_castling(piece, target_position) || @board.move_piece(piece, target_position)
     end
   end
 
-  def select_movable_piece(player)
-    loop do
-      start_position = piece_selection_loop(player)
-      piece = @board.select_piece_at(start_position)
-      return piece if piece_can_move?(piece)
-
-      @display.piece_cant_move_message(piece)
-    end
-  end
-
   def piece_can_move?(piece)
-    @display.confirm_selection_message(piece)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
     @board.update_board_with_moves(possible_moves)
-    @display.possible_moves_message(piece, possible_moves)
     !possible_moves.empty?
   end
 
@@ -160,26 +150,24 @@ class ChessGame
   end
 
   def piece_selection_loop(player)
-    @display.select_piece_message(player)
     loop do
       input = gets.chomp
       (save_game; next) if input == 'save'
-      return translate_chess_to_array(input) if valid_pick?(player, input)
+      position = translate_chess_to_array(input)
+      piece = @board.select_piece_at(position)
+      return piece if valid_pick?(piece, player) && piece_can_move?(piece)
 
-      @display.wrong_piece_selection_message(player)
+      valid_pick?(piece, player) ? @display.piece_cant_move_message(piece) : @display.wrong_piece_selection_message(player)
     end
   end
 
-  def valid_pick?(player, input)
-    position = translate_chess_to_array(input)
-    piece = @board.select_piece_at(position)
+  def valid_pick?(piece, player)
     return if piece.nil?
 
     piece.color == player.color
   end
 
   def moving_piece_loop(piece)
-    @display.move_piece_message(piece)
     loop do
       input = gets.chomp
       (save_game; next) if input == 'save'

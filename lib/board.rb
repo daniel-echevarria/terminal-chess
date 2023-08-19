@@ -19,16 +19,19 @@ class ChessBoard
     colorize_board(board)
   end
 
-  def define_background_color(num)
+  def define_background_color(position)
+    row, col = position
+    num = row + col
     num.odd? ? :cyan : :yellow
   end
 
   def colorize_board(board)
-    board.each_with_index do |row, ind|
-      row.each_with_index do |col, i|
-        color = define_background_color(ind + i)
+    board.each_with_index do |row, r_idx|
+      row.each_with_index do |col, c_idx|
+        position = [r_idx, c_idx]
+        color = define_background_color(position)
         col.colorize(background: color)
-        board[ind][i] = '   '.colorize(background: color)
+        board[r_idx][c_idx] = '   '.colorize(background: color)
       end
     end
   end
@@ -38,8 +41,8 @@ class ChessBoard
   end
 
   def display_move(position)
+    color = define_background_color(position)
     row, col = position
-    color = define_background_color(row + col)
     if position_is_free?(position)
       @board[row][col] = " \u25CF ".colorize(color: :red, background: color)
     else
@@ -66,14 +69,14 @@ class ChessBoard
       next if piece.position.any?(&:negative?)
 
       row, col = piece.position
-      color = define_background_color(row + col)
+      color = define_background_color(piece.position)
       @board[row][col] = " #{piece.unicode} ".colorize(color: :black, background: color)
     end
   end
 
   def clean_cell(position)
     row, col = position
-    color = define_background_color(row + col)
+    color = define_background_color(position)
     @board[row][col] = '   '.colorize(background: color)
   end
 
