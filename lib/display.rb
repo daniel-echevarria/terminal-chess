@@ -11,7 +11,8 @@ class ChessDisplay
     yellow: "\e[33m",
     blue: "\e[34m",
     magenta: "\e[35m",
-    cyan: "\e[36m"
+    cyan: "\e[36m",
+    white: "\e[37m"
   }
 
   def display_message_in_color(message, color)
@@ -20,13 +21,26 @@ class ChessDisplay
 
   # Instructions messages are in Yellow
 
+  def introduction(player1, player2)
+    message = <<~HEREDOC
+      Welcome #{player1.name} and #{player2.name} to your new favorite chess game
+      In this game you select the positions by typing a combination of 2 characters.
+      A letter as given by the horizontal axis and a number as given by the vertical axis.
+      Here are some exemples a2, f3, c8 etc.
+
+      Before you play your turn you can also decide to save the game by typing save
+      That's it! You are all set! Further instructions will come along the way if needed ;)
+    HEREDOC
+    display_message_in_color(message, :yellow)
+  end
+
   def select_piece_message(player)
     message = "#{player.name} select the piece you would like to move by typing it\'s position"
     display_message_in_color(message, :yellow)
   end
 
   def move_piece_message(piece)
-    message = "Type the square you want to move the #{piece.specie} to"
+    message = "Type the position you want to move the #{piece.specie} to"
     display_message_in_color(message, :yellow)
   end
 
@@ -93,8 +107,6 @@ class ChessDisplay
   def wrong_piece_selection_message(player)
     message = <<~HEREDOC.chomp
       Please input the position of a #{player.color} piece
-      following the notation letter + num.
-      ex: a2, f7, c3 etc
       HEREDOC
     display_message_in_color(message, :red)
   end

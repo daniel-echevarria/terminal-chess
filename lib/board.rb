@@ -42,6 +42,7 @@ class ChessBoard
 
   def display_move(position)
     return if position.empty?
+
     color = define_background_color(position)
     row, col = position
     if position_is_free?(position)
@@ -164,6 +165,8 @@ class ChessBoard
   end
 
   def snack_piece_en_passant_at(future_position, piece)
+    return if future_position.empty?
+
     direction = piece.color == :white ? 1 : -1
     futur_row, futur_col = future_position
     snack_row = futur_row + direction

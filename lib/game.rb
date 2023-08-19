@@ -20,10 +20,11 @@ class ChessGame
     @mover = MoveGenerator.new(@board)
     @display = ChessDisplay.new
     @game_over = false
+    @board.update_board
+    @display.introduction(@player_one, @player_two)
   end
 
   def play
-    @board.update_board
     until @game_over
       assess_situation(@current_player)
       play_turn(@current_player) unless @game_over
@@ -62,7 +63,7 @@ class ChessGame
     loop do
       @display.select_piece_message(player)
       piece = piece_selection_loop(player)
-      possible_moves = get_possible_moves_for_piece(piece)
+      possible_moves = get_possible_moves_for_piece(piece, player)
       (@display.piece_cant_move_message(piece); next) if possible_moves.empty?
 
       @board.update_board_with_moves(possible_moves)
@@ -79,11 +80,12 @@ class ChessGame
     end
   end
 
-  def get_possible_moves_for_piece(piece)
+  def get_possible_moves_for_piece(piece, player)
     possibles = @mover.generate_possible_moves_for_piece(piece)
     possibles << @mover.generate_castling_moves(piece) if piece.specie == :king
     possibles << @mover.generate_en_passant_moves(piece) if piece.specie == :pawn
-    possibles
+    moves_by_piece = { piece: piece, possibles: possibles }
+    check_free_moves = select_check_free_moves([moves_by_piece], player)
   end
 
   def out_of_check_loop(current_player)
@@ -122,7 +124,7 @@ class ChessGame
       possible_moves = piece_and_moves[:possibles]
       possible_moves.each do |move|
         @board.move_piece(piece, move)
-        check_free_moves << [piece, move] unless player_check?(player)
+        check_free_moves << move unless player_check?(player)
         @board.undo_last_move
       end
     end
