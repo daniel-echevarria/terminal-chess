@@ -35,6 +35,10 @@ class ChessBoard
     end
   end
 
+  def display_moves(moves)
+    moves.each { |move| display_move(move) }
+  end
+
   def display_move(position)
     row, col = position
     color = define_background_color(row + col)
@@ -84,10 +88,14 @@ class ChessBoard
 
   def update_board
     populate_board(@pieces)
-    display_move([3, 3])
     display_board
   end
-  # Pieces Related Methods
+
+  def update_board_without_moves
+    colorize_board(@board)
+    populate_board(@pieces)
+    display_board
+  end
 
   def select_piece_at(position)
     @pieces.find { |piece| piece.position == position }

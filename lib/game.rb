@@ -87,6 +87,7 @@ class ChessGame
       next if target_position == 'exit'
 
       @display.confirm_move_message(piece, target_position)
+      @board.update_board_without_moves
       return handle_castling(piece, target_position) || @board.move_piece(piece, target_position)
     end
   end
@@ -104,6 +105,8 @@ class ChessGame
   def piece_can_move?(piece)
     @display.confirm_selection_message(piece)
     possible_moves = @mover.generate_possible_moves_for_piece(piece)
+    @board.display_moves(possible_moves)
+    @board.update_board
     @display.possible_moves_message(piece, possible_moves)
     !possible_moves.empty?
   end
