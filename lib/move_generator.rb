@@ -43,7 +43,8 @@ class MoveGenerator
   def get_possibles_moves_by_piece_for_color(color)
     pieces_possibles = []
     pieces = @board.select_pieces_of_color(color)
-    pieces.each do |piece|
+    alive_pieces = pieces.select { |piece| piece.position[0] >= 0 }
+    alive_pieces.each do |piece|
       moves = generate_possible_moves_for_piece(piece)
       pieces_possibles << { piece: piece, possibles: moves }
     end

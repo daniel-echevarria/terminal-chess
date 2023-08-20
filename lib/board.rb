@@ -204,7 +204,9 @@ class ChessBoard
 
     if last_move[:snack]
       snacked_piece = last_move[:snack][:piece]
-      snacked_piece.position = get_piece_previous_position(snacked_piece)
+      previous_position = get_piece_previous_position(snacked_piece)
+      snacked_piece.position = previous_position || last_move[:snack][:from]
+      # snacked_piece.position = get_piece_previous_position(snacked_piece)
     end
 
     piece = last_move[:piece]
