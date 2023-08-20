@@ -61,24 +61,12 @@ class MoveGenerator
     one_front = move_vertically(position, direction)
     two_front = move_vertically(position, 2 * direction)
 
-    possible_moves << main_diag if @board.position_has_oponent?(main_diag, pawn)
-    possible_moves << sec_diag if @board.position_has_oponent?(sec_diag, pawn)
+    possible_moves << main_diag if @board.position_has_oponent?(main_diag, pawn) || @board.en_passant_permitted?(pawn, main_diag)
+    possible_moves << sec_diag if @board.position_has_oponent?(sec_diag, pawn) || @board.en_passant_permitted?(pawn, sec_diag)
     possible_moves << one_front if @board.position_is_free?(one_front)
     possible_moves << two_front if @board.pawn_on_initial_position?(pawn) && @board.position_is_free?(two_front) && @board.position_is_free?(one_front)
 
     possible_moves
-  end
-
-  def generate_en_passant_moves(pawn)
-    possible_moves = []
-    direction = pawn.color == :white ? 1 : -1
-    position = pawn.position
-
-    main_diag = move_main_diagonal(position, direction)
-    sec_diag = move_secondary_diagonal(position, direction)
-    possible_moves << main_diag if @board.en_passant_permitted?(pawn, main_diag)
-    possible_moves << sec_diag if @board.en_passant_permitted?(pawn, sec_diag)
-    possible_moves.flatten(1)
   end
 
   def generate_rook_moves(rook)

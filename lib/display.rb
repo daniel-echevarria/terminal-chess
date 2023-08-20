@@ -23,6 +23,7 @@ class ChessDisplay
 
   def introduction(player1, player2)
     message = <<~HEREDOC
+
       Welcome #{player1.name} and #{player2.name} to your new favorite chess game
       In this game you select the positions by typing a combination of 2 characters:
 

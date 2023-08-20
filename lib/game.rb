@@ -20,8 +20,8 @@ class ChessGame
     @mover = MoveGenerator.new(@board)
     @display = ChessDisplay.new
     @game_over = false
-    @board.update_board_without_moves
     @display.introduction(@player_one, @player_two)
+    @board.update_board_without_moves
   end
 
   def play
@@ -82,7 +82,6 @@ class ChessGame
   def get_possible_moves_for_piece(piece, player)
     moves = @mover.generate_possible_moves_for_piece(piece)
     moves << @mover.generate_castling_moves(piece) if piece.specie == :king
-    moves << @mover.generate_en_passant_moves(piece) if piece.specie == :pawn
     select_check_free_moves_for_piece(piece, moves, player)
   end
 
