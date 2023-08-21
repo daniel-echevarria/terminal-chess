@@ -28,19 +28,22 @@ def create_new_game
   ChessGame.new(board, player_one, player_two)
 end
 
+def load_or_new_input(path)
+  loop do
+    puts 'Do you want to continue your saved game or start a new one?'
+    input = gets.chomp
+    return create_new_game if %w[new n].include?(input.downcase)
+    return ChessGame.load_game(saved_game_path) if %w[saved s].include?(input.downcase)
+
+    puts 'Please type n or new for a new game or s or saved for the saved game'
+  end
+end
+
 def load_or_new_game
   saved_game_path = 'saved_game.yaml'
   return create_new_game.play unless File.exist?(saved_game_path)
 
-  game = loop do
-    puts 'Do you want to continue your saved game or start a new one?'
-    input = gets.chomp
-    break create_new_game if %w[new n].include?(input.downcase)
-    break ChessGame.load_game(saved_game_path) if %w[saved s].include?(input.downcase)
-
-    puts 'Please type n or new for a new game or s or saved for the saved game'
-  end
-
+  game = load_or_new_input(saved_game_path)
   game.play
 end
 
