@@ -257,4 +257,27 @@ describe ChessGame do
       end
     end
   end
+
+  describe '#can_somebody_win?' do
+    context 'when there is less than 5 pieces and none of the pieces is a winable' do
+      let(:knight) { instance_double(ChessPiece, specie: :knight) }
+      let(:king) { instance_double(ChessPiece, specie: :king) }
+      let(:bishop) { instance_double(ChessPiece, specie: :bishop) }
+      let(:king2) { instance_double(ChessPiece, specie: :king2) }
+
+      before do
+        allow(board).to receive(:count_pieces).and_return(4)
+        allow(board).to receive(:pieces).and_return([knight, king, bishop])
+        allow(knight).to receive(:winable_piece?).and_return(false)
+        allow(king).to receive(:winable_piece?).and_return(false)
+        allow(bishop).to receive(:winable_piece?).and_return(false)
+        allow(king2).to receive(:winable_piece?).and_return(false)
+      end
+
+      it 'returns false' do
+        result = game.can_somebody_win?
+        expect(result).to eq(false)
+      end
+    end
+  end
 end

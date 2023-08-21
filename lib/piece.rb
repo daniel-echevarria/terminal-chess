@@ -8,4 +8,8 @@ class ChessPiece
     @color = color
     @unicode = unicode
   end
+
+  def winable_piece?
+    @specie == :queen || @specie == :rook || @specie == :pawn
+  end
 end

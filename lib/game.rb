@@ -43,7 +43,8 @@ class ChessGame
   # If there are and there is no queen or pawn or tour the game is draw
   # otherwise do nothing
 
-  def game_is_draw?
+  def can_somebody_win?
+    return false if @board.count_pieces < 5 && @board.pieces.none?(&:winable_piece?)
   end
 
   def play_turn(player)
