@@ -45,16 +45,17 @@ class ChessGame
   end
 
   def change_current_player(player)
-    @current_player = select_the_other_player(player)
+    @current_player = select_other_player(player)
   end
 
-  def select_the_other_player(player)
+  def select_other_player(player)
     player == @player_one ? @player_two : @player_one
   end
 
   def handle_end_game(player)
     @game_over = true
-    player_check?(player) ? @display.check_mate_message(player) : @display.draw_message(player)
+    winner = select_other_player(player)
+    player_check?(player) ? @display.check_mate_message(player, winner) : @display.draw_message(player)
   end
 
   def player_check?(player)
@@ -64,7 +65,7 @@ class ChessGame
 
   def player_resigned(player)
     @resigned = player
-    winner = select_the_other_player(player)
+    winner = select_other_player(player)
     @display.resign_message(player, winner)
     @game_over = true
   end

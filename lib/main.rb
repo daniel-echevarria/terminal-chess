@@ -28,20 +28,20 @@ def create_new_game
   ChessGame.new(board, player_one, player_two)
 end
 
-
 def load_or_new_game
   saved_game_path = 'saved_game.yaml'
   return create_new_game.play unless File.exist?(saved_game_path)
 
-  puts 'Do you want to continue were you left or start a new one?'
-  input = gets.chomp
-  if input.include?('new')
-    game = create_new_game
-    game.play
-  else
-    chess_game = ChessGame.load_game(saved_game_path)
-    chess_game.play
+  game = loop do
+    puts 'Do you want to continue your saved game or start a new one?'
+    input = gets.chomp
+    break create_new_game if %w[new n].include?(input.downcase)
+    break ChessGame.load_game(saved_game_path) if %w[saved s].include?(input.downcase)
+
+    puts 'Please type n or new for a new game or s or saved for the saved game'
   end
+
+  game.play
 end
 
 def replay_request
@@ -49,16 +49,16 @@ def replay_request
   puts 'Y/N'
   loop do
     input = gets.chomp
-    return false if %w[Y y].include?(input)
-    return true if %w[N n].include?(input)
+    return true if input.downcase == 'y'
+    return false if input.downcase == 'n'
 
     puts 'Please type Y for yes or N for no'
   end
 end
 
-stop_playing = false
-until stop_playing
+keep_going = true
+while keep_going
   load_or_new_game
-  stop_playing = replay_request
+  keep_going = replay_request
 end
 

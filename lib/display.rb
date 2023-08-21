@@ -78,11 +78,6 @@ class ChessDisplay
     display_message_in_color(message, :green)
   end
 
-  def resign_message(player, winner)
-    message = "#{player.name} you just resigned the game, congratulations #{winner.name} you win!"
-    display_message_in_color(message, :green)
-  end
-
   # Check related messages are in magenta
 
   def check_message(player)
@@ -90,9 +85,14 @@ class ChessDisplay
     display_message_in_color(message, :magenta)
   end
 
-  def check_mate_message(player)
-    message = "Game is over, #{player.name} you are check_mate!"
+  def check_mate_message(player, winner)
+    message = "Game is over, #{player.name} you are check_mate!, Congratulations #{winner.name} you won!"
     display_message_in_color(message, :magenta)
+  end
+
+  def resign_message(player, winner)
+    message = "#{player.name} you just resigned the game, congratulations #{winner.name} you win!"
+    display_message_in_color(message, :green)
   end
 
   # Error messages are in red
