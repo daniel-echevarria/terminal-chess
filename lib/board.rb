@@ -333,7 +333,7 @@ class ChessBoard
     king_row, king_col = king.position
     rook_col = rook.position[1]
 
-    positions = []
+    positions = [king.position]
     direction = king_col < rook_col ? +1 : -1
 
     until king_col == (rook_col - direction)
