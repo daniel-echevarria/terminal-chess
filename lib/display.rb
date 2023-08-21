@@ -78,6 +78,11 @@ class ChessDisplay
     display_message_in_color(message, :green)
   end
 
+  def resign_message(player, winner)
+    message = "#{player.name} you just resigned the game, congratulations #{winner.name} you win!"
+    display_message_in_color(message, :green)
+  end
+
   # Check related messages are in magenta
 
   def check_message(player)

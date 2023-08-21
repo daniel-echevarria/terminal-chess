@@ -20,7 +20,7 @@ class ChessGame
     @mover = MoveGenerator.new(@board)
     @display = ChessDisplay.new
     @game_over = false
-    @display.introduction(@player_one, @player_two)
+    @resigned = nil
     @board.update_board_without_moves
   end
 
@@ -30,10 +30,6 @@ class ChessGame
       play_turn(@current_player) unless @game_over
       change_current_player(@current_player)
     end
-  end
-
-  def change_current_player(player)
-    @current_player = player == @player_one ? @player_two : @player_one
   end
 
   def assess_situation(player)
@@ -48,6 +44,14 @@ class ChessGame
     handle_promotion(promoted_pawn, player) if promoted_pawn
   end
 
+  def change_current_player(player)
+    @current_player = select_the_other_player(player)
+  end
+
+  def select_the_other_player(player)
+    player == @player_one ? @player_two : @player_one
+  end
+
   def handle_end_game(player)
     @game_over = true
     player_check?(player) ? @display.check_mate_message(player) : @display.draw_message(player)
@@ -58,10 +62,19 @@ class ChessGame
     @board.check?(player_king)
   end
 
+  def player_resigned(player)
+    @resigned = player
+    winner = select_the_other_player(player)
+    @display.resign_message(player, winner)
+    @game_over = true
+  end
+
   def play_move_loop(player)
     loop do
       @display.select_piece_message(player)
       piece = piece_selection_loop(player)
+      return player_resigned(player) if piece.nil?
+
       possible_moves = get_possible_moves_for_piece(piece, player)
       (@display.piece_cant_move_message(piece); next) if possible_moves.empty?
 
@@ -70,6 +83,8 @@ class ChessGame
 
       @display.move_piece_message(piece)
       target_position = moving_piece_loop(piece, possible_moves)
+      return player_resigned(player) if target_position.nil?
+
       (@board.update_board_without_moves; next) if target_position == 'exit'
 
       castling?(piece, target_position) ? @board.castle(piece, target_position) : @board.move_piece(piece, target_position)
@@ -104,7 +119,8 @@ class ChessGame
 
   def player_cant_move?(player)
     moves_by_piece = @mover.get_possibles_moves_by_piece_for_color(player.color)
-    out_of_check_moves = select_check_free_moves(moves_by_piece, player)
+    check_free_moves = select_check_free_moves(moves_by_piece, player)
+    out_of_check_moves = check_free_moves.reject(&:empty?)
     out_of_check_moves.empty?
   end
 
@@ -131,7 +147,10 @@ class ChessGame
   def piece_selection_loop(player)
     loop do
       input = gets.chomp
+      return if input == 'resign'
+
       (save_game; next) if input == 'save'
+
       position = translate_chess_to_array(input)
       piece = @board.select_piece_at(position)
       return piece if valid_pick?(piece, player)
@@ -149,8 +168,10 @@ class ChessGame
   def moving_piece_loop(piece, possible_moves)
     loop do
       input = gets.chomp
-      (save_game; next) if input == 'save'
       return input if input == 'exit'
+      return if input == 'resign'
+
+      (save_game; next) if input == 'save'
 
       target_position = translate_chess_to_array(input)
       return target_position if possible_moves.include?(target_position)
@@ -182,7 +203,7 @@ class ChessGame
       game_over: @game_over,
       current_player: @current_player
     }
-    File.open('games.yaml', 'w') do |file|
+    File.open('saved_game.yaml', 'w') do |file|
       file.puts YAML.dump(data)
     end
     @display.confirm_saving_message
