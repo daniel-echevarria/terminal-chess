@@ -12,6 +12,7 @@ describe ChessGame do
 
   before do
     game.instance_variable_set(:@display, display)
+    allow(board).to receive(:update_board_without_moves)
   end
 
   describe '#piece_selection_loop' do

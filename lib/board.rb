@@ -58,6 +58,10 @@ class ChessBoard
     pieces_creator.pieces
   end
 
+  def count_pieces
+    @pieces.reject { |piece| piece.position[0].negative? }.count
+  end
+
   def reset_board
     @board = create_board
     @mover = MoveGenerator.new(self)
@@ -101,6 +105,7 @@ class ChessBoard
   end
 
   def update_board_without_moves
+    p count_pieces
     colorize_board(@board)
     populate_board(@pieces)
     display_board

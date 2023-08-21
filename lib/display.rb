@@ -27,11 +27,12 @@ class ChessDisplay
       Welcome #{player1.name} and #{player2.name} to your new favorite chess game
       In this game you select the positions by typing a combination of 2 characters:
 
-      The first character denoting the horizontal axis and the second character
-      representing the vertical axis.
-      Here are some exemples a2, f3, c8 etc.
+      The first character denoting the 'file' or column and the second character
+      representing the 'rank' or row.
+      Here are some exemples e2, e4, d7, d5 etc.
 
-      Before you play your turn you can also decide to save the game by typing save
+      Before you play your turn you can also decide to save the game by typing save.
+      The current player can resign by typing resign at any point during is turn.
       That's it! You are all set! Further instructions will come along the way if needed ;)
     HEREDOC
     display_message_in_color(message, :white)

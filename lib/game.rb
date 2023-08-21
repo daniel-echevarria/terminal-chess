@@ -21,10 +21,10 @@ class ChessGame
     @display = ChessDisplay.new
     @game_over = false
     @resigned = nil
-    @board.update_board_without_moves
   end
 
   def play
+    @board.update_board_without_moves
     until @game_over
       assess_situation(@current_player)
       play_turn(@current_player) unless @game_over
@@ -36,6 +36,14 @@ class ChessGame
     return handle_end_game(player) if player_cant_move?(player)
 
     @display.check_message(player) if player_check?(player)
+  end
+
+  # Algo for game_is_draw?
+  # Check if there are less than four alive pieces
+  # If there are and there is no queen or pawn or tour the game is draw
+  # otherwise do nothing
+
+  def game_is_draw?
   end
 
   def play_turn(player)
