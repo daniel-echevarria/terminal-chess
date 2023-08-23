@@ -20,6 +20,7 @@ class ChessGame
     @mover = MoveGenerator.new(@board)
     @display = ChessDisplay.new
     @game_over = false
+    @game_draw = false
     @resigned = nil
   end
 
@@ -38,13 +39,8 @@ class ChessGame
     @display.check_message(player) if player_check?(player)
   end
 
-  # Algo for game_is_draw?
-  # Check if there are less than four alive pieces
-  # If there are and there is no queen or pawn or tour the game is draw
-  # otherwise do nothing
-
-  def can_somebody_win?
-    return false if @board.count_pieces < 5 && @board.pieces.none?(&:winable_piece?)
+  def not_enough_material_to_win?
+    @board.count_pieces < 5 && @board.pieces.none?(&:winable_piece?)
   end
 
   def play_turn(player)

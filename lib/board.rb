@@ -105,7 +105,6 @@ class ChessBoard
   end
 
   def update_board_without_moves
-    p count_pieces
     colorize_board(@board)
     populate_board(@pieces)
     display_board
@@ -122,7 +121,7 @@ class ChessBoard
   def select_promoted_pawn_of_color(color)
     pieces = select_pieces_of_color(color)
     pawns = pieces.select { |piece| piece.specie == :pawn }
-    pawns.find { |pawn| pawn_on_promotion_position?(pawn) }
+    pawns.find(&:pawn_on_promotion_position?)
   end
 
   def select_king_of_color(color)
@@ -264,20 +263,6 @@ class ChessBoard
     return if piece.nil?
 
     piece.color == color
-  end
-
-  def pawn_on_initial_position?(pawn)
-    current_row = pawn.position[0]
-    initial_row = pawn.color == :white ? 6 : 1
-
-    current_row == initial_row
-  end
-
-  def pawn_on_promotion_position?(pawn)
-    current_row = pawn.position[0]
-    promotion_row = pawn.color == :white ? 0 : 7
-
-    current_row == promotion_row
   end
 
   def pawn_on_en_passant_position?(pawn)
