@@ -31,8 +31,8 @@ class ChessDisplay
       representing the 'rank' or row.
       Here are some exemples e2, e4, d7, d5 etc.
 
-      Before you play your turn you can also decide to save the game by typing save.
-      The current player can resign by typing resign at any point during is turn.
+      Each player can also type 'resign' to resign the game or 'save'
+      to save the game.
       That's it! You are all set! Further instructions will come along the way if needed ;)
     HEREDOC
     display_message_in_color(message, :white)

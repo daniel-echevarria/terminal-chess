@@ -22,6 +22,7 @@ class ChessGame
     @game_over = false
     @game_draw = false
     @resigned = nil
+    @display.introduction(@player_one, @player_two)
   end
 
   def play
