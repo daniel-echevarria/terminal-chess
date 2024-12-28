@@ -2,7 +2,6 @@ require_relative 'move_module.rb'
 require_relative 'display.rb'
 require_relative 'move_generator.rb'
 require_relative 'chess_array_translator.rb'
-
 require 'yaml'
 
 
@@ -216,8 +215,16 @@ class ChessGame
     @display.confirm_saving_message
   end
 
+  # def self.load_game(path)
+  #   data = YAML.load_file((path))
+  #   fresh_game = ChessGame.new(data[:board], data[:player_one], data[:player_two])
+  #   fresh_game.current_player = data[:current_player]
+  #   fresh_game
+  # end
+
   def self.load_game(path)
-    data = YAML.unsafe_load(File.read(path))
+    permitted_classes = [ChessBoard, ChessGame, Symbol, MoveGenerator, ChessPiecesCreator, ChessPiece, ChessPlayer]
+    data = YAML.safe_load(File.read(path), permitted_classes: permitted_classes, aliases: true)
     fresh_game = ChessGame.new(data[:board], data[:player_one], data[:player_two])
     fresh_game.current_player = data[:current_player]
     fresh_game
