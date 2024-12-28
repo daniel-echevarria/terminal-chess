@@ -1,7 +1,5 @@
 require_relative 'piece.rb'
 
-require 'colorize'
-
 class ChessPiecesCreator
   PIECES_INITIAL_SETUP = {
     rook: {

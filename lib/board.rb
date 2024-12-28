@@ -312,8 +312,11 @@ class ChessBoard
     king_trajectory = castling_trajectory[0..1]
     opponent_color = king.color == :white ? :black : :white
 
-    return false if piece_moved?(king) || piece_moved?(rook)
-    return false unless castling_trajectory.all? { |pos| position_is_free?(pos) }
+    some_piece_moved = piece_moved?(king) || piece_moved?(rook)
+    road_is_free = castling_trajectory.all? { |pos| position_is_free?(pos)}
+
+    return false if some_piece_moved
+    return false unless road_is_free
     return false if king_trajectory.any? { |pos| position_is_threatened?(pos, opponent_color) }
 
     true
@@ -331,7 +334,7 @@ class ChessBoard
       positions << [king_row, king_col]
     end
 
-    positions
+    positions[1..-1]
   end
 
   def get_same_color_rooks(king)
