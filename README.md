@@ -40,6 +40,8 @@ To play the game on Glitch, follow these steps:
 5. **Enjoy**:
    - Follow the on-screen instructions to begin your chess match!
 
+> **Note:** The save and load feature may not work on Glitch due to the platform's older Ruby version. For full functionality, consider running the game locally with Ruby 3.0 or later.
+
 ---
 
 ## 🚀 Future Improvements
