@@ -19,7 +19,7 @@ Welcome to the **Terminal Chess Game**, a classic chess game built entirely in t
 - **Determination and Passion:** Built with attention to detail and a love for chess, entirely from scratch.
 
 ## 🎢 Live Demo
-Want to see the game in action? Check out the instructions below! : 
+Want to see the game in action? Check out the instructions below! ⬇️
 
 ---
 
