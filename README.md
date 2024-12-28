@@ -1,4 +1,4 @@
-# Chess Game ♔♚
+# Terminal Chess Game ♔♚
 
 Welcome to the **Terminal Chess Game**, a classic chess game built entirely in the terminal!
 
